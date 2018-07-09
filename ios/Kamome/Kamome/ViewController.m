@@ -10,7 +10,7 @@
 
 #import "ViewController.h"
 
-#import "KMMKamomeSDK.h"
+#import <KamomeSDK/KamomeSDK.h>
 
 @interface ViewController ()
 

@@ -60,7 +60,7 @@ window.Kamome = (function () {
         else if (isAndroid()) {
             if ('kamomeAndroid' in window) {
                 setTimeout(function () {
-                    window.kamomeAndroid.send(json);
+                    window.kamomeAndroid.kamomeSend(json);
                 }, 0);
             }
             else {

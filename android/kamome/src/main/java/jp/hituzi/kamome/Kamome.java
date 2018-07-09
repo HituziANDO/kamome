@@ -39,7 +39,7 @@ public final class Kamome {
     }
 
     @JavascriptInterface
-    public void send(String message) {
+    public void kamomeSend(String message) {
         try {
             JSONObject object = new JSONObject(message);
             String name = object.getString("name");
