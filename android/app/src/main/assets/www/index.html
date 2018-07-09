@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title></title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: sans-serif;
+        }
+
+        .container {
+            padding: 0 1rem;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            letter-spacing: .05em;
+            padding: .5rem 1rem;
+            min-height: 44px;
+        }
+
+        #message {
+            border: solid 1px gray;
+            border-radius: 5px;
+            font-size: .9rem;
+            color: gray;
+            padding: .5rem;
+        }
+    </style>
+</head>
+<body>
+<section class="container">
+    <h1>Kamome</h1>
+    <div>
+        <button id="echoButton" class="btn">Echo</button>
+        <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message:</div>
+        <div id="message"></div>
+    </div>
+</section>
+
+<script src="kamome.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        Kamome.addListener('echo', function (data) {
+            document.getElementById('message').innerHTML += data.message + '<br>';
+        });
+
+        document.getElementById('echoButton').addEventListener('click', function () {
+            Kamome.send('echo', { message: 'Hello World!' });
+        });
+    });
+</script>
+</body>
+</html>

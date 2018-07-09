@@ -1,0 +1,17 @@
+{
+  "name": "Kamome",
+  "version": "1.0.0",
+  "description": "",
+  "main": "kamome.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ando",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.4.0",
+    "gulp-watch": "^4.3.5"
+  }
+}
