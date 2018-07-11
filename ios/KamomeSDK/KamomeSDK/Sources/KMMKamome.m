@@ -6,9 +6,11 @@
 #import "KMMKamome.h"
 #import "KMMUserContentController.h"
 #import "KMMCommand.h"
+#import "KMMMessenger.h"
 
 @interface KMMKamome ()
 
+@property (nonatomic, weak) id webView;
 @property (nonatomic) KMMUserContentController *userContentController;
 
 @end
@@ -26,11 +28,16 @@
 }
 
 - (void)setWebView:(id)webView {
+    self.webView = webView;
     self.userContentController.webView = webView;
 }
 
 - (void)addCommand:(KMMCommand *)command {
     [self.userContentController addCommand:command];
+}
+
+- (void)sendMessage:(NSDictionary *)data forName:(NSString *)name {
+    [KMMMessenger sendMessageWithWebView:self.webView data:data forName:name];
 }
 
 @end

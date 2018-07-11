@@ -1,4 +1,4 @@
-package jp.hituzi.kamome;
+package jp.hituzi.kamome.internal;
 
 import android.os.Handler;
 import android.os.Looper;

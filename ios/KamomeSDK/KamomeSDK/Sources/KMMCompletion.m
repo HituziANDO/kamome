@@ -30,6 +30,10 @@
     return self;
 }
 
+- (void)complete {
+    [self completeWithData:nil];
+}
+
 - (void)completeWithData:(NSDictionary *)data {
     if (self.completed) {
         return;

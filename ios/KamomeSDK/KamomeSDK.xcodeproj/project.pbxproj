@@ -123,7 +123,6 @@
 				5E4EC3E420F4232600C60D7A /* KMMCompletion.h */,
 				5E4EC3EB20F4232600C60D7A /* KMMException.h */,
 				5E4EC3EC20F4232700C60D7A /* KMMKamome.h */,
-				5E4EC3F020F4232700C60D7A /* KMMMessenger.h */,
 				5E4EC3EE20F4232700C60D7A /* KMMUserContentController.h */,
 			);
 			path = Headers;
@@ -132,14 +131,23 @@
 		5E4EC40520F478E900C60D7A /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				5E4EC40920F5691E00C60D7A /* Internal */,
 				5E4EC3ED20F4232700C60D7A /* KMMCommand.m */,
 				5E4EC3E720F4232600C60D7A /* KMMCompletion.m */,
 				5E4EC3EA20F4232600C60D7A /* KMMException.m */,
 				5E4EC3EF20F4232700C60D7A /* KMMKamome.m */,
-				5E4EC3E820F4232600C60D7A /* KMMMessenger.m */,
 				5E4EC3E520F4232600C60D7A /* KMMUserContentController.m */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		5E4EC40920F5691E00C60D7A /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				5E4EC3F020F4232700C60D7A /* KMMMessenger.h */,
+				5E4EC3E820F4232600C60D7A /* KMMMessenger.m */,
+			);
+			path = Internal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithWebView:(id)webView name:(NSString *)name;
 
+- (void)complete;
+
 - (void)completeWithData:(nullable NSDictionary *)data;
 
 @end

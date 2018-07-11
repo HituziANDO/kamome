@@ -4,6 +4,8 @@ import android.webkit.WebView;
 
 import org.json.JSONObject;
 
+import jp.hituzi.kamome.internal.Messenger;
+
 public final class Completion {
 
     private final WebView webView;

@@ -7,5 +7,4 @@
 #import "KMMCommand.h"
 #import "KMMCompletion.h"
 #import "KMMException.h"
-#import "KMMMessenger.h"
 #import "KMMUserContentController.h"

@@ -11,6 +11,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.hituzi.kamome.internal.Messenger;
+
 public final class Kamome {
 
     private final WebView webView;
@@ -36,6 +38,10 @@ public final class Kamome {
     public Kamome addCommand(Command command) {
         commands.add(command);
         return this;
+    }
+
+    public void sendMessage(JSONObject data, String name) {
+        Messenger.sendMessage(webView, name, data);
     }
 
     @JavascriptInterface
