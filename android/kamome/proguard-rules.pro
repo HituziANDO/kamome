@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keepattributes *Annotation*
+-keepattributes InnerClasses
+-keepattributes EnclosingMethod
+-keepattributes Signature
+-keepattributes JavascriptInterface
+-keepclassmembers enum * {
+    **[] $VALUES;
+    public *;
+}
+-keep public class jp.hituzi.kamome.*
+-keepclassmembers class jp.hituzi.kamome.* { public <methods>; }
