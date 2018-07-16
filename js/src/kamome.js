@@ -21,6 +21,7 @@ window.Kamome = (function () {
     };
 
     var listenerDict = {};
+    var webHandlerDict = {};
 
     var addListener = function (name, listener) {
         if (!(name in listenerDict)) {
@@ -67,20 +68,38 @@ window.Kamome = (function () {
                 // TODO: impl
             }
         }
+        else {
+            if (name in webHandlerDict) {
+                setTimeout(function () {
+                    var completion = (function (name) {
+                        return function (data) {
+                            onReceive(name, data ? JSON.stringify(data) : null);
+                        }
+                    })(name);
+                    webHandlerDict[name](data, completion);
+                }, 0);
+            }
+        }
     };
 
     var onReceive = function (name, json) {
         if (name in listenerDict) {
             listenerDict[name].forEach(function (listener) {
-                listener(JSON.parse(json));
+                listener(json ? JSON.parse(json) : null);
             });
         }
+    };
+
+    var addWebHandler = function (name, handler) {
+        webHandlerDict[name] = handler;
+        return this;
     };
 
     return {
         addListener: addListener,
         removeListener: removeListener,
         send: send,
-        onReceive: onReceive
+        onReceive: onReceive,
+        addWebHandler: addWebHandler,
     };
 })();
