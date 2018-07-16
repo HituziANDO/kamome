@@ -41,7 +41,7 @@
 
     self.completed = YES;
 
-    [KMMMessenger sendMessageWithWebView:self.webView data:data forName:self.name];
+    [KMMMessenger completeMessageWithWebView:self.webView data:data forName:self.name];
 }
 
 @end

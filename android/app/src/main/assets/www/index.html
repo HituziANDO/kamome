@@ -47,7 +47,8 @@
 <section class="container">
     <h1>Kamome</h1>
     <div>
-        <button id="echoButton" class="btn">Echo</button>
+        <button id="echoButton1" class="btn">Echo (Callback)</button>
+        <button id="echoButton2" class="btn">Echo (Promise)</button>
         <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message:</div>
         <div id="message"></div>
     </div>
@@ -56,13 +57,18 @@
 <script src="kamome.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        var count = 0;
 
-        Kamome.addListener('echo', function (data) {
-            document.getElementById('message').innerHTML += data.message + '<br>';
+        document.getElementById('echoButton1').addEventListener('click', function () {
+            Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }, function (data) {
+                document.getElementById('message').innerHTML += data.message + '<br>';
+            });
         });
 
-        document.getElementById('echoButton').addEventListener('click', function () {
-            Kamome.send('echo', { message: 'Hello World!' });
+        document.getElementById('echoButton2').addEventListener('click', function () {
+            Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }).then(function (data) {
+                document.getElementById('message').innerHTML += data.message + '<br>';
+            });
         });
     });
 </script>

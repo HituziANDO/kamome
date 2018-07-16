@@ -20,33 +20,54 @@ window.Kamome = (function () {
         return (ua.indexOf('iphone') > 0 || ua.indexOf('ipad') > 0 || ua.indexOf('ipod') > 0);
     };
 
-    var listenerDict = {};
+    var receiverDict = {};
     var webHandlerDict = {};
+    var requests = [];
+    var isRequesting = false;
 
-    var addListener = function (name, listener) {
-        if (!(name in listenerDict)) {
-            listenerDict[name] = [];
-        }
-
-        listenerDict[name].push(listener);
-
+    var addReceiver = function (name, receiver) {
+        receiverDict[name] = receiver;
         return this;
     };
 
-    var removeListener = function (name, listener) {
-        if (name in listenerDict) {
-            for (var i = listenerDict[name].length - 1; i >= 0; --i) {
-                if (listenerDict[name][i] === listener) {
-                    listenerDict[name].splice(i, 1);
-                }
-            }
+    var removeReceiver = function (name) {
+        if (name in receiverDict) {
+            delete receiverDict[name];
         }
 
         return this;
     };
 
-    var send = function (name, data) {
-        var json = JSON.stringify({ name: name, data: data });
+    /**
+     *
+     * @param {string} name A command name
+     * @param {Object} data
+     * @param {Function} callback (Optional)
+     * @return {Promise|null}
+     */
+    var send = function (name, data, callback) {
+        if (callback) {
+            requests.push({ name: name, data: data, callback: callback });
+            _send();
+            return null;
+        }
+        else {
+            return new Promise(function (resolve) {
+                requests.push({ name: name, data: data, resolve: resolve });
+                _send();
+            });
+        }
+    };
+
+    var _send = function () {
+        if (isRequesting) {
+            return;
+        }
+
+        isRequesting = true;
+
+        var req = requests[0];
+        var json = JSON.stringify({ name: req.name, data: req.data });
 
         if (isIOS()) {
             if ('webkit' in window) {
@@ -69,36 +90,61 @@ window.Kamome = (function () {
             }
         }
         else {
-            if (name in webHandlerDict) {
+            if (req.name in webHandlerDict) {
                 setTimeout(function () {
                     var completion = (function (name) {
                         return function (data) {
-                            onReceive(name, data ? JSON.stringify(data) : null);
+                            onComplete(name, data ? JSON.stringify(data) : null);
                         }
-                    })(name);
-                    webHandlerDict[name](data, completion);
+                    })(req.name);
+                    webHandlerDict[req.name](req.data, completion);
                 }, 0);
             }
         }
     };
 
-    var onReceive = function (name, json) {
-        if (name in listenerDict) {
-            listenerDict[name].forEach(function (listener) {
-                listener(json ? JSON.parse(json) : null);
-            });
+    var onComplete = function (name, json) {
+        isRequesting = false;
+
+        var data = json ? JSON.parse(json) : null;
+        var req = requests.shift();
+
+        if (name === req.name) {
+            if ('callback' in req) {
+                req.callback(data);
+            }
+            else if ('resolve' in req) {
+                req.resolve(data);
+            }
+        }
+
+        if (requests.length > 0) {
+            _send();
         }
     };
 
+    var onReceive = function (name, json) {
+        if (name in receiverDict) {
+            receiverDict[name](json ? JSON.parse(json) : null);
+        }
+    };
+
+    /**
+     *
+     * @param {string} name A command name
+     * @param {Function} handler
+     * @return {*}
+     */
     var addWebHandler = function (name, handler) {
         webHandlerDict[name] = handler;
         return this;
     };
 
     return {
-        addListener: addListener,
-        removeListener: removeListener,
+        addReceiver: addReceiver,
+        removeReceiver: removeReceiver,
         send: send,
+        onComplete: onComplete,
         onReceive: onReceive,
         addWebHandler: addWebHandler,
     };

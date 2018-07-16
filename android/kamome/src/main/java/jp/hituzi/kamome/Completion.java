@@ -32,6 +32,6 @@ public final class Completion {
 
         completed = true;
 
-        Messenger.sendMessage(webView, name, data);
+        Messenger.completeMessage(webView, name, data);
     }
 }
