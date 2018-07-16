@@ -28,7 +28,7 @@
 }
 
 - (void)setWebView:(id)webView {
-    self.webView = webView;
+    _webView = webView;
     self.userContentController.webView = webView;
 }
 
