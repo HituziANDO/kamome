@@ -2,6 +2,7 @@ package jp.hituzi.kamome;
 
 import android.webkit.WebView;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import jp.hituzi.kamome.internal.Messenger;
@@ -22,10 +23,20 @@ public final class Completion {
     }
 
     public void complete() {
-        complete(null);
+        complete((JSONObject) null);
     }
 
     public void complete(JSONObject data) {
+        if (completed) {
+            return;
+        }
+
+        completed = true;
+
+        Messenger.completeMessage(webView, name, data);
+    }
+
+    public void complete(JSONArray data) {
         if (completed) {
             return;
         }

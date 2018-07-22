@@ -4,19 +4,17 @@ import android.os.Handler;
 import android.os.Looper;
 import android.webkit.WebView;
 
-import org.json.JSONObject;
-
 public final class Messenger {
 
-    public static void completeMessage(final WebView webView, final String name, final JSONObject data) {
+    public static void completeMessage(final WebView webView, final String name, final Object data) {
         runJavaScript("window.Kamome.onComplete", webView, name, data);
     }
 
-    public static void sendMessage(final WebView webView, final String name, final JSONObject data) {
+    public static void sendMessage(final WebView webView, final String name, final Object data) {
         runJavaScript("window.Kamome.onReceive", webView, name, data);
     }
 
-    private static void runJavaScript(final String funcName, final WebView webView, final String name, final JSONObject data) {
+    private static void runJavaScript(final String funcName, final WebView webView, final String name, final Object data) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
 
             @Override

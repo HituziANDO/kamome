@@ -9,9 +9,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface KMMMessenger : NSObject
 
-+ (void)completeMessageWithWebView:(id)webView data:(nullable NSDictionary *)data forName:(NSString *)name;
++ (void)completeMessageWithWebView:(id)webView data:(nullable id)data forName:(NSString *)name;
 
-+ (void)sendMessageWithWebView:(id)webView data:(nullable NSDictionary *)data forName:(NSString *)name;
++ (void)sendMessageWithWebView:(id)webView data:(nullable id)data forName:(NSString *)name;
 
 @end
 

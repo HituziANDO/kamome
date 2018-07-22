@@ -47,12 +47,22 @@ static NSString *const kHandlerName = @"kamomeSend";
     NSDictionary *data = [NSJSONSerialization JSONObjectWithData:[message.body dataUsingEncoding:NSUTF8StringEncoding]
                                                          options:NSJSONReadingAllowFragments
                                                            error:nil];
+    KMMCommand *command = nil;
 
-    for (KMMCommand *command in self.commands) {
-        if ([command.name isEqualToString:data[@"name"]]) {
-            KMMCompletion *completion = [[KMMCompletion alloc] initWithWebView:self.webView name:command.name];
-            [command execute:data[@"data"] withCompletion:completion];
+    for (KMMCommand *cmd in self.commands) {
+        if ([cmd.name isEqualToString:data[@"name"]]) {
+            command = cmd;
+            break;
         }
+    }
+
+    KMMCompletion *completion = [[KMMCompletion alloc] initWithWebView:self.webView name:data[@"name"]];
+
+    if (command) {
+        [command execute:data[@"data"] withCompletion:completion];
+    }
+    else {
+        [completion complete];
     }
 }
 

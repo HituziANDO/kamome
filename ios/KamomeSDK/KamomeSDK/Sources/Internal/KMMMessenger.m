@@ -10,19 +10,23 @@
 
 @implementation KMMMessenger
 
-+ (void)completeMessageWithWebView:(id)webView data:(NSDictionary *)data forName:(NSString *)name {
++ (void)completeMessageWithWebView:(id)webView data:(id)data forName:(NSString *)name {
         [self runJavaScript:@"window.Kamome.onComplete" withWebView:webView data:data forName:name];
 }
 
-+ (void)sendMessageWithWebView:(id)webView data:(NSDictionary *)data forName:(NSString *)name {
++ (void)sendMessageWithWebView:(id)webView data:(id)data forName:(NSString *)name {
     [self runJavaScript:@"window.Kamome.onReceive" withWebView:webView data:data forName:name];
 }
 
-+ (void)runJavaScript:(NSString *)funcName withWebView:(id)webView data:(NSDictionary *)data forName:(NSString *)name {
++ (void)runJavaScript:(NSString *)funcName withWebView:(id)webView data:(id)data forName:(NSString *)name {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSString *js;
-        
+
         if (data) {
+            if (![NSJSONSerialization isValidJSONObject:data]) {
+                @throw [KMMException exceptionWithReason:@"data is not valid." userInfo:nil];
+            }
+
             NSString *params = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:data
                                                                                               options:0
                                                                                                 error:nil]

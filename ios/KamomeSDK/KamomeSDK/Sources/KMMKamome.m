@@ -36,7 +36,11 @@
     [self.userContentController addCommand:command];
 }
 
-- (void)sendMessage:(NSDictionary *)data forName:(NSString *)name {
+- (void)sendMessageWithDictionary:(NSDictionary *)data forName:(NSString *)name {
+    [KMMMessenger sendMessageWithWebView:self.webView data:data forName:name];
+}
+
+- (void)sendMessageWithArray:(NSArray *)data forName:(NSString *)name {
     [KMMMessenger sendMessageWithWebView:self.webView data:data forName:name];
 }
 

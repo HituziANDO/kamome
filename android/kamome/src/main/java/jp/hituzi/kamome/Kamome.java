@@ -5,6 +5,7 @@ import android.os.Build;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,6 +45,10 @@ public final class Kamome {
         Messenger.sendMessage(webView, name, data);
     }
 
+    public void sendMessage(JSONArray data, String name) {
+        Messenger.sendMessage(webView, name, data);
+    }
+
     @JavascriptInterface
     public void kamomeSend(String message) {
         try {
@@ -51,10 +56,21 @@ public final class Kamome {
             String name = object.getString("name");
             JSONObject data = object.isNull("data") ? null : object.getJSONObject("data");
 
-            for (Command command : commands) {
-                if (name.equals(command.getName())) {
-                    command.execute(data, new Completion(webView, command.getName()));
+            Command command = null;
+
+            for (Command cmd : commands) {
+                if (name.equals(cmd.getName())) {
+                    command = cmd;
+                    break;
                 }
+            }
+
+            Completion completion = new Completion(webView, name);
+
+            if (command != null) {
+                command.execute(data, completion);
+            } else {
+                completion.complete();
             }
         } catch (JSONException e) {
             e.printStackTrace();

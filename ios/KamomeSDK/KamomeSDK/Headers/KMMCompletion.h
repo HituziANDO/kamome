@@ -15,7 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)complete;
 
-- (void)completeWithData:(nullable NSDictionary *)data;
+- (void)completeWithDictionary:(nullable NSDictionary *)data;
+
+- (void)completeWithArray:(nullable NSArray *)data;
 
 @end
 

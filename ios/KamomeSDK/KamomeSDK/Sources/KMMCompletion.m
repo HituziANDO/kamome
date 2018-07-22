@@ -31,16 +31,26 @@
 }
 
 - (void)complete {
-    [self completeWithData:nil];
+    [self completeWithDictionary:nil];
 }
 
-- (void)completeWithData:(NSDictionary *)data {
+- (void)completeWithDictionary:(NSDictionary *)data {
     if (self.completed) {
         return;
     }
 
     self.completed = YES;
 
+    [KMMMessenger completeMessageWithWebView:self.webView data:data forName:self.name];
+}
+
+- (void)completeWithArray:(NSArray *)data {
+    if (self.completed) {
+        return;
+    }
+    
+    self.completed = YES;
+    
     [KMMMessenger completeMessageWithWebView:self.webView data:data forName:self.name];
 }
 
