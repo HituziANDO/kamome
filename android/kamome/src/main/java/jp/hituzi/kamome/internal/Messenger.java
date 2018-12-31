@@ -1,5 +1,6 @@
 package jp.hituzi.kamome.internal;
 
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.webkit.WebView;
@@ -27,7 +28,11 @@ public final class Messenger {
                     js = String.format("%s('%s', null)", funcName, name);
                 }
 
-                webView.loadUrl("javascript:" + js);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    webView.evaluateJavascript(js, null);
+                } else {
+                    webView.loadUrl("javascript:" + js);
+                }
             }
         });
     }

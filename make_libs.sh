@@ -1,6 +1,6 @@
 #!/bin/sh
 
-LIBS_DIR=libs
+LIBS_DIR=kamome
 
 if [ -e $LIBS_DIR ]; then
     rm -rf $LIBS_DIR
@@ -23,6 +23,11 @@ cd ../
 # Make Android
 
 cd ./android
+
+if [ -e ./kamome/release ]; then
+    rm -rf ./kamome/release
+fi
+
 ./gradlew makeJar
 cp ./kamome/release/*.jar ../$LIBS_DIR/
 cd ../

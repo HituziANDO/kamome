@@ -53,6 +53,7 @@ build/${FRAMEWORK_BUILD_CONFIGURATION}-iphonesimulator/lib${FRAMEWORK_NAME}.a \
 cp -Rf "${PROJECT_NAME}/Headers/" ${FRAMEWORK_DIR}/Headers/
 cp "${PROJECT_NAME}/Resources/" ${FRAMEWORK_DIR}/Resources/
 cp ${INFOPLIST} ${FRAMEWORK_DIR}/Resources/
+cp -Rf "${PROJECT_NAME}/Modules/" ${FRAMEWORK_DIR}/Modules/
 cd ${FRAMEWORK_BUILD_PATH}
 chmod -fR 755 "${FRAMEWORK_NAME}.framework"
 zip -ry ${PACKAGENAME} $(basename $FRAMEWORK_DIR)
