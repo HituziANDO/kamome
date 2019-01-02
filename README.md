@@ -2,6 +2,8 @@
 
 ***kamome is iOS/Android library sending messages between JavaScript and native code written by Objective-C or Java in the WebView.***
 
+<img src="./README/images/illustration.png" width="410">
+
 ## Include in your app
 
 1. Download latest [kamome SDK](https://github.com/HituziANDO/kamome/releases)
@@ -67,6 +69,8 @@
 	}]];
 	```
 	
+	**[NOTE]** Supports WKWebView only. UIWebView not supported.
+	
 1. Receive message on Android
 	
 	```java
@@ -80,7 +84,7 @@
 	        
 	        @Override
 	        public void execute(JSONObject data, Completion completion) {
-	            // Receive `echo` message
+	            // Receive `echo` command
 	            
 	            try {
 	                // Then send result to JavaScript callback function
