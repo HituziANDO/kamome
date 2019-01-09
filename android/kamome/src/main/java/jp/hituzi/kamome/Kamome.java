@@ -2,6 +2,7 @@ package jp.hituzi.kamome;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
@@ -11,10 +12,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import jp.hituzi.kamome.internal.Messenger;
 
 public final class Kamome {
+
+    public interface IResultCallback {
+
+        void onReceiveResult(@Nullable Object result);
+    }
 
     private final WebView webView;
     private final List<Command> commands = new ArrayList<>();
@@ -41,12 +48,36 @@ public final class Kamome {
         return this;
     }
 
-    public void sendMessage(JSONObject data, String name) {
-        Messenger.sendMessage(webView, name, data);
+    public void sendMessage(String name, @Nullable final IResultCallback callback) {
+        sendMessage((JSONObject) null, name, callback);
     }
 
-    public void sendMessage(JSONArray data, String name) {
-        Messenger.sendMessage(webView, name, data);
+    public void sendMessage(JSONObject data, String name, @Nullable final IResultCallback callback) {
+        if (callback != null) {
+            Messenger.sendMessage(webView, name, data, new Messenger.IMessageCallback() {
+
+                @Override
+                public void onReceiveResult(Object result) {
+                    callback.onReceiveResult(result);
+                }
+            }, UUID.randomUUID().toString());
+        } else {
+            Messenger.sendMessage(webView, name, null, null, null);
+        }
+    }
+
+    public void sendMessage(JSONArray data, String name, @Nullable final IResultCallback callback) {
+        if (callback != null) {
+            Messenger.sendMessage(webView, name, data, new Messenger.IMessageCallback() {
+
+                @Override
+                public void onReceiveResult(Object result) {
+                    callback.onReceiveResult(result);
+                }
+            }, UUID.randomUUID().toString());
+        } else {
+            Messenger.sendMessage(webView, name, null, null, null);
+        }
     }
 
     @JavascriptInterface

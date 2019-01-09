@@ -1,5 +1,28 @@
 /**
+ * kamome.js Rev.2
+ * https://github.com/HituziANDO/kamome
  *
+ * MIT License
+ *
+ * Copyright (c) 2018 Hituzi Ando
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 window.Kamome = (function () {
 
@@ -25,6 +48,18 @@ window.Kamome = (function () {
     var requests = [];
     var isRequesting = false;
 
+    /**
+     *
+     * @param {string} name A command name
+     * @param {Function} receiver A receiver is
+     *  ```
+     *  function(json) {
+     *      ...
+     *      return result;  // Any object or null
+     *  }
+     *  ```
+     * @return {*}
+     */
     var addReceiver = function (name, receiver) {
         receiverDict[name] = receiver;
         return this;
@@ -42,7 +77,7 @@ window.Kamome = (function () {
      *
      * @param {string} name A command name
      * @param {Object} data
-     * @param {Function} callback (Optional)
+     * @param {Function} callback (Optional) A callback
      * @return {Promise|null}
      */
     var send = function (name, data, callback) {
@@ -103,7 +138,7 @@ window.Kamome = (function () {
         }
     };
 
-    var onComplete = function (name, json) {
+    var onComplete = function (name, json, nullObj) {
         isRequesting = false;
 
         var data = json ? JSON.parse(json) : null;
@@ -121,11 +156,27 @@ window.Kamome = (function () {
         if (requests.length > 0) {
             _send();
         }
+
+        return null;
     };
 
-    var onReceive = function (name, json) {
+    var onReceive = function (name, json, callbackId) {
         if (name in receiverDict) {
-            receiverDict[name](json ? JSON.parse(json) : null);
+            var result = receiverDict[name](json ? JSON.parse(json) : null);
+
+            if (isAndroid()) {
+                return { callbackId: callbackId, result: result };
+            }
+            else {
+                return JSON.stringify({ callbackId: callbackId, result: result });
+            }
+        }
+
+        if (isAndroid()) {
+            return { callbackId: callbackId, result: null };
+        }
+        else {
+            return JSON.stringify({ callbackId: callbackId, result: null });
         }
     };
 
@@ -141,11 +192,11 @@ window.Kamome = (function () {
     };
 
     return {
-        addReceiver: addReceiver,
+        addReceiver:    addReceiver,
         removeReceiver: removeReceiver,
-        send: send,
-        onComplete: onComplete,
-        onReceive: onReceive,
-        addWebHandler: addWebHandler,
+        send:           send,
+        onComplete:     onComplete,
+        onReceive:      onReceive,
+        addWebHandler:  addWebHandler,
     };
 })();
