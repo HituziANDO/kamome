@@ -1,8 +1,10 @@
 # kamome
 
-***kamome is iOS/Android library sending messages between JavaScript and native code written by Objective-C or Java in the WebView.***
+***Kamome is iOS/Android library sending messages between JavaScript and native code written by Objective-C or Java in the WebView.***
 
 <img src="./README/images/illustration.png" width="410">
+
+Kamome provides common JavaScript interface for iOS and Android.
 
 ## Include in your app
 
@@ -30,6 +32,8 @@
 
 ## Usage
 
+### JavaScript to Native Code
+
 1. Send message from JavaScript and then receive callback
 	
 	```javascript
@@ -52,16 +56,20 @@
 1. Receive message on iOS
 	
 	```objc
-	KMMKamome *kamome = [KMMKamome new];
+	@property (nonatomic) KMMKamome *kamome;
+	```
+	
+	```objc
+	self.kamome = [KMMKamome new];
 	
 	WKWebViewConfiguration *configuration = [WKWebViewConfiguration new];
-	configuration.userContentController = kamome.userContentController;
+	configuration.userContentController = self.kamome.userContentController;
 	self.webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:configuration];
 	
-	[kamome setWebView:self.webView];
+	[self.kamome setWebView:self.webView];
 	
 	// Register `echo` command
-	[kamome addCommand:[KMMCommand commandWithName:@"echo" handler:^(NSDictionary *data, KMMCompletion *completion) {
+	[self.kamome addCommand:[KMMCommand commandWithName:@"echo" handler:^(NSDictionary *data, KMMCompletion *completion) {
 	    // Receive `echo` command
 	    
 	    // Then send result to JavaScript callback function
@@ -74,10 +82,15 @@
 1. Receive message on Android
 	
 	```java
+	// Instance variable
+	private Kamome kamome;
+	```
+	
+	```java
 	WebView webView = (WebView) findViewById(R.id.webView);
 	
 	try {
-	    Kamome kamome = Kamome.createInstanceForWebView(webView);
+	    kamome = Kamome.createInstanceForWebView(webView);
 	    
 	    // Register `echo` command
 	    kamome.addCommand(new Command("echo", new Command.IHandler() {
@@ -97,6 +110,50 @@
 	} catch (ApiVersionException e) {
 	    e.printStackTrace();
 	}
+	```
+
+### Native Code to JavaScript
+
+1. Send message from native code and then receive callback
+
+	**iOS**
+	
+	```objc
+	[self.kamome sendMessageWithDictionary:@{ @"greeting": @"Hello!" }
+                                     block:^(id result) {
+                                         NSLog(@"result: %@", result);	// => 'World!'
+                                     }
+                                   forName:@"greeting"];
+	```
+	
+	**Android**
+	
+	```java
+	try {
+	    // Send data to JavaScript.
+	    kamome.sendMessage(new JSONObject().put("greeting", "Hello!"),
+	        "greeting",
+	        new Kamome.IResultCallback() {
+	            
+	            @Override
+	            public void onReceiveResult(Object result) {
+	                Log.d(TAG, "result: " + result);	// => 'World!'
+	            }
+	        });
+	} catch (JSONException e) {
+	    e.printStackTrace();
+	}
+	```
+	
+1. Receive message on JavaScript
+	
+	```javascript
+	Kamome.addReceiver('greeting', function (data) {
+	    console.log(data.greeting);	// => 'Hello!'
+	    
+	    // Return result to native code.
+	    return 'World!';	// Any object or null.
+	});
 	```
 
 More info, see my [iOS sample project](https://github.com/HituziANDO/kamome/tree/master/ios) and [Android sample project](https://github.com/HituziANDO/kamome/tree/master/android).
