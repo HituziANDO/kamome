@@ -80,6 +80,11 @@ public final class Kamome {
         }
     }
 
+    /**
+     * [NOTE] This method should not be executed directly.
+     *
+     * @param message A JSON passed from JavaScript.
+     */
     @JavascriptInterface
     public void kamomeSend(String message) {
         try {

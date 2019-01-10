@@ -70,6 +70,12 @@
                 document.getElementById('message').innerHTML += data.message + '<br>';
             });
         });
+
+        Kamome.addReceiver('greeting', function (data) {
+            document.getElementById('message').innerHTML += data.greeting + '<br>';
+
+            return 'World!';
+        });
     });
 </script>
 </body>
