@@ -15,6 +15,8 @@ Kamome provides common JavaScript interface for iOS and Android.
 	```html
 	<script src="kamome.min.js"></script>
 	```
+	
+	Or copy the code in [kamome[.min].js](https://github.com/HituziANDO/kamome/blob/master/js/src/kamome.js) to your JavaScript.
 
 1. Import KamomeSDK.framework to your iOS app
 	
