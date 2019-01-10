@@ -32,8 +32,11 @@
     self.userContentController.webView = webView;
 }
 
-- (void)addCommand:(KMMCommand *)command {
+- (instancetype)addCommand:(KMMCommand *)command {
     [self.userContentController addCommand:command];
+
+    return self;
+}
 }
 
 - (void)sendMessageWithDictionary:(NSDictionary *)data forName:(NSString *)name {

@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setWebView:(id)webView;
 
-- (void)addCommand:(KMMCommand *)command;
+- (instancetype)addCommand:(KMMCommand *)command;
 
 - (void)sendMessageWithDictionary:(nullable NSDictionary *)data forName:(NSString *)name;
 
