@@ -37,14 +37,35 @@
 
     return self;
 }
+
+- (void)sendMessageWithBlock:(nullable void (^)(id _Nullable))block forName:(NSString *)name {
+    [self sendMessageWithDictionary:nil block:block forName:name];
 }
 
-- (void)sendMessageWithDictionary:(NSDictionary *)data forName:(NSString *)name {
-    [KMMMessenger sendMessageWithWebView:self.webView data:data forName:name];
+- (void)sendMessageWithDictionary:(nullable NSDictionary *)data block:(nullable void (^)(id _Nullable))block forName:(NSString *)name {
+    if (block) {
+        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
+                                                          data:data
+                                                         block:block
+                                                    callbackId:[NSUUID UUID].UUIDString
+                                                       forName:name];
+    }
+    else {
+        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView data:data block:nil callbackId:nil forName:name];
+    }
 }
 
-- (void)sendMessageWithArray:(NSArray *)data forName:(NSString *)name {
-    [KMMMessenger sendMessageWithWebView:self.webView data:data forName:name];
+- (void)sendMessageWithArray:(nullable NSArray *)data block:(nullable void (^)(id _Nullable))block forName:(NSString *)name {
+    if (block) {
+        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
+                                                          data:data
+                                                         block:block
+                                                    callbackId:[NSUUID UUID].UUIDString
+                                                       forName:name];
+    }
+    else {
+        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView data:data block:nil callbackId:nil forName:name];
+    }
 }
 
 @end

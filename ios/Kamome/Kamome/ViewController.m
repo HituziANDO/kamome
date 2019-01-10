@@ -6,15 +6,15 @@
 //  Copyright © 2018年 Hituzi Ando. All rights reserved.
 //
 
-@import WebKit;
+#import <WebKit/WebKit.h>
+#import <KamomeSDK/KamomeSDK.h>
 
 #import "ViewController.h"
-
-#import <KamomeSDK/KamomeSDK.h>
 
 @interface ViewController ()
 
 @property (nonatomic) WKWebView *webView;
+@property (nonatomic) KMMKamome *kamome;
 
 @end
 
@@ -23,21 +23,31 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    KMMKamome *kamome = [KMMKamome new];
+    self.kamome = [KMMKamome new];
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration new];
-    configuration.userContentController = kamome.userContentController;
+    configuration.userContentController = self.kamome.userContentController;
     self.webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:configuration];
 
-    [kamome setWebView:self.webView];
+    [self.kamome setWebView:self.webView];
 
-    [kamome addCommand:[KMMCommand commandWithName:@"echo" handler:^(NSDictionary *data, KMMCompletion *completion) {
+    [self.kamome addCommand:[KMMCommand commandWithName:@"echo" handler:^(NSDictionary *data, KMMCompletion *completion) {
         [completion completeWithDictionary:@{ @"message": data[@"message"] }];
     }]];
 
-    NSURL *htmlUrl = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"index" ofType:@"html" inDirectory:@"www"]];
-    [self.webView loadFileURL:htmlUrl allowingReadAccessToURL:htmlUrl];
+    NSURL *htmlURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"index" ofType:@"html" inDirectory:@"www"]];
+    [self.webView loadFileURL:htmlURL allowingReadAccessToURL:htmlURL];
     [self.view addSubview:self.webView];
+    [self.view sendSubviewToBack:self.webView];
+}
+
+- (IBAction)sendButtonPressed:(id)sender {
+    // Send data to JavaScript.
+    [self.kamome sendMessageWithDictionary:@{ @"greeting": @"Hello!" }
+                                     block:^(id result) {
+                                         NSLog(@"result: %@", result);
+                                     }
+                                   forName:@"greeting"];
 }
 
 @end

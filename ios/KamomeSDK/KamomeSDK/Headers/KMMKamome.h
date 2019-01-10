@@ -19,9 +19,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)addCommand:(KMMCommand *)command;
 
-- (void)sendMessageWithDictionary:(nullable NSDictionary *)data forName:(NSString *)name;
+- (void)sendMessageWithBlock:(nullable void (^)(id _Nullable result))block forName:(NSString *)name;
 
-- (void)sendMessageWithArray:(nullable NSArray *)data forName:(NSString *)name;
+- (void)sendMessageWithDictionary:(nullable NSDictionary *)data
+                            block:(nullable void (^)(id _Nullable result))block
+                          forName:(NSString *)name;
+
+- (void)sendMessageWithArray:(nullable NSArray *)data
+                       block:(nullable void (^)(id _Nullable result))block
+                     forName:(NSString *)name;
 
 @end
 

@@ -7,11 +7,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void (^KMMReceiveResultBlock)(id _Nullable result);
+
 @interface KMMMessenger : NSObject
 
-+ (void)completeMessageWithWebView:(id)webView data:(nullable id)data forName:(NSString *)name;
++ (instancetype)sharedMessenger;
 
-+ (void)sendMessageWithWebView:(id)webView data:(nullable id)data forName:(NSString *)name;
+- (void)completeMessageWithWebView:(id)webView data:(nullable id)data forName:(NSString *)name;
+
+- (void)sendMessageWithWebView:(id)webView
+                          data:(nullable id)data
+                         block:(nullable KMMReceiveResultBlock)block
+                    callbackId:(nullable NSString *)callbackId
+                       forName:(NSString *)name;
 
 @end
 

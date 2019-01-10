@@ -41,17 +41,17 @@
 
     self.completed = YES;
 
-    [KMMMessenger completeMessageWithWebView:self.webView data:data forName:self.name];
+    [[KMMMessenger sharedMessenger] completeMessageWithWebView:self.webView data:data forName:self.name];
 }
 
 - (void)completeWithArray:(NSArray *)data {
     if (self.completed) {
         return;
     }
-    
+
     self.completed = YES;
-    
-    [KMMMessenger completeMessageWithWebView:self.webView data:data forName:self.name];
+
+    [[KMMMessenger sharedMessenger] completeMessageWithWebView:self.webView data:data forName:self.name];
 }
 
 @end
