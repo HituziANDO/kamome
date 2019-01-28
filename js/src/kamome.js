@@ -165,10 +165,10 @@ window.Kamome = (function () {
                 var req = requests.shift();
 
                 if ('callback' in req) {
-                    req.callback(null, Error.requestTimeout);
+                    req.callback(null, Error.requestTimeout + ':' + req.name);
                 }
                 else if ('reject' in req) {
-                    req.reject(Error.requestTimeout);
+                    req.reject(Error.requestTimeout + ':' + req.name);
                 }
 
                 if (requests.length > 0) {
