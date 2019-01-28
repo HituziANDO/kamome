@@ -1,10 +1,10 @@
 /**
- * kamome.js Rev.2
+ * kamome.js Rev.3
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
  *
- * Copyright (c) 2018 Hituzi Ando
+ * Copyright (c) 2019 Hituzi Ando
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,10 +43,27 @@ window.Kamome = (function () {
         return (ua.indexOf('iphone') > 0 || ua.indexOf('ipad') > 0 || ua.indexOf('ipod') > 0);
     };
 
+    var Error = {
+        requestTimeout: 'RequestTimeout',
+    };
+
     var receiverDict = {};
     var webHandlerDict = {};
     var requests = [];
     var isRequesting = false;
+    var requestTimer = null;
+    var requestTimeout = 10000; // Default value is 10 seconds
+
+    /**
+     * Sets a timeout for a request. If given `time` <= 0, the request timeout is disabled.
+     *
+     * @param {Object} time A time in millisecond
+     * @return {*}
+     */
+    var setRequestTimeout = function (time) {
+        requestTimeout = time;
+        return this;
+    };
 
     /**
      *
@@ -87,8 +104,8 @@ window.Kamome = (function () {
             return null;
         }
         else {
-            return new Promise(function (resolve) {
-                requests.push({ name: name, data: data, resolve: resolve });
+            return new Promise(function (resolve, reject) {
+                requests.push({ name: name, data: data, resolve: resolve, reject: reject });
                 _send();
             });
         }
@@ -136,9 +153,41 @@ window.Kamome = (function () {
                 }, 0);
             }
         }
+
+        if (requestTimeout > 0) {
+            _clearTimer();
+
+            requestTimer = setTimeout(function () {
+                _clearTimer();
+
+                isRequesting = false;
+
+                var req = requests.shift();
+
+                if ('callback' in req) {
+                    req.callback(null, Error.requestTimeout);
+                }
+                else if ('reject' in req) {
+                    req.reject(Error.requestTimeout);
+                }
+
+                if (requests.length > 0) {
+                    _send();
+                }
+            }, requestTimeout);
+        }
+    };
+
+    var _clearTimer = function () {
+        if (requestTimer !== null) {
+            clearTimeout(requestTimer);
+            requestTimer = null;
+        }
     };
 
     var onComplete = function (name, json, nullObj) {
+        _clearTimer();
+
         isRequesting = false;
 
         var data = json ? JSON.parse(json) : null;
@@ -192,11 +241,14 @@ window.Kamome = (function () {
     };
 
     return {
-        addReceiver:    addReceiver,
-        removeReceiver: removeReceiver,
-        send:           send,
-        onComplete:     onComplete,
-        onReceive:      onReceive,
-        addWebHandler:  addWebHandler,
+        Error:             Error,
+        setRequestTimeout: setRequestTimeout,
+        addReceiver:       addReceiver,
+        removeReceiver:    removeReceiver,
+        send:              send,
+        onComplete:        onComplete,
+        onReceive:         onReceive,
+        addWebHandler:     addWebHandler,
     };
 })();
+// export default Kamome = window.Kamome;
