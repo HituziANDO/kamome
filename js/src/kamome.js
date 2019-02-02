@@ -45,7 +45,7 @@ window.Kamome = (function () {
 
     var Error = {
         requestTimeout: 'RequestTimeout',
-        failed:         'Failed',
+        rejected:       'Rejected',
     };
 
     var receiverDict = {};
@@ -98,7 +98,7 @@ window.Kamome = (function () {
      * @param {Function} callback (Optional) A callback is
      *  ```
      *  function(data, error) {
-     *      // If the request is succeeded, an `error` is null, otherwise the request is failed
+     *      // If the request is resolved, an `error` is null, otherwise the request is rejected
      *  }
      *  ```
      * @return {Promise|null} Returns a promise if a `callback` is null, otherwise returns null
@@ -225,10 +225,10 @@ window.Kamome = (function () {
 
         if (name === req.name) {
             if ('callback' in req) {
-                req.callback(null, Error.failed + ':' + req.name + msg);
+                req.callback(null, Error.rejected + ':' + req.name + msg);
             }
             else if ('reject' in req) {
-                req.reject(Error.failed + ':' + req.name + msg);
+                req.reject(Error.rejected + ':' + req.name + msg);
             }
         }
 
