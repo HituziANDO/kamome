@@ -29,18 +29,25 @@ public class MainActivity extends Activity {
         WebView webView = (WebView) findViewById(R.id.webView);
 
         try {
-            kamome = Kamome.createInstanceForWebView(webView);
-            kamome.addCommand(new Command("echo", new Command.IHandler() {
+            kamome = Kamome.createInstanceForWebView(webView)
+                .addCommand(new Command("echo", new Command.IHandler() {
 
-                @Override
-                public void execute(JSONObject data, Completion completion) {
-                    try {
-                        completion.complete(new JSONObject().put("message", data.getString("message")));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    @Override
+                    public void execute(JSONObject data, Completion completion) {
+                        try {
+                            completion.resolve(new JSONObject().put("message", data.getString("message")));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            }));
+                }))
+                .addCommand(new Command("get", new Command.IHandler() {
+
+                    @Override
+                    public void execute(JSONObject data, Completion completion) {
+                        completion.reject("Error message");
+                    }
+                }));
         } catch (ApiVersionException e) {
             e.printStackTrace();
         }

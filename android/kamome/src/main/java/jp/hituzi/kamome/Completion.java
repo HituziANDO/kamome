@@ -1,5 +1,6 @@
 package jp.hituzi.kamome;
 
+import android.support.annotation.Nullable;
 import android.webkit.WebView;
 
 import org.json.JSONArray;
@@ -22,11 +23,26 @@ public final class Completion {
         return completed;
     }
 
+    @Deprecated
     public void complete() {
-        complete((JSONObject) null);
+        resolve();
     }
 
-    public void complete(JSONObject data) {
+    @Deprecated
+    public void complete(@Nullable JSONObject data) {
+        resolve(data);
+    }
+
+    @Deprecated
+    public void complete(@Nullable JSONArray data) {
+        resolve(data);
+    }
+
+    public void resolve() {
+        resolve((JSONObject) null);
+    }
+
+    public void resolve(@Nullable JSONObject data) {
         if (completed) {
             return;
         }
@@ -36,7 +52,7 @@ public final class Completion {
         Messenger.completeMessage(webView, name, data);
     }
 
-    public void complete(JSONArray data) {
+    public void resolve(@Nullable JSONArray data) {
         if (completed) {
             return;
         }
@@ -44,5 +60,19 @@ public final class Completion {
         completed = true;
 
         Messenger.completeMessage(webView, name, data);
+    }
+
+    public void reject() {
+        reject(null);
+    }
+
+    public void reject(@Nullable String errorMessage) {
+        if (completed) {
+            return;
+        }
+
+        completed = true;
+
+        Messenger.failMessage(webView, name, errorMessage);
     }
 }

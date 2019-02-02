@@ -23,7 +23,19 @@ public final class Messenger {
     private static final HashMap<String, IMessageCallback> MESSAGE_CALLBACKS = new HashMap<>();
 
     public static void completeMessage(final WebView webView, final String name, @Nullable final Object data) {
-        runJavaScript("window.Kamome.onComplete", webView, name, data, null);
+        if (data != null) {
+            runJavaScript(String.format("window.Kamome.onComplete('%s', '%s', null)", name, data.toString()), webView);
+        } else {
+            runJavaScript(String.format("window.Kamome.onComplete('%s', null, null)", name), webView);
+        }
+    }
+
+    public static void failMessage(final WebView webView, final String name, @Nullable final String error) {
+        if (error != null) {
+            runJavaScript(String.format("window.Kamome.onError('%s', '%s')", name, error), webView);
+        } else {
+            runJavaScript(String.format("window.Kamome.onError('%s', null)", name), webView);
+        }
     }
 
     public static void sendMessage(final WebView webView, final String name, @Nullable final Object data,
@@ -35,22 +47,26 @@ public final class Messenger {
             }
         }
 
-        runJavaScript("window.Kamome.onReceive", webView, name, data, callbackId);
+        if (data != null) {
+            if (callbackId != null) {
+                runJavaScript(String.format("window.Kamome.onReceive('%s', '%s', '%s')", name, data.toString(), callbackId), webView);
+            } else {
+                runJavaScript(String.format("window.Kamome.onReceive('%s', '%s', null)", name, data.toString()), webView);
+            }
+        } else {
+            if (callbackId != null) {
+                runJavaScript(String.format("window.Kamome.onReceive('%s', null, '%s')", name, callbackId), webView);
+            } else {
+                runJavaScript(String.format("window.Kamome.onReceive('%s', null, null)", name), webView);
+            }
+        }
     }
 
-    private static void runJavaScript(final String funcName, final WebView webView, final String name, @Nullable final Object data,
-        @Nullable final String callbackId) {
-
+    private static void runJavaScript(final String js, final WebView webView) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
 
             @Override
             public void run() {
-                String js = String.format("%s('%s', %s, %s)",
-                    funcName,
-                    name,
-                    data != null ? "'" + data.toString() + "'" : "null",
-                    callbackId != null ? "'" + callbackId + "'" : "null");
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     webView.evaluateJavascript(js, new ValueCallback<String>() {
 
