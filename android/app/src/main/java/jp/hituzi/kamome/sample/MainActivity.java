@@ -35,6 +35,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void execute(JSONObject data, Completion completion) {
                         try {
+                            // Success
                             completion.resolve(new JSONObject().put("message", data.getString("message")));
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -45,6 +46,7 @@ public class MainActivity extends Activity {
 
                     @Override
                     public void execute(JSONObject data, Completion completion) {
+                        // Failure
                         completion.reject("Error message");
                     }
                 }));

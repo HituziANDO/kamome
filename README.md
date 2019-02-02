@@ -40,9 +40,14 @@ Kamome provides common JavaScript interface for iOS and Android.
 	
 	```javascript
 	// Send `echo` command
-	Kamome.send('echo', { message: 'Hello' }, function (data) {
-	    // Callback from native
-	    console.log(data.message);
+	Kamome.send('echo', { message: 'Hello' }, function (data, error) {
+	    if (!error) {
+	        // Callback from native if succeeded
+	        console.log(data.message);
+	    } else {
+	        // Callback from native if failed
+	        console.log(error);
+	    }
 	});
 	```
 	
@@ -50,8 +55,11 @@ Kamome provides common JavaScript interface for iOS and Android.
 	
 	```javascript
 	Kamome.send('echo', { message: 'Hello' }).then(function (data) {
-	    // Callback from native
+	    // Callback from native if succeeded
 	    console.log(data.message);
+	}).catch(function (error) {
+	    // Callback from native if failed
+	    console.log(error);
 	});
 	```
 
@@ -75,7 +83,9 @@ Kamome provides common JavaScript interface for iOS and Android.
 	    // Receive `echo` command
 	    
 	    // Then send result to JavaScript callback function
-	    [completion completeWithDictionary:@{ @"message": data[@"message"] }];
+	    [completion resolveWithDictionary:@{ @"message": data[@"message"] }];
+	    // Or send error result if failed
+	    //[completion rejectWithErrorMessage:@"Error message"];
 	}]];
 	```
 	
@@ -103,7 +113,9 @@ Kamome provides common JavaScript interface for iOS and Android.
 	            
 	            try {
 	                // Then send result to JavaScript callback function
-	                completion.complete(new JSONObject().put("message", data.getString("message")));
+	                completion.resolve(new JSONObject().put("message", data.getString("message")));
+	                // Or send error result if failed
+	                //completion.reject("Error message");
 	            } catch (JSONException e) {
 	                e.printStackTrace();
 	            }

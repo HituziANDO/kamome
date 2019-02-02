@@ -32,10 +32,12 @@
     [self.kamome setWebView:self.webView];
 
     [self.kamome addCommand:[KMMCommand commandWithName:@"echo" handler:^(NSDictionary *data, KMMCompletion *completion) {
+        // Success
         [completion resolveWithDictionary:@{ @"message": data[@"message"] }];
     }]];
 
     [self.kamome addCommand:[KMMCommand commandWithName:@"get" handler:^(NSDictionary *data, KMMCompletion *completion) {
+        // Failure
         [completion rejectWithErrorMessage:@"Error message"];
     }]];
 
