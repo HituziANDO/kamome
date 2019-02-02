@@ -36,8 +36,40 @@
     return self;
 }
 
-- (void)completeMessageWithWebView:(id)webView data:(nullable id)data forName:(NSString *)name {
-    [self runJavaScript:@"window.Kamome.onComplete" withWebView:webView data:data callbackId:nil forName:name];
+- (void)completeMessageWithWebView:(id)webView
+                              data:(nullable id)data
+                           forName:(NSString *)name {
+
+    if (data) {
+        if (![NSJSONSerialization isValidJSONObject:data]) {
+            @throw [KMMException exceptionWithReason:@"data is not valid." userInfo:nil];
+        }
+
+        NSString *params = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:data
+                                                                                          options:0
+                                                                                            error:nil]
+                                                 encoding:NSUTF8StringEncoding];
+        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onComplete('%@', '%@', null)", name, params]
+                withWebView:webView];
+    }
+    else {
+        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onComplete('%@', null, null)", name]
+                withWebView:webView];
+    }
+}
+
+- (void)failMessageWithWebView:(id)webView
+                         error:(nullable NSString *)error
+                       forName:(NSString *)name {
+
+    if (error) {
+        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onError('%@', '%@')", name, error]
+                withWebView:webView];
+    }
+    else {
+        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onError('%@', null)", name]
+                withWebView:webView];
+    }
 }
 
 - (void)sendMessageWithWebView:(id)webView
@@ -52,35 +84,39 @@
         }
     }
 
-    [self runJavaScript:@"window.Kamome.onReceive" withWebView:webView data:data callbackId:callbackId forName:name];
-}
+    if (data) {
+        if (![NSJSONSerialization isValidJSONObject:data]) {
+            @throw [KMMException exceptionWithReason:@"data is not valid." userInfo:nil];
+        }
 
-- (void)runJavaScript:(NSString *)funcName
-          withWebView:(id)webView
-                 data:(id)data
-           callbackId:(NSString *)callbackId
-              forName:(NSString *)name {
+        NSString *params = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:data
+                                                                                          options:0
+                                                                                            error:nil]
+                                                 encoding:NSUTF8StringEncoding];
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSString *js;
-
-        if (data) {
-            if (![NSJSONSerialization isValidJSONObject:data]) {
-                @throw [KMMException exceptionWithReason:@"data is not valid." userInfo:nil];
-            }
-
-            NSString *params = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:data
-                                                                                              options:0
-                                                                                                error:nil]
-                                                     encoding:NSUTF8StringEncoding];
-            js = [NSString stringWithFormat:@"%@('%@', '%@', %@)",
-                                            funcName, name, params, callbackId ? [NSString stringWithFormat:@"'%@'", callbackId] : @"null"];
+        if (callbackId) {
+            [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onReceive('%@', '%@', '%@')", name, params, callbackId]
+                    withWebView:webView];
         }
         else {
-            js = [NSString stringWithFormat:@"%@('%@', null, %@)",
-                                            funcName, name, callbackId ? [NSString stringWithFormat:@"'%@'", callbackId] : @"null"];
+            [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onReceive('%@', '%@', null)", name, params]
+                    withWebView:webView];
         }
+    }
+    else {
+        if (callbackId) {
+            [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onReceive('%@', null, '%@')", name, callbackId]
+                    withWebView:webView];
+        }
+        else {
+            [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onReceive('%@', null, null)", name]
+                    withWebView:webView];
+        }
+    }
+}
 
+- (void)runJavaScript:(NSString *)js withWebView:(id)webView {
+    dispatch_async(dispatch_get_main_queue(), ^{
         if ([webView isKindOfClass:[WKWebView class]]) {
             __weak typeof(self) weakSelf = self;
 

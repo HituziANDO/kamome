@@ -13,11 +13,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithWebView:(id)webView name:(NSString *)name;
 
-- (void)complete;
+- (void)complete DEPRECATED_MSG_ATTRIBUTE("Uses `resolve` method.");
 
-- (void)completeWithDictionary:(nullable NSDictionary *)data;
+- (void)completeWithDictionary:(nullable NSDictionary *)data DEPRECATED_MSG_ATTRIBUTE("Uses `resolveWithDictionary:` method.");
 
-- (void)completeWithArray:(nullable NSArray *)data;
+- (void)completeWithArray:(nullable NSArray *)data DEPRECATED_MSG_ATTRIBUTE("Uses `resolveWithArray:` method.");
+
+- (void)resolve;
+
+- (void)resolveWithDictionary:(nullable NSDictionary *)data;
+
+- (void)resolveWithArray:(nullable NSArray *)data;
+
+- (void)reject;
+
+- (void)rejectWithErrorMessage:(nullable NSString *)errorMessage;
 
 @end
 

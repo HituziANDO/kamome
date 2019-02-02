@@ -32,7 +32,11 @@
     [self.kamome setWebView:self.webView];
 
     [self.kamome addCommand:[KMMCommand commandWithName:@"echo" handler:^(NSDictionary *data, KMMCompletion *completion) {
-        [completion completeWithDictionary:@{ @"message": data[@"message"] }];
+        [completion resolveWithDictionary:@{ @"message": data[@"message"] }];
+    }]];
+
+    [self.kamome addCommand:[KMMCommand commandWithName:@"get" handler:^(NSDictionary *data, KMMCompletion *completion) {
+        [completion rejectWithErrorMessage:@"Error message"];
     }]];
 
     NSURL *htmlURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"index" ofType:@"html" inDirectory:@"www"]];

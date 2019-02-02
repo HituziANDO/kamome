@@ -51,7 +51,11 @@
                                                        forName:name];
     }
     else {
-        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView data:data block:nil callbackId:nil forName:name];
+        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
+                                                          data:data
+                                                         block:nil
+                                                    callbackId:nil
+                                                       forName:name];
     }
 }
 
@@ -64,7 +68,11 @@
                                                        forName:name];
     }
     else {
-        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView data:data block:nil callbackId:nil forName:name];
+        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
+                                                          data:data
+                                                         block:nil
+                                                    callbackId:nil
+                                                       forName:name];
     }
 }
 

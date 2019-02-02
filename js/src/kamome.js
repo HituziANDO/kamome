@@ -1,5 +1,5 @@
 /**
- * kamome.js Rev.3
+ * kamome.js Rev.4
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -45,6 +45,7 @@ window.Kamome = (function () {
 
     var Error = {
         requestTimeout: 'RequestTimeout',
+        failed:         'Failed',
     };
 
     var receiverDict = {};
@@ -94,8 +95,13 @@ window.Kamome = (function () {
      *
      * @param {string} name A command name
      * @param {Object} data
-     * @param {Function} callback (Optional) A callback
-     * @return {Promise|null}
+     * @param {Function} callback (Optional) A callback is
+     *  ```
+     *  function(data, error) {
+     *      // If the request is succeeded, an `error` is null, otherwise the request is failed
+     *  }
+     *  ```
+     * @return {Promise|null} Returns a promise if a `callback` is null, otherwise returns null
      */
     var send = function (name, data, callback) {
         if (callback) {
@@ -195,10 +201,34 @@ window.Kamome = (function () {
 
         if (name === req.name) {
             if ('callback' in req) {
-                req.callback(data);
+                req.callback(data, null);
             }
             else if ('resolve' in req) {
                 req.resolve(data);
+            }
+        }
+
+        if (requests.length > 0) {
+            _send();
+        }
+
+        return null;
+    };
+
+    var onError = function (name, errorMessage) {
+        _clearTimer();
+
+        isRequesting = false;
+
+        var msg = errorMessage ? ':' + errorMessage : '';
+        var req = requests.shift();
+
+        if (name === req.name) {
+            if ('callback' in req) {
+                req.callback(null, Error.failed + ':' + req.name + msg);
+            }
+            else if ('reject' in req) {
+                req.reject(Error.failed + ':' + req.name + msg);
             }
         }
 
@@ -247,6 +277,7 @@ window.Kamome = (function () {
         removeReceiver:    removeReceiver,
         send:              send,
         onComplete:        onComplete,
+        onError:           onError,
         onReceive:         onReceive,
         addWebHandler:     addWebHandler,
     };

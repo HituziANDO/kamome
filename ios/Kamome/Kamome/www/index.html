@@ -33,6 +33,9 @@
             padding: .5rem 1rem;
             min-height: 44px;
         }
+        .btn.error {
+            background-color: #e74c3c !important;
+        }
 
         #message {
             border: solid 1px gray;
@@ -47,8 +50,14 @@
 <section class="container">
     <h1>Kamome</h1>
     <div>
-        <button id="echoButton1" class="btn">Echo (Callback)</button>
-        <button id="echoButton2" class="btn">Echo (Promise)</button>
+        <div>
+            <button id="echoButton1" class="btn">Echo (Callback)</button>
+            <button id="echoButton2" class="btn">Echo (Promise)</button>
+        </div>
+        <div>
+            <button id="echoButton3" class="btn error">Echo (Callback)</button>
+            <button id="echoButton4" class="btn error">Echo (Promise)</button>
+        </div>
         <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message:</div>
         <div id="message"></div>
     </div>
@@ -68,6 +77,18 @@
         document.getElementById('echoButton2').addEventListener('click', function () {
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }).then(function (data) {
                 document.getElementById('message').innerHTML += data.message + '<br>';
+            });
+        });
+
+        document.getElementById('echoButton3').addEventListener('click', function () {
+            Kamome.send('get', {}, function (data, error) {
+                document.getElementById('message').innerHTML += error + '<br>';
+            });
+        });
+
+        document.getElementById('echoButton4').addEventListener('click', function () {
+            Kamome.send('get', {}).catch(function (error) {
+                document.getElementById('message').innerHTML += error + '<br>';
             });
         });
 

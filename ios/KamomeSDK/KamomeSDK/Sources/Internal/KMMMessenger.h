@@ -13,7 +13,13 @@ typedef void (^KMMReceiveResultBlock)(id _Nullable result);
 
 + (instancetype)sharedMessenger;
 
-- (void)completeMessageWithWebView:(id)webView data:(nullable id)data forName:(NSString *)name;
+- (void)completeMessageWithWebView:(id)webView
+                              data:(nullable id)data
+                           forName:(NSString *)name;
+
+- (void)failMessageWithWebView:(id)webView
+                         error:(nullable NSString *)error
+                       forName:(NSString *)name;
 
 - (void)sendMessageWithWebView:(id)webView
                           data:(nullable id)data
