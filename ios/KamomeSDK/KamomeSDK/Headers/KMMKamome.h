@@ -4,16 +4,27 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WebKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class WKWebViewConfiguration;
 @class KMMCommand;
 @class KMMUserContentController;
 
-@interface KMMKamome : NSObject
+UIKIT_EXTERN NSString *const KMMScriptMessageHandlerName;
 
-@property (nonatomic, readonly) KMMUserContentController *userContentController;
+@interface KMMKamome : NSObject <WKScriptMessageHandler>
+
+@property (nonatomic, readonly) KMMUserContentController *userContentController DEPRECATED_ATTRIBUTE;
+
+/**
+ * Creates a KMMKamome instance and a default WKWebView instance initialized by Kamome.
+
+ * @param webView Returns a WKWebView instance created by Kamome.
+ * @param frame A webView's frame.
+ * @return Returns a KMMKamome instance.
+ */
++ (instancetype)createInstanceAndWebView:(WKWebView **)webView withFrame:(CGRect)frame;
 
 - (void)setWebView:(id)webView;
 

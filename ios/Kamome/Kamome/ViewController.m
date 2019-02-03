@@ -23,13 +23,21 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.kamome = [KMMKamome new];
+    // Creates a kamome instance with default webView.
+    WKWebView *webView = nil;
+    self.kamome = [KMMKamome createInstanceAndWebView:&webView withFrame:self.view.frame];
+    self.webView = webView;
 
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration new];
-    configuration.userContentController = self.kamome.userContentController;
-    self.webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:configuration];
-
-    [self.kamome setWebView:self.webView];
+    // Creates a kamome instance for a customized webView.
+//    self.kamome = [KMMKamome new];
+//
+//    WKUserContentController *userContentController = [WKUserContentController new];
+//    [userContentController addScriptMessageHandler:self.kamome name:KMMScriptMessageHandlerName];
+//    WKWebViewConfiguration *configuration = [WKWebViewConfiguration new];
+//    configuration.userContentController = userContentController;
+//    self.webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:configuration];
+//
+//    [self.kamome setWebView:self.webView];
 
     [self.kamome addCommand:[KMMCommand commandWithName:@"echo" handler:^(NSDictionary *data, KMMCompletion *completion) {
         // Success

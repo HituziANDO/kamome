@@ -67,16 +67,14 @@ Kamome provides common JavaScript interface for iOS and Android.
 	
 	```objc
 	@property (nonatomic) KMMKamome *kamome;
+	@property (nonatomic) WKWebView *webView;
 	```
 	
 	```objc
-	self.kamome = [KMMKamome new];
-	
-	WKWebViewConfiguration *configuration = [WKWebViewConfiguration new];
-	configuration.userContentController = self.kamome.userContentController;
-	self.webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:configuration];
-	
-	[self.kamome setWebView:self.webView];
+	// Creates a kamome instance with default webView
+    WKWebView *webView = nil;
+    self.kamome = [KMMKamome createInstanceAndWebView:&webView withFrame:self.view.frame];
+    self.webView = webView;
 	
 	// Register `echo` command
 	[self.kamome addCommand:[KMMCommand commandWithName:@"echo" handler:^(NSDictionary *data, KMMCompletion *completion) {
@@ -87,6 +85,9 @@ Kamome provides common JavaScript interface for iOS and Android.
 	    // Or send error result if failed
 	    //[completion rejectWithErrorMessage:@"Error message"];
 	}]];
+	
+	// Adds the webView to a ViewController's view
+	[self.view addSubview:self.webView];
 	```
 	
 	**[NOTE]** Supports WKWebView only. UIWebView not supported.
