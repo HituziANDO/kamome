@@ -7,120 +7,114 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5E4EC3C720F0B50F00C60D7A /* www in Resources */ = {isa = PBXBuildFile; fileRef = 5E4EC3C620F0B50F00C60D7A /* www */; };
-		5E4EC40720F47FFB00C60D7A /* KamomeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E4EC40620F47FFB00C60D7A /* KamomeSDK.framework */; };
-		5E523D9420ED873C00350389 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E523D9320ED873C00350389 /* AppDelegate.m */; };
-		5E523D9720ED873C00350389 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E523D9620ED873C00350389 /* ViewController.m */; };
-		5E523D9A20ED873C00350389 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E523D9820ED873C00350389 /* Main.storyboard */; };
-		5E523D9C20ED873D00350389 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E523D9B20ED873D00350389 /* Assets.xcassets */; };
-		5E523D9F20ED873D00350389 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E523D9D20ED873D00350389 /* LaunchScreen.storyboard */; };
-		5E523DA220ED873E00350389 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E523DA120ED873E00350389 /* main.m */; };
+		5EEBB9742206DA4E00C47AB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEBB9732206DA4E00C47AB1 /* AppDelegate.swift */; };
+		5EEBB9762206DA4E00C47AB1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEBB9752206DA4E00C47AB1 /* ViewController.swift */; };
+		5EEBB9792206DA4E00C47AB1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5EEBB9772206DA4E00C47AB1 /* Main.storyboard */; };
+		5EEBB97B2206DA5000C47AB1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5EEBB97A2206DA5000C47AB1 /* Assets.xcassets */; };
+		5EEBB97E2206DA5000C47AB1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5EEBB97C2206DA5000C47AB1 /* LaunchScreen.storyboard */; };
+		5EEBB9872206DA9C00C47AB1 /* KamomeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EEBB9862206DA9C00C47AB1 /* KamomeSDK.framework */; };
+		5EEBB9892206DB1000C47AB1 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 5EEBB9882206DB1000C47AB1 /* www */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5E4EC3C620F0B50F00C60D7A /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
-		5E4EC40620F47FFB00C60D7A /* KamomeSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KamomeSDK.framework; path = Framework/KamomeSDK.framework; sourceTree = SOURCE_ROOT; };
-		5E523D8F20ED873C00350389 /* Kamome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kamome.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5E523D9220ED873C00350389 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		5E523D9320ED873C00350389 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		5E523D9520ED873C00350389 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		5E523D9620ED873C00350389 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		5E523D9920ED873C00350389 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		5E523D9B20ED873D00350389 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		5E523D9E20ED873D00350389 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		5E523DA020ED873E00350389 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5E523DA120ED873E00350389 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5EEBB9702206DA4E00C47AB1 /* KamomeSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KamomeSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EEBB9732206DA4E00C47AB1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		5EEBB9752206DA4E00C47AB1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		5EEBB9782206DA4E00C47AB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5EEBB97A2206DA5000C47AB1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5EEBB97D2206DA5000C47AB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		5EEBB97F2206DA5000C47AB1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5EEBB9862206DA9C00C47AB1 /* KamomeSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = KamomeSDK.framework; sourceTree = "<group>"; };
+		5EEBB9882206DB1000C47AB1 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		5E523D8C20ED873C00350389 /* Frameworks */ = {
+		5EEBB96D2206DA4E00C47AB1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E4EC40720F47FFB00C60D7A /* KamomeSDK.framework in Frameworks */,
+				5EEBB9872206DA9C00C47AB1 /* KamomeSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5E4EC40820F4802F00C60D7A /* Framework */ = {
+		5EEBB9672206DA4E00C47AB1 = {
 			isa = PBXGroup;
 			children = (
-				5E4EC40620F47FFB00C60D7A /* KamomeSDK.framework */,
-			);
-			path = Framework;
-			sourceTree = "<group>";
-		};
-		5E523D8620ED873C00350389 = {
-			isa = PBXGroup;
-			children = (
-				5E4EC40820F4802F00C60D7A /* Framework */,
-				5E523D9120ED873C00350389 /* Kamome */,
-				5E523D9020ED873C00350389 /* Products */,
+				5EEBB9852206DA7E00C47AB1 /* Framework */,
+				5EEBB9722206DA4E00C47AB1 /* KamomeSwift */,
+				5EEBB9712206DA4E00C47AB1 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		5E523D9020ED873C00350389 /* Products */ = {
+		5EEBB9712206DA4E00C47AB1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5E523D8F20ED873C00350389 /* Kamome.app */,
+				5EEBB9702206DA4E00C47AB1 /* KamomeSwift.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5E523D9120ED873C00350389 /* Kamome */ = {
+		5EEBB9722206DA4E00C47AB1 /* KamomeSwift */ = {
 			isa = PBXGroup;
 			children = (
-				5E523D9220ED873C00350389 /* AppDelegate.h */,
-				5E523D9320ED873C00350389 /* AppDelegate.m */,
-				5E523D9B20ED873D00350389 /* Assets.xcassets */,
-				5E523DA020ED873E00350389 /* Info.plist */,
-				5E523D9D20ED873D00350389 /* LaunchScreen.storyboard */,
-				5E523DA120ED873E00350389 /* main.m */,
-				5E523D9820ED873C00350389 /* Main.storyboard */,
-				5E523D9520ED873C00350389 /* ViewController.h */,
-				5E523D9620ED873C00350389 /* ViewController.m */,
-				5E4EC3C620F0B50F00C60D7A /* www */,
+				5EEBB9732206DA4E00C47AB1 /* AppDelegate.swift */,
+				5EEBB97A2206DA5000C47AB1 /* Assets.xcassets */,
+				5EEBB97F2206DA5000C47AB1 /* Info.plist */,
+				5EEBB97C2206DA5000C47AB1 /* LaunchScreen.storyboard */,
+				5EEBB9772206DA4E00C47AB1 /* Main.storyboard */,
+				5EEBB9752206DA4E00C47AB1 /* ViewController.swift */,
+				5EEBB9882206DB1000C47AB1 /* www */,
 			);
-			path = Kamome;
+			path = KamomeSwift;
+			sourceTree = "<group>";
+		};
+		5EEBB9852206DA7E00C47AB1 /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				5EEBB9862206DA9C00C47AB1 /* KamomeSDK.framework */,
+			);
+			path = Framework;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5E523D8E20ED873C00350389 /* Kamome */ = {
+		5EEBB96F2206DA4E00C47AB1 /* KamomeSwift */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5E523DA520ED873E00350389 /* Build configuration list for PBXNativeTarget "Kamome" */;
+			buildConfigurationList = 5EEBB9822206DA5000C47AB1 /* Build configuration list for PBXNativeTarget "KamomeSwift" */;
 			buildPhases = (
-				5E523D8B20ED873C00350389 /* Sources */,
-				5E523D8C20ED873C00350389 /* Frameworks */,
-				5E523D8D20ED873C00350389 /* Resources */,
+				5EEBB96C2206DA4E00C47AB1 /* Sources */,
+				5EEBB96D2206DA4E00C47AB1 /* Frameworks */,
+				5EEBB96E2206DA4E00C47AB1 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = Kamome;
-			productName = Kamome;
-			productReference = 5E523D8F20ED873C00350389 /* Kamome.app */;
+			name = KamomeSwift;
+			productName = KamomeSwift;
+			productReference = 5EEBB9702206DA4E00C47AB1 /* KamomeSwift.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		5E523D8720ED873C00350389 /* Project object */ = {
+		5EEBB9682206DA4E00C47AB1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastSwiftUpdateCheck = 1010;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Hituzi Ando";
 				TargetAttributes = {
-					5E523D8E20ED873C00350389 = {
-						CreatedOnToolsVersion = 9.4.1;
+					5EEBB96F2206DA4E00C47AB1 = {
+						CreatedOnToolsVersion = 10.1;
 					};
 				};
 			};
-			buildConfigurationList = 5E523D8A20ED873C00350389 /* Build configuration list for PBXProject "Kamome" */;
+			buildConfigurationList = 5EEBB96B2206DA4E00C47AB1 /* Build configuration list for PBXProject "KamomeSwift" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -128,56 +122,55 @@
 				en,
 				Base,
 			);
-			mainGroup = 5E523D8620ED873C00350389;
-			productRefGroup = 5E523D9020ED873C00350389 /* Products */;
+			mainGroup = 5EEBB9672206DA4E00C47AB1;
+			productRefGroup = 5EEBB9712206DA4E00C47AB1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5E523D8E20ED873C00350389 /* Kamome */,
+				5EEBB96F2206DA4E00C47AB1 /* KamomeSwift */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		5E523D8D20ED873C00350389 /* Resources */ = {
+		5EEBB96E2206DA4E00C47AB1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E4EC3C720F0B50F00C60D7A /* www in Resources */,
-				5E523D9F20ED873D00350389 /* LaunchScreen.storyboard in Resources */,
-				5E523D9C20ED873D00350389 /* Assets.xcassets in Resources */,
-				5E523D9A20ED873C00350389 /* Main.storyboard in Resources */,
+				5EEBB9892206DB1000C47AB1 /* www in Resources */,
+				5EEBB97E2206DA5000C47AB1 /* LaunchScreen.storyboard in Resources */,
+				5EEBB97B2206DA5000C47AB1 /* Assets.xcassets in Resources */,
+				5EEBB9792206DA4E00C47AB1 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		5E523D8B20ED873C00350389 /* Sources */ = {
+		5EEBB96C2206DA4E00C47AB1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E523D9720ED873C00350389 /* ViewController.m in Sources */,
-				5E523DA220ED873E00350389 /* main.m in Sources */,
-				5E523D9420ED873C00350389 /* AppDelegate.m in Sources */,
+				5EEBB9762206DA4E00C47AB1 /* ViewController.swift in Sources */,
+				5EEBB9742206DA4E00C47AB1 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		5E523D9820ED873C00350389 /* Main.storyboard */ = {
+		5EEBB9772206DA4E00C47AB1 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5E523D9920ED873C00350389 /* Base */,
+				5EEBB9782206DA4E00C47AB1 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		5E523D9D20ED873D00350389 /* LaunchScreen.storyboard */ = {
+		5EEBB97C2206DA5000C47AB1 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5E523D9E20ED873D00350389 /* Base */,
+				5EEBB97D2206DA5000C47AB1 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -185,7 +178,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		5E523DA320ED873E00350389 /* Debug */ = {
+		5EEBB9802206DA5000C47AB1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -237,13 +230,16 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		5E523DA420ED873E00350389 /* Release */ = {
+		5EEBB9812206DA5000C47AB1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -290,12 +286,15 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		5E523DA620ED873E00350389 /* Debug */ = {
+		5EEBB9832206DA5000C47AB1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -305,18 +304,19 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Framework",
 				);
-				INFOPLIST_FILE = Kamome/Info.plist;
+				INFOPLIST_FILE = KamomeSwift/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.Kamome;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.KamomeSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		5E523DA720ED873E00350389 /* Release */ = {
+		5EEBB9842206DA5000C47AB1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -326,13 +326,14 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Framework",
 				);
-				INFOPLIST_FILE = Kamome/Info.plist;
+				INFOPLIST_FILE = KamomeSwift/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.Kamome;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.KamomeSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -340,25 +341,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5E523D8A20ED873C00350389 /* Build configuration list for PBXProject "Kamome" */ = {
+		5EEBB96B2206DA4E00C47AB1 /* Build configuration list for PBXProject "KamomeSwift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5E523DA320ED873E00350389 /* Debug */,
-				5E523DA420ED873E00350389 /* Release */,
+				5EEBB9802206DA5000C47AB1 /* Debug */,
+				5EEBB9812206DA5000C47AB1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5E523DA520ED873E00350389 /* Build configuration list for PBXNativeTarget "Kamome" */ = {
+		5EEBB9822206DA5000C47AB1 /* Build configuration list for PBXNativeTarget "KamomeSwift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5E523DA620ED873E00350389 /* Debug */,
-				5E523DA720ED873E00350389 /* Release */,
+				5EEBB9832206DA5000C47AB1 /* Debug */,
+				5EEBB9842206DA5000C47AB1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 5E523D8720ED873C00350389 /* Project object */;
+	rootObject = 5EEBB9682206DA4E00C47AB1 /* Project object */;
 }

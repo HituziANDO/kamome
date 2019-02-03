@@ -39,13 +39,13 @@ Kamome provides common JavaScript interface for iOS and Android.
 1. Send message from JavaScript and then receive callback
 	
 	```javascript
-	// Send `echo` command
+	// Sends `echo` command
 	Kamome.send('echo', { message: 'Hello' }, function (data, error) {
 	    if (!error) {
-	        // Callback from native if succeeded
+	        // Callback from the native if succeeded
 	        console.log(data.message);
 	    } else {
-	        // Callback from native if failed
+	        // Callback from the native if failed
 	        console.log(error);
 	    }
 	});
@@ -55,15 +55,45 @@ Kamome provides common JavaScript interface for iOS and Android.
 	
 	```javascript
 	Kamome.send('echo', { message: 'Hello' }).then(function (data) {
-	    // Callback from native if succeeded
+	    // Callback from the native if succeeded
 	    console.log(data.message);
 	}).catch(function (error) {
-	    // Callback from native if failed
+	    // Callback from the native if failed
 	    console.log(error);
 	});
 	```
 
 1. Receive message on iOS
+	
+	**Swift**
+
+	```swift
+	// Properties
+	private var webView: WKWebView?
+	private var kamome:  KMMKamome?
+	```
+	
+	```swift
+	// Creates a kamome instance with default webView
+	var webView: WKWebView? = nil
+	kamome = KMMKamome.createInstanceAndWebView(&webView, withFrame: view.frame)
+	self.webView = webView
+	
+	// Registers `echo` command
+	kamome?.add(KMMCommand(name: "echo") { data, completion in
+	           // Receives `echo` command
+	           
+	           // Then sends resolved result to the JavaScript callback function
+	           completion.resolve(with: ["message": data!["message"]!])
+	           // Or sends rejected result if failed
+	           //completion.reject(with: "Error message")
+	       })
+	
+	// Adds the webView to a ViewController's view
+	view.addSubview(self.webView!)
+	```
+	
+	**Objective-C**
 	
 	```objc
 	@property (nonatomic) KMMKamome *kamome;
@@ -76,13 +106,13 @@ Kamome provides common JavaScript interface for iOS and Android.
     self.kamome = [KMMKamome createInstanceAndWebView:&webView withFrame:self.view.frame];
     self.webView = webView;
 	
-	// Register `echo` command
+	// Registers `echo` command
 	[self.kamome addCommand:[KMMCommand commandWithName:@"echo" handler:^(NSDictionary *data, KMMCompletion *completion) {
-	    // Receive `echo` command
+	    // Receives `echo` command
 	    
-	    // Then send result to JavaScript callback function
+	    // Then sends resolved result to the JavaScript callback function
 	    [completion resolveWithDictionary:@{ @"message": data[@"message"] }];
-	    // Or send error result if failed
+	    // Or sends rejected result if failed
 	    //[completion rejectWithErrorMessage:@"Error message"];
 	}]];
 	
@@ -105,17 +135,17 @@ Kamome provides common JavaScript interface for iOS and Android.
 	try {
 	    kamome = Kamome.createInstanceForWebView(webView);
 	    
-	    // Register `echo` command
+	    // Registers `echo` command
 	    kamome.addCommand(new Command("echo", new Command.IHandler() {
 	        
 	        @Override
 	        public void execute(JSONObject data, Completion completion) {
-	            // Receive `echo` command
+	            // Receives `echo` command
 	            
 	            try {
-	                // Then send result to JavaScript callback function
+	                // Then sends resolved result to the JavaScript callback function
 	                completion.resolve(new JSONObject().put("message", data.getString("message")));
-	                // Or send error result if failed
+	                // Or sends rejected result if failed
 	                //completion.reject("Error message");
 	            } catch (JSONException e) {
 	                e.printStackTrace();
@@ -131,9 +161,22 @@ Kamome provides common JavaScript interface for iOS and Android.
 
 1. Send message from native code and then receive callback
 
-	**iOS**
+	#### iOS
+	
+	**Swift**
+	
+	```swift
+	// Sends data to JavaScript
+	kamome?.sendMessage(with: ["greeting": "Hello!"], block: { result in
+	    guard let result = result else { return }
+	    print("result: \(result)")    // => 'World!'
+	}, forName: "greeting")
+	```
+	
+	**Objective-C**
 	
 	```objc
+	// Sends data to JavaScript
 	[self.kamome sendMessageWithDictionary:@{ @"greeting": @"Hello!" }
                                      block:^(id result) {
                                          NSLog(@"result: %@", result);	// => 'World!'
@@ -141,11 +184,11 @@ Kamome provides common JavaScript interface for iOS and Android.
                                    forName:@"greeting"];
 	```
 	
-	**Android**
+	#### Android
 	
 	```java
 	try {
-	    // Send data to JavaScript.
+	    // Sends a data to JavaScript
 	    kamome.sendMessage(new JSONObject().put("greeting", "Hello!"),
 	        "greeting",
 	        new Kamome.IResultCallback() {
@@ -166,7 +209,7 @@ Kamome provides common JavaScript interface for iOS and Android.
 	Kamome.addReceiver('greeting', function (data) {
 	    console.log(data.greeting);	// => 'Hello!'
 	    
-	    // Return result to native code.
+	    // Returns a result to the native code.
 	    return 'World!';	// Any object or null.
 	});
 	```
