@@ -1,5 +1,5 @@
 /**
- * kamome.js Rev.4
+ * kamome.js Rev.6
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -24,9 +24,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-window.Kamome = (function () {
+window.Kamome = (function (Undefined) {
 
     /**
+     * Tells whether the OS is Android.
      *
      * @return {boolean} Returns true if the OS is Android
      */
@@ -35,6 +36,7 @@ window.Kamome = (function () {
     };
 
     /**
+     * Tells whether the OS is iOS.
      *
      * @return {boolean} Returns true if the OS is iOS
      */
@@ -58,7 +60,7 @@ window.Kamome = (function () {
     /**
      * Sets a timeout for a request. If given `time` <= 0, the request timeout is disabled.
      *
-     * @param {Object} time A time in millisecond
+     * @param {number} time A time in millisecond
      * @return {*}
      */
     var setRequestTimeout = function (time) {
@@ -67,6 +69,7 @@ window.Kamome = (function () {
     };
 
     /**
+     * Registers a receiver for given command. The receiver function receives a JSON message from the native.
      *
      * @param {string} name A command name
      * @param {Function} receiver A receiver is
@@ -83,6 +86,12 @@ window.Kamome = (function () {
         return this;
     };
 
+    /**
+     * Removes a receiver for given command if it is registered.
+     *
+     * @param {string} name A command name
+     * @return {*}
+     */
     var removeReceiver = function (name) {
         if (name in receiverDict) {
             delete receiverDict[name];
@@ -92,6 +101,7 @@ window.Kamome = (function () {
     };
 
     /**
+     * Sends a JSON message to the native.
      *
      * @param {string} name A command name
      * @param {Object} data
@@ -101,22 +111,30 @@ window.Kamome = (function () {
      *      // If the request is resolved, an `error` is null, otherwise the request is rejected
      *  }
      *  ```
+     * @param {number} timeout (Optional) An individual timeout for this request
      * @return {Promise|null} Returns a promise if a `callback` is null, otherwise returns null
      */
-    var send = function (name, data, callback) {
+    var send = function (name, data, callback, timeout) {
+        if (timeout === null || timeout === Undefined) {
+            timeout = requestTimeout;
+        }
+
         if (callback) {
-            requests.push({ name: name, data: data, callback: callback });
+            requests.push({ name: name, data: data, timeout: timeout, callback: callback });
             _send();
             return null;
         }
         else {
             return new Promise(function (resolve, reject) {
-                requests.push({ name: name, data: data, resolve: resolve, reject: reject });
+                requests.push({ name: name, data: data, timeout: timeout, resolve: resolve, reject: reject });
                 _send();
             });
         }
     };
 
+    /**
+     * @private
+     */
     var _send = function () {
         if (isRequesting) {
             return;
@@ -127,40 +145,37 @@ window.Kamome = (function () {
         var req = requests[0];
         var json = JSON.stringify({ name: req.name, data: req.data });
 
-        if (isIOS()) {
-            if ('webkit' in window) {
-                setTimeout(function () {
-                    window.webkit.messageHandlers.kamomeSend.postMessage(json);
-                }, 0);
-            }
-            else {
-                // TODO: impl
-            }
+        if (isIOS() && 'webkit' in window) {  // Require WKWebView
+            setTimeout(function () {
+                window.webkit.messageHandlers.kamomeSend.postMessage(json);
+            }, 0);
         }
-        else if (isAndroid()) {
-            if ('kamomeAndroid' in window) {
-                setTimeout(function () {
-                    window.kamomeAndroid.kamomeSend(json);
-                }, 0);
-            }
-            else {
-                // TODO: impl
-            }
+        else if (isAndroid() && 'kamomeAndroid' in window) {
+            setTimeout(function () {
+                window.kamomeAndroid.kamomeSend(json);
+            }, 0);
         }
         else {
             if (req.name in webHandlerDict) {
                 setTimeout(function () {
-                    var completion = (function (name) {
+                    var resolve = (function (name) {
                         return function (data) {
                             onComplete(name, data ? JSON.stringify(data) : null);
                         }
                     })(req.name);
-                    webHandlerDict[req.name](req.data, completion);
+
+                    var reject = (function (name) {
+                        return function (errorMessage) {
+                            onError(name, errorMessage);
+                        }
+                    })(req.name);
+
+                    webHandlerDict[req.name](req.data, resolve, reject);
                 }, 0);
             }
         }
 
-        if (requestTimeout > 0) {
+        if (req.timeout > 0) {
             _clearTimer();
 
             requestTimer = setTimeout(function () {
@@ -180,10 +195,13 @@ window.Kamome = (function () {
                 if (requests.length > 0) {
                     _send();
                 }
-            }, requestTimeout);
+            }, req.timeout);
         }
     };
 
+    /**
+     * @private
+     */
     var _clearTimer = function () {
         if (requestTimer !== null) {
             clearTimeout(requestTimer);
@@ -262,7 +280,16 @@ window.Kamome = (function () {
     /**
      *
      * @param {string} name A command name
-     * @param {Function} handler
+     * @param {Function} handler A handler is
+     * ```
+     *  function (data, resolve, reject) {
+     *      // Something to do
+     *      // Then, if succeeded
+     *      // resolve(response);   // response is any object or null
+     *      // Else
+     *      // reject('Error Message');
+     *  }
+     * ```
      * @return {*}
      */
     var addWebHandler = function (name, handler) {
