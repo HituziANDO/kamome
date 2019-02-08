@@ -1,12 +1,16 @@
 #!/bin/sh
 
-LIBS_DIR=kamome
+OUTPUT_DIR=output
+LIBS_DIR=$OUTPUT_DIR/kamome
 
-if [ -e $LIBS_DIR ]; then
-    rm -rf $LIBS_DIR
+if [ -e $OUTPUT_DIR ]; then
+    rm -rf $OUTPUT_DIR
 fi
 
-mkdir $LIBS_DIR
+mkdir -p $LIBS_DIR
+mkdir $LIBS_DIR/js
+mkdir $LIBS_DIR/android
+mkdir $LIBS_DIR/ios
 
 # Make JavaScript
 
@@ -17,7 +21,8 @@ if [ -e ./src/kamome.min.js ]; then
 fi
 
 gulp build
-cp ./src/kamome.min.js ../$LIBS_DIR/
+cp ./src/kamome.js ../$LIBS_DIR/js
+cp ./src/kamome.min.js ../$LIBS_DIR/js
 cd ../
 
 # Make Android
@@ -29,13 +34,12 @@ if [ -e ./kamome/release ]; then
 fi
 
 ./gradlew makeJar
-cp ./kamome/release/*.jar ../$LIBS_DIR/
+cp ./kamome/release/*.jar ../$LIBS_DIR/android
 cd ../
 
 # Make iOS
 
 cd ./ios/KamomeSDK
 ./make_framework.sh
-cp -rf ./Framework/*.framework ../../$LIBS_DIR/
+cp -rf ./Framework/*.framework ../../$LIBS_DIR/ios
 cd ../../
-
