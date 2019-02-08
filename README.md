@@ -8,35 +8,68 @@ Kamome provides common JavaScript interface for iOS and Android.
 
 ## Include in your app
 
-1. Download latest [kamome SDK](https://github.com/HituziANDO/kamome/releases)
+1. Downloads latest [kamome SDK](https://github.com/HituziANDO/kamome/releases)
 
-1. Import kamome.min.js
+1. Imports kamome.min.js
 	
 	```html
 	<script src="kamome.min.js"></script>
 	```
 	
-	Or copy the code in [kamome[.min].js](https://github.com/HituziANDO/kamome/blob/master/js/src/kamome.js) to your JavaScript.
+	Or copies the code in [kamome[.min].js](https://github.com/HituziANDO/kamome/blob/master/js/src/kamome.js) to your JavaScript.
 
-1. Import KamomeSDK.framework to your iOS app
+1. Imports KamomeSDK.framework to your iOS app
+	
+	### CocoaPods
+	
+	Kamome is available through [CocoaPods](http://cocoapods.org). To install
+it, simply add the following line to your Podfile:
+	
+	```ruby
+	pod "KamomeSDK"
+	```
 	
 	### Manual Installation
 	
-	1. Drag & Drop KamomeSDK.framework into your Xcode project
-	1. Write `#import <KamomeSDK/KamomeSDK.h>` in your source code
+	1. Drags & Drops KamomeSDK.framework into your Xcode project
+	1. Writes `#import <KamomeSDK/KamomeSDK.h>` in your source code
 
-1. Import kamome-x.x.x.jar to your Android app
+1. Imports kamome-x.x.x.jar to your Android app
+	
+	### Gradle
+	
+	Adds the following code in build.gradle(project level).
+	
+	```groovy
+	allprojects {
+		repositories {
+			
+			maven {
+				url 'https://hituziando.github.io/kamome/android/repo'
+			}
+		}
+	}
+	```
+	
+	Adds the following code in build.gradle(app level).
+	
+	```groovy
+	dependencies {
+		
+		implementation 'jp.hituzi:kamome:1.3.0'
+	}
+	```
 	
 	### Manual Installation
 	
-	1. Copy kamome-x.x.x.jar to `YOUR_ANDROID_STUDIO_PROJECT/app/libs` directory
+	1. Copies kamome-x.x.x.jar to `YOUR_ANDROID_STUDIO_PROJECT/app/libs` directory
 	1. Sync Project in AndroidStudio
 
 ## Usage
 
 ### JavaScript to Native Code
 
-1. Send message from JavaScript and then receive callback
+1. Sends a message from JavaScript and then receives callback
 	
 	```javascript
 	// Sends `echo` command
@@ -51,7 +84,7 @@ Kamome provides common JavaScript interface for iOS and Android.
 	});
 	```
 	
-	Or return Promise
+	Or returns Promise
 	
 	```javascript
 	Kamome.send('echo', { message: 'Hello' }).then(function (data) {
@@ -63,7 +96,7 @@ Kamome provides common JavaScript interface for iOS and Android.
 	});
 	```
 
-1. Receive message on iOS
+1. Receives a message on iOS
 	
 	**Swift**
 
@@ -122,7 +155,7 @@ Kamome provides common JavaScript interface for iOS and Android.
 	
 	**[NOTE]** Supports WKWebView only. UIWebView not supported.
 	
-1. Receive message on Android
+1. Receives a message on Android
 	
 	```java
 	// Instance variable
@@ -159,7 +192,7 @@ Kamome provides common JavaScript interface for iOS and Android.
 
 ### Native Code to JavaScript
 
-1. Send message from native code and then receive callback
+1. Sends a message from native code and then receives callback
 
 	#### iOS
 	
@@ -203,7 +236,7 @@ Kamome provides common JavaScript interface for iOS and Android.
 	}
 	```
 	
-1. Receive message on JavaScript
+1. Receives a message on JavaScript
 	
 	```javascript
 	Kamome.addReceiver('greeting', function (data) {
