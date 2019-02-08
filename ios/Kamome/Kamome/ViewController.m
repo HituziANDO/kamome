@@ -49,6 +49,13 @@
         [completion rejectWithErrorMessage:@"Error message"];
     }]];
 
+    [self.kamome addCommand:[KMMCommand commandWithName:@"tooLong" handler:^(NSDictionary *data, KMMCompletion *completion) {
+        // Too long process
+        [NSTimer scheduledTimerWithTimeInterval:30.0 repeats:NO block:^(NSTimer *timer) {
+            [completion resolve];
+        }];
+    }]];
+
     NSURL *htmlURL = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"index" ofType:@"html" inDirectory:@"www"]];
     [self.webView loadFileURL:htmlURL allowingReadAccessToURL:htmlURL];
     [self.view addSubview:self.webView];

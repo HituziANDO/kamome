@@ -34,6 +34,10 @@
             min-height: 44px;
         }
 
+        .btn.warn {
+            background-color: #f1c40f !important;
+        }
+
         .btn.error {
             background-color: #e74c3c !important;
         }
@@ -63,6 +67,10 @@
             <button id="getButton1" class="btn error">Get (Callback)</button>
             <button id="getButton2" class="btn error">Get (Promise)</button>
         </div>
+        <div class="mt-1">
+            <button id="timeoutButton" class="btn warn">Timeout Sample</button>
+            <button id="cancelButton" class="btn warn">Cancel</button>
+        </div>
         <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message:</div>
         <div id="message"></div>
     </div>
@@ -72,6 +80,9 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var count = 0;
+
+        // Sets default request timeout in second.
+        Kamome.setDefaultRequestTimeout(15);
 
         document.getElementById('echoButton1').addEventListener('click', function () {
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }, function (data) {
@@ -95,6 +106,23 @@
             Kamome.send('get', {}).catch(function (error) {
                 document.getElementById('message').innerHTML += error + '<br>';
             });
+        });
+
+        document.getElementById('timeoutButton').addEventListener('click', function () {
+            Kamome.send('tooLong', null, null, 3 * 1000).then(function (data) {
+                // Not call
+            }).catch(function (error) {
+                document.getElementById('message').innerHTML += error + '<br>';
+            });
+        });
+
+        document.getElementById('cancelButton').addEventListener('click', function () {
+            Kamome.send('tooLong').then(function (data) {
+                // Not call
+            }).catch(function (error) {
+                document.getElementById('message').innerHTML += error + '<br>';
+            });
+            Kamome.cancelCurrentRequest();
         });
 
         Kamome.addReceiver('greeting', function (data) {

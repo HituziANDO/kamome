@@ -2,6 +2,7 @@ package jp.hituzi.kamome.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -48,6 +49,20 @@ public class MainActivity extends Activity {
                     public void execute(JSONObject data, Completion completion) {
                         // Failure
                         completion.reject("Error message");
+                    }
+                }))
+                .addCommand(new Command("tooLong", new Command.IHandler() {
+
+                    @Override
+                    public void execute(JSONObject data, final Completion completion) {
+                        // Too long process
+                        new Handler().postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                completion.resolve();
+                            }
+                        }, 30 * 1000);
                     }
                 }));
         } catch (ApiVersionException e) {

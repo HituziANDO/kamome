@@ -1,5 +1,5 @@
 /**
- * kamome.js Rev.6
+ * kamome.js Rev.7
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -48,6 +48,7 @@ window.Kamome = (function (Undefined) {
     var Error = {
         requestTimeout: 'RequestTimeout',
         rejected:       'Rejected',
+        canceled:       'Canceled',
     };
 
     var receiverDict = {};
@@ -63,7 +64,7 @@ window.Kamome = (function (Undefined) {
      * @param {number} time A time in millisecond
      * @return {*}
      */
-    var setRequestTimeout = function (time) {
+    var setDefaultRequestTimeout = function (time) {
         requestTimeout = time;
         return this;
     };
@@ -129,6 +130,35 @@ window.Kamome = (function (Undefined) {
                 requests.push({ name: name, data: data, timeout: timeout, resolve: resolve, reject: reject });
                 _send();
             });
+        }
+    };
+
+    /**
+     * Cancels current request immediately if requesting to native. Then the request calls reject handler.
+     *
+     * @param {string|null} reason (Optional) A reason why a request is cancel
+     */
+    var cancelCurrentRequest = function (reason) {
+        if (requests.length === 0) {
+            return;
+        }
+
+        _clearTimer();
+
+        isRequesting = false;
+
+        var msg = reason ? ':' + reason : '';
+        var req = requests.shift();
+
+        if ('callback' in req) {
+            req.callback(null, Error.canceled + ':' + req.name + msg);
+        }
+        else if ('reject' in req) {
+            req.reject(Error.canceled + ':' + req.name + msg);
+        }
+
+        if (requests.length > 0) {
+            _send();
         }
     };
 
@@ -298,15 +328,16 @@ window.Kamome = (function (Undefined) {
     };
 
     return {
-        Error:             Error,
-        setRequestTimeout: setRequestTimeout,
-        addReceiver:       addReceiver,
-        removeReceiver:    removeReceiver,
-        send:              send,
-        onComplete:        onComplete,
-        onError:           onError,
-        onReceive:         onReceive,
-        addWebHandler:     addWebHandler,
+        Error:                    Error,
+        setDefaultRequestTimeout: setDefaultRequestTimeout,
+        addReceiver:              addReceiver,
+        removeReceiver:           removeReceiver,
+        send:                     send,
+        cancelCurrentRequest:     cancelCurrentRequest,
+        onComplete:               onComplete,
+        onError:                  onError,
+        onReceive:                onReceive,
+        addWebHandler:            addWebHandler,
     };
 })();
 // export default Kamome = window.Kamome;

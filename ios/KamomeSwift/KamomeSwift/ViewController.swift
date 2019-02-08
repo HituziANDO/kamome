@@ -42,6 +42,12 @@ class ViewController: UIViewController {
                    // Failure
                    completion.reject(with: "Error message")
                })
+               .add(KMMCommand(name: "tooLong") { data, completion in
+                   // Too long process
+                   Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { timer in
+                       completion.resolve()
+                   }
+               })
 
         let htmlURL = URL(fileURLWithPath: Bundle.main.path(forResource: "index", ofType: "html", inDirectory: "www")!)
         self.webView!.loadFileURL(htmlURL, allowingReadAccessTo: htmlURL)
