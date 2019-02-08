@@ -3,8 +3,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 27
 
-
-
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 27
@@ -47,3 +45,19 @@ task makeJar(type: Delete) {
     delete 'release/AndroidManifest.xml', 'release/R.txt', 'release/res', 'release/values', 'release/' + LIB_NAME + '-release.aar'
 }
 makeJar.dependsOn(build, copyAar, unzipAar)
+
+// Creates Maven repository
+def repo = new File(rootDir, "repo")
+
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository url: "file://${repo.absolutePath}"
+            pom.version = "${LIB_VERSION}"
+            pom.groupId = 'jp.hituzi'
+            pom.artifactId = 'kamome'
+        }
+    }
+}
