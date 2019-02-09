@@ -247,4 +247,25 @@ it, simply add the following line to your Podfile:
 	});
 	```
 
+### Configuration
+
+#### Request Timeout from JavaScript to Native Code
+
+`Kamome.send` method in JavaScript expects a 'resolve'/'reject' response will be returned in a duration. If the request is timed out, it's callback calls `reject` with requestTimeout error. You can change default request timeout, see following.
+
+```javascript
+// Sets default timeout in millisecond.
+Kamome.setDefaultRequestTimeout(15000);
+```
+
+If given time <= 0, the request timeout function is disabled.
+
+If you want to specify a request timeout individually, you set a timeout in millisecond at `Kamome.send` method's 4th argument.
+
+```javascript
+// Sets a timeout in millisecond at 4th argument.
+const promise = Kamome.send(commandName, data, null, 5000);
+```
+
+--
 More info, see my [iOS sample project](https://github.com/HituziANDO/kamome/tree/master/ios) and [Android sample project](https://github.com/HituziANDO/kamome/tree/master/android).

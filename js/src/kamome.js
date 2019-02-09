@@ -39,7 +39,10 @@ window.Kamome = (function (Undefined) {
     var _requestTimeout = 10000;    // Default value is 10 seconds
 
     /**
-     * Sets a timeout for a request. If given `time` <= 0, the request timeout is disabled.
+     * `Kamome.send` method expects a 'resolve'/'reject' response will be returned in a duration.
+     * If the request is timed out, it's callback calls `reject` with requestTimeout error.
+     * You can change default request timeout.
+     * Sets a timeout for a request. If given `time` <= 0, the request timeout function is disabled.
      *
      * @param {number} time A time in millisecond
      * @return {*}
