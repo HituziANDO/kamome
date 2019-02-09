@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "KamomeSDK"
-  s.version      = "1.3.1"
+  s.version      = "1.4.0"
   s.summary      = "Kamome is bridging JavaScript and Objective-C/Swift."
 
   # This description is used to generate tags and improve search results.

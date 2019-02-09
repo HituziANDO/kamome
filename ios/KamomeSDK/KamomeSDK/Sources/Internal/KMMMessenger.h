@@ -33,11 +33,11 @@ typedef void (^KMMReceiveResultBlock)(id _Nullable result);
 
 - (void)completeMessageWithWebView:(id)webView
                               data:(nullable id)data
-                           forName:(NSString *)name;
+                      forRequestId:(NSString *)requestId;
 
 - (void)failMessageWithWebView:(id)webView
                          error:(nullable NSString *)error
-                       forName:(NSString *)name;
+                  forRequestId:(NSString *)requestId;
 
 - (void)sendMessageWithWebView:(id)webView
                           data:(nullable id)data

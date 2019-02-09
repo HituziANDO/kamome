@@ -81,35 +81,51 @@
     document.addEventListener('DOMContentLoaded', function () {
         var count = 0;
 
-        // Sets default request timeout in second.
-        Kamome.setDefaultRequestTimeout(15);
+        // Sets default timeout in millisecond.
+        Kamome.setDefaultRequestTimeout(15000);
 
         document.getElementById('echoButton1').addEventListener('click', function () {
-            Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }, function (data) {
-                document.getElementById('message').innerHTML += data.message + '<br>';
+            Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }, function (data, error) {
+                if (data) {
+                    document.getElementById('message').innerHTML += data.message + '<br>';
+                } else if (error) {
+                    // Not call
+                    document.getElementById('message').innerHTML += error + '<br>';
+                }
             });
         });
 
         document.getElementById('echoButton2').addEventListener('click', function () {
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }).then(function (data) {
                 document.getElementById('message').innerHTML += data.message + '<br>';
+            }).catch(function (error) {
+                // Not call
+                document.getElementById('message').innerHTML += error + '<br>';
             });
         });
 
         document.getElementById('getButton1').addEventListener('click', function () {
             Kamome.send('get', {}, function (data, error) {
-                document.getElementById('message').innerHTML += error + '<br>';
+                if (data) {
+                    // Not call
+                    document.getElementById('message').innerHTML += data.message + '<br>';
+                } else if (error) {
+                    document.getElementById('message').innerHTML += error + '<br>';
+                }
             });
         });
 
         document.getElementById('getButton2').addEventListener('click', function () {
-            Kamome.send('get', {}).catch(function (error) {
+            Kamome.send('get', {}).then(function (data) {
+                // Not call
+                document.getElementById('message').innerHTML += data.message + '<br>';
+            }).catch(function (error) {
                 document.getElementById('message').innerHTML += error + '<br>';
             });
         });
 
         document.getElementById('timeoutButton').addEventListener('click', function () {
-            Kamome.send('tooLong', null, null, 3 * 1000).then(function (data) {
+            Kamome.send('tooLong', null, null, 5000).then(function (data) {
                 // Not call
             }).catch(function (error) {
                 document.getElementById('message').innerHTML += error + '<br>';
@@ -117,11 +133,6 @@
         });
 
         document.getElementById('cancelButton').addEventListener('click', function () {
-            Kamome.send('tooLong').then(function (data) {
-                // Not call
-            }).catch(function (error) {
-                document.getElementById('message').innerHTML += error + '<br>';
-            });
             Kamome.cancelCurrentRequest();
         });
 

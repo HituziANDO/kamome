@@ -70,7 +70,7 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
         }
     }
 
-    KMMCompletion *completion = [[KMMCompletion alloc] initWithWebView:self.webView name:data[@"name"]];
+    KMMCompletion *completion = [[KMMCompletion alloc] initWithWebView:self.webView requestId:data[@"id"]];
 
     if (command) {
         NSDictionary *params = data[@"data"] != [NSNull null] ? data[@"data"] : nil;

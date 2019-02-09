@@ -89,6 +89,7 @@ public final class Kamome {
     public void kamomeSend(String message) {
         try {
             JSONObject object = new JSONObject(message);
+            String requestId = object.getString("id");
             String name = object.getString("name");
             JSONObject data = object.isNull("data") ? null : object.getJSONObject("data");
 
@@ -101,12 +102,12 @@ public final class Kamome {
                 }
             }
 
-            Completion completion = new Completion(webView, name);
+            Completion completion = new Completion(webView, requestId);
 
             if (command != null) {
                 command.execute(data, completion);
             } else {
-                completion.complete();
+                completion.resolve();
             }
         } catch (JSONException e) {
             e.printStackTrace();

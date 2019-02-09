@@ -56,7 +56,7 @@ it, simply add the following line to your Podfile:
 	```groovy
 	dependencies {
 		
-		implementation 'jp.hituzi:kamome:1.3.0'
+		implementation 'jp.hituzi:kamome:1.4.0'
 	}
 	```
 	
