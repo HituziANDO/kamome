@@ -140,8 +140,9 @@
 
             [((WKWebView *) webView) evaluateJavaScript:js completionHandler:^(id value, NSError *error) {
                 if (error) {
-                    @throw [KMMException exceptionWithReason:[NSString stringWithFormat:@"%@ %@", error.localizedDescription, error.userInfo]
-                                                    userInfo:nil];
+                    NSLog(@"[Kamome] ERROR: %@ %@", error.localizedDescription, error.userInfo);
+
+                    return;
                 }
 
                 if (value == [NSNull null] || ![value isKindOfClass:[NSString class]]) {
