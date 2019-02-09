@@ -1,5 +1,5 @@
 /**
- * kamome.js Rev.8
+ * kamome.js Rev.9
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -89,13 +89,13 @@ window.Kamome = (function (Undefined) {
      *
      * @param {string} name A command name
      * @param {Object} data
-     * @param {Function} callback (Optional) A callback is
+     * @param {Function|null} callback A callback is
      *  ```
      *  function(data, error) {
      *      // If the request is resolved, an `error` is null, otherwise the request is rejected
      *  }
      *  ```
-     * @param {number} timeout (Optional) An individual timeout for this request
+     * @param {number|null} timeout An individual timeout for this request
      * @return {Promise|null} Returns a promise if a `callback` is null, otherwise returns null
      */
     var send = function (name, data, callback, timeout) {
@@ -132,7 +132,7 @@ window.Kamome = (function (Undefined) {
     /**
      * Cancels current request immediately if requesting to native. Then the request calls reject handler.
      *
-     * @param {string|null} reason (Optional) A reason why a request is cancel
+     * @param {string|null} reason A reason why a request is cancel
      */
     var cancelCurrentRequest = function (reason) {
         if (_requests.length === 0) {
@@ -246,15 +246,58 @@ window.Kamome = (function (Undefined) {
     };
 
     /**
+     * Tells whether an argument is Object.
+     *
+     * @param {*} obj
+     * @return {boolean} true if an argument is Object
+     * @private
+     */
+    var _isObj = function (obj) {
+        return ({}).toString.call(obj) === '[object Object]';
+    };
+
+    /**
+     * Tells whether an argument is Function.
+     *
+     * @param {*} obj
+     * @return {boolean} true if an argument is Function
+     * @private
+     */
+    var _isFun = function (obj) {
+        return ({}).toString.call(obj) === '[object Function]';
+    };
+
+    /**
      * @return {string} Returns a UUID string
      * @private
      */
     var _uuid = function () {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            var r = Math.random() * 16 | 0;
+            var v = c === 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         }).toLowerCase();
+    };
+
+    /**
+     * @private
+     */
+    var _merge = function (obj1, obj2) {
+        obj2 = obj2 || {};
+
+        for (var key in obj2) {
+            if (obj2[key] === null || obj2[key] === Undefined) {
+                obj1[key] = null;
+            }
+            else if (_isObj(obj2[key])) {
+                obj1[key] = _merge(obj1[key] || {}, obj2[key]);
+            }
+            else {
+                obj1[key] = obj2[key];
+            }
+        }
+
+        return obj1;
     };
 
     var onComplete = function (json, requestId) {
@@ -335,7 +378,7 @@ window.Kamome = (function (Undefined) {
         return this;
     };
 
-    return {
+    var _module = {
         Error:                    Error,
         setDefaultRequestTimeout: setDefaultRequestTimeout,
         addReceiver:              addReceiver,
@@ -347,5 +390,28 @@ window.Kamome = (function (Undefined) {
         onReceive:                onReceive,
         addWebHandler:            addWebHandler,
     };
+
+    _module.extension = {
+        /**
+         * Adds a command method with default value to Kamome object.
+         *
+         * @param {string} commandName A command name
+         * @param {Object|null} defaultValue Default value of the command
+         * @param {string|null} methodName A method name of the command if it is given
+         * @return {*}
+         */
+        addCommand: function (commandName, defaultValue, methodName) {
+            _module[methodName || commandName] = (function (name, defaultValue) {
+                return function (dataOrFunc, callback, timeout) {
+                    var value = _isFun(dataOrFunc) ? dataOrFunc(_merge({}, defaultValue)) : _merge(_merge({}, defaultValue), dataOrFunc);
+                    return send(name, value, callback, timeout);
+                }
+            })(commandName, defaultValue);
+
+            return this;
+        }
+    };
+
+    return _module;
 })();
 // export default Kamome = window.Kamome;

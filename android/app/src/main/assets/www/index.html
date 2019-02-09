@@ -62,6 +62,7 @@
         <div>
             <button id="echoButton1" class="btn">Echo (Callback)</button>
             <button id="echoButton2" class="btn">Echo (Promise)</button>
+            <button id="echoButton3" class="btn">Echo</button>
         </div>
         <div class="mt-1">
             <button id="getButton1" class="btn error">Get (Callback)</button>
@@ -84,6 +85,11 @@
         // Sets default timeout in millisecond.
         Kamome.setDefaultRequestTimeout(15000);
 
+        // Adds a command method with default value to Kamome object.
+        Kamome.extension
+            .addCommand('echo', { message: 'Hello World!' })
+            .addCommand('get');
+
         document.getElementById('echoButton1').addEventListener('click', function () {
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }, function (data, error) {
                 if (data) {
@@ -104,6 +110,19 @@
             });
         });
 
+        document.getElementById('echoButton3').addEventListener('click', function () {
+            // Calls `echo` command method.
+            Kamome.echo(function (defaultValue) {
+                // Modifies sending data from default.
+                return { message: defaultValue.message + ' (' + (++count) + ')' };
+            }).then(function (data) {
+                document.getElementById('message').innerHTML += data.message + '<br>';
+            }).catch(function (error) {
+                // Not call
+                document.getElementById('message').innerHTML += error + '<br>';
+            });
+        });
+
         document.getElementById('getButton1').addEventListener('click', function () {
             Kamome.send('get', {}, function (data, error) {
                 if (data) {
@@ -116,7 +135,8 @@
         });
 
         document.getElementById('getButton2').addEventListener('click', function () {
-            Kamome.send('get', {}).then(function (data) {
+            // Calls `get` command method.
+            Kamome.get().then(function (data) {
                 // Not call
                 document.getElementById('message').innerHTML += data.message + '<br>';
             }).catch(function (error) {

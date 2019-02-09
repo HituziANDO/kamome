@@ -1,6 +1,6 @@
 # kamome
 
-***Kamome is iOS/Android library sending messages between JavaScript and native code written by Objective-C or Java in the WebView.***
+***Kamome is iOS/Android library sending messages between JavaScript and native code written by Swift/Objective-C or Java in the WebView.***
 
 <img src="./README/images/illustration.png" width="410">
 
@@ -267,5 +267,6 @@ If you want to specify a request timeout individually, you set a timeout in mill
 const promise = Kamome.send(commandName, data, null, 5000);
 ```
 
---
+---
+
 More info, see my [iOS sample project](https://github.com/HituziANDO/kamome/tree/master/ios) and [Android sample project](https://github.com/HituziANDO/kamome/tree/master/android).
