@@ -1,5 +1,5 @@
 /**
- * kamome.js Rev.9
+ * kamome.js Rev.10
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -181,15 +181,15 @@ window.Kamome = (function (Undefined) {
                 setTimeout(function () {
                     var resolve = (function (name, id) {
                         return function (data) {
-                            onComplete(name, data ? JSON.stringify(data) : null, id);
+                            onComplete(data ? JSON.stringify(data) : null, id);
                         }
                     })(req.name, req.id);
 
-                    var reject = (function (name, id) {
+                    var reject = (function (id) {
                         return function (errorMessage) {
-                            onError(name, errorMessage, id);
+                            onError(errorMessage, id);
                         }
-                    })(req.name, req.id);
+                    })(req.id);
 
                     _webHandlerDict[req.name](req.data, resolve, reject);
                 }, 0);
@@ -414,4 +414,4 @@ window.Kamome = (function (Undefined) {
 
     return _module;
 })();
-// export default Kamome = window.Kamome;
+// export const Kamome = window.Kamome;
