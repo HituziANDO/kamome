@@ -175,8 +175,11 @@
             // MessageCallback not supported.
             [((UIWebView *) webView) stringByEvaluatingJavaScriptFromString:js];
         }
+        else if (webView == nil) {
+            @throw [KMMException exceptionWithReason:@"The webView is nil." userInfo:nil];
+        }
         else {
-            @throw [KMMException exceptionWithReason:@"webView is not WKWebView or UIWebView instance." userInfo:nil];
+            @throw [KMMException exceptionWithReason:@"The webView is not WKWebView or UIWebView instance." userInfo:nil];
         }
     });
 }
