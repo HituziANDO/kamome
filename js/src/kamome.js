@@ -1,5 +1,5 @@
 /**
- * kamome.js Rev.7
+ * kamome.js Rev.10
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -26,46 +26,29 @@
  */
 window.Kamome = (function (Undefined) {
 
-    /**
-     * Tells whether the OS is Android.
-     *
-     * @return {boolean} Returns true if the OS is Android
-     */
-    var isAndroid = function () {
-        return (navigator.userAgent.toLowerCase().indexOf('android') > 0);
-    };
-
-    /**
-     * Tells whether the OS is iOS.
-     *
-     * @return {boolean} Returns true if the OS is iOS
-     */
-    var isIOS = function () {
-        var ua = navigator.userAgent.toLowerCase();
-        return (ua.indexOf('iphone') > 0 || ua.indexOf('ipad') > 0 || ua.indexOf('ipod') > 0);
-    };
-
     var Error = {
         requestTimeout: 'RequestTimeout',
         rejected:       'Rejected',
         canceled:       'Canceled',
     };
 
-    var receiverDict = {};
-    var webHandlerDict = {};
-    var requests = [];
-    var isRequesting = false;
-    var requestTimer = null;
-    var requestTimeout = 10000; // Default value is 10 seconds
+    var _receiverDict = {};
+    var _webHandlerDict = {};
+    var _requests = [];
+    var _isRequesting = false;
+    var _requestTimeout = 10000;    // Default value is 10 seconds
 
     /**
-     * Sets a timeout for a request. If given `time` <= 0, the request timeout is disabled.
+     * `Kamome.send` method expects a 'resolve'/'reject' response will be returned in a duration.
+     * If the request is timed out, it's callback calls `reject` with requestTimeout error.
+     * You can change default request timeout.
+     * Sets a timeout for a request. If given `time` <= 0, the request timeout function is disabled.
      *
      * @param {number} time A time in millisecond
      * @return {*}
      */
     var setDefaultRequestTimeout = function (time) {
-        requestTimeout = time;
+        _requestTimeout = time;
         return this;
     };
 
@@ -83,7 +66,7 @@ window.Kamome = (function (Undefined) {
      * @return {*}
      */
     var addReceiver = function (name, receiver) {
-        receiverDict[name] = receiver;
+        _receiverDict[name] = receiver;
         return this;
     };
 
@@ -94,8 +77,8 @@ window.Kamome = (function (Undefined) {
      * @return {*}
      */
     var removeReceiver = function (name) {
-        if (name in receiverDict) {
-            delete receiverDict[name];
+        if (name in _receiverDict) {
+            delete _receiverDict[name];
         }
 
         return this;
@@ -106,28 +89,41 @@ window.Kamome = (function (Undefined) {
      *
      * @param {string} name A command name
      * @param {Object} data
-     * @param {Function} callback (Optional) A callback is
+     * @param {Function|null} callback A callback is
      *  ```
      *  function(data, error) {
      *      // If the request is resolved, an `error` is null, otherwise the request is rejected
      *  }
      *  ```
-     * @param {number} timeout (Optional) An individual timeout for this request
+     * @param {number|null} timeout An individual timeout for this request
      * @return {Promise|null} Returns a promise if a `callback` is null, otherwise returns null
      */
     var send = function (name, data, callback, timeout) {
         if (timeout === null || timeout === Undefined) {
-            timeout = requestTimeout;
+            timeout = _requestTimeout;
         }
 
         if (callback) {
-            requests.push({ name: name, data: data, timeout: timeout, callback: callback });
+            _requests.push({
+                id:       _uuid(),
+                name:     name,
+                data:     data,
+                timeout:  timeout,
+                callback: callback
+            });
             _send();
             return null;
         }
         else {
             return new Promise(function (resolve, reject) {
-                requests.push({ name: name, data: data, timeout: timeout, resolve: resolve, reject: reject });
+                _requests.push({
+                    id:      _uuid(),
+                    name:    name,
+                    data:    data,
+                    timeout: timeout,
+                    resolve: resolve,
+                    reject:  reject
+                });
                 _send();
             });
         }
@@ -136,162 +132,217 @@ window.Kamome = (function (Undefined) {
     /**
      * Cancels current request immediately if requesting to native. Then the request calls reject handler.
      *
-     * @param {string|null} reason (Optional) A reason why a request is cancel
+     * @param {string|null} reason A reason why a request is cancel
      */
     var cancelCurrentRequest = function (reason) {
-        if (requests.length === 0) {
+        if (_requests.length === 0) {
             return;
         }
 
-        _clearTimer();
-
-        isRequesting = false;
+        _isRequesting = false;
 
         var msg = reason ? ':' + reason : '';
-        var req = requests.shift();
 
-        if ('callback' in req) {
-            req.callback(null, Error.canceled + ':' + req.name + msg);
-        }
-        else if ('reject' in req) {
-            req.reject(Error.canceled + ':' + req.name + msg);
-        }
-
-        if (requests.length > 0) {
-            _send();
-        }
+        _shiftRequest(function (req) {
+            if ('callback' in req) {
+                req.callback(null, Error.canceled + ':' + req.name + msg);
+            }
+            else if ('reject' in req) {
+                req.reject(Error.canceled + ':' + req.name + msg);
+            }
+        });
     };
 
     /**
      * @private
      */
     var _send = function () {
-        if (isRequesting) {
+        if (_requests.length === 0 || _isRequesting) {
             return;
         }
 
-        isRequesting = true;
+        _isRequesting = true;
 
-        var req = requests[0];
-        var json = JSON.stringify({ name: req.name, data: req.data });
+        var req = _requests[0];
+        var json = JSON.stringify({ name: req.name, data: req.data, id: req.id });
 
-        if (isIOS() && 'webkit' in window) {  // Require WKWebView
+        if (_isIOS() && 'webkit' in window) {  // Require WKWebView
             setTimeout(function () {
                 window.webkit.messageHandlers.kamomeSend.postMessage(json);
             }, 0);
         }
-        else if (isAndroid() && 'kamomeAndroid' in window) {
+        else if (_isAndroid() && 'kamomeAndroid' in window) {
             setTimeout(function () {
                 window.kamomeAndroid.kamomeSend(json);
             }, 0);
         }
         else {
-            if (req.name in webHandlerDict) {
+            if (req.name in _webHandlerDict) {
                 setTimeout(function () {
-                    var resolve = (function (name) {
+                    var resolve = (function (name, id) {
                         return function (data) {
-                            onComplete(name, data ? JSON.stringify(data) : null);
+                            onComplete(data ? JSON.stringify(data) : null, id);
                         }
-                    })(req.name);
+                    })(req.name, req.id);
 
-                    var reject = (function (name) {
+                    var reject = (function (id) {
                         return function (errorMessage) {
-                            onError(name, errorMessage);
+                            onError(errorMessage, id);
                         }
-                    })(req.name);
+                    })(req.id);
 
-                    webHandlerDict[req.name](req.data, resolve, reject);
+                    _webHandlerDict[req.name](req.data, resolve, reject);
                 }, 0);
             }
         }
 
         if (req.timeout > 0) {
-            _clearTimer();
+            setTimeout((function (id) {
+                return function () {
+                    _isRequesting = false;
 
-            requestTimer = setTimeout(function () {
-                _clearTimer();
-
-                isRequesting = false;
-
-                var req = requests.shift();
-
-                if ('callback' in req) {
-                    req.callback(null, Error.requestTimeout + ':' + req.name);
-                }
-                else if ('reject' in req) {
-                    req.reject(Error.requestTimeout + ':' + req.name);
-                }
-
-                if (requests.length > 0) {
-                    _send();
-                }
-            }, req.timeout);
+                    if (_requests.length > 0 && _requests[0].id === id) {
+                        _shiftRequest(function (req) {
+                            if ('callback' in req) {
+                                req.callback(null, Error.requestTimeout + ':' + req.name);
+                            }
+                            else if ('reject' in req) {
+                                req.reject(Error.requestTimeout + ':' + req.name);
+                            }
+                        });
+                    }
+                };
+            })(req.id), req.timeout);
         }
     };
 
     /**
      * @private
      */
-    var _clearTimer = function () {
-        if (requestTimer !== null) {
-            clearTimeout(requestTimer);
-            requestTimer = null;
-        }
+    var _shiftRequest = function (didShift) {
+        didShift(_requests.shift());
+        _send();
     };
 
-    var onComplete = function (name, json, nullObj) {
-        _clearTimer();
+    /**
+     * Tells whether the OS is Android.
+     *
+     * @return {boolean} Returns true if the OS is Android
+     * @private
+     */
+    var _isAndroid = function () {
+        return (navigator.userAgent.toLowerCase().indexOf('android') > 0);
+    };
 
-        isRequesting = false;
+    /**
+     * Tells whether the OS is iOS.
+     *
+     * @return {boolean} Returns true if the OS is iOS
+     * @private
+     */
+    var _isIOS = function () {
+        var ua = navigator.userAgent.toLowerCase();
+        return (ua.indexOf('iphone') > 0 || ua.indexOf('ipad') > 0 || ua.indexOf('ipod') > 0);
+    };
 
-        var data = json ? JSON.parse(json) : null;
-        var req = requests.shift();
+    /**
+     * Tells whether an argument is Object.
+     *
+     * @param {*} obj
+     * @return {boolean} true if an argument is Object
+     * @private
+     */
+    var _isObj = function (obj) {
+        return ({}).toString.call(obj) === '[object Object]';
+    };
 
-        if (name === req.name) {
-            if ('callback' in req) {
-                req.callback(data, null);
+    /**
+     * Tells whether an argument is Function.
+     *
+     * @param {*} obj
+     * @return {boolean} true if an argument is Function
+     * @private
+     */
+    var _isFun = function (obj) {
+        return ({}).toString.call(obj) === '[object Function]';
+    };
+
+    /**
+     * @return {string} Returns a UUID string
+     * @private
+     */
+    var _uuid = function () {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0;
+            var v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        }).toLowerCase();
+    };
+
+    /**
+     * @private
+     */
+    var _merge = function (obj1, obj2) {
+        obj2 = obj2 || {};
+
+        for (var key in obj2) {
+            if (obj2[key] === null || obj2[key] === Undefined) {
+                obj1[key] = null;
             }
-            else if ('resolve' in req) {
-                req.resolve(data);
+            else if (_isObj(obj2[key])) {
+                obj1[key] = _merge(obj1[key] || {}, obj2[key]);
+            }
+            else {
+                obj1[key] = obj2[key];
             }
         }
 
-        if (requests.length > 0) {
-            _send();
+        return obj1;
+    };
+
+    var onComplete = function (json, requestId) {
+        _isRequesting = false;
+
+        if (_requests.length > 0 && _requests[0].id === requestId) {
+            var data = json ? JSON.parse(json) : null;
+
+            _shiftRequest(function (req) {
+                if ('callback' in req) {
+                    req.callback(data, null);
+                }
+                else if ('resolve' in req) {
+                    req.resolve(data);
+                }
+            });
         }
 
         return null;
     };
 
-    var onError = function (name, errorMessage) {
-        _clearTimer();
+    var onError = function (errorMessage, requestId) {
+        _isRequesting = false;
 
-        isRequesting = false;
+        if (_requests.length > 0 && _requests[0].id === requestId) {
+            var msg = errorMessage ? ':' + errorMessage : '';
 
-        var msg = errorMessage ? ':' + errorMessage : '';
-        var req = requests.shift();
-
-        if (name === req.name) {
-            if ('callback' in req) {
-                req.callback(null, Error.rejected + ':' + req.name + msg);
-            }
-            else if ('reject' in req) {
-                req.reject(Error.rejected + ':' + req.name + msg);
-            }
-        }
-
-        if (requests.length > 0) {
-            _send();
+            _shiftRequest(function (req) {
+                if ('callback' in req) {
+                    req.callback(null, Error.rejected + ':' + req.name + msg);
+                }
+                else if ('reject' in req) {
+                    req.reject(Error.rejected + ':' + req.name + msg);
+                }
+            });
         }
 
         return null;
     };
 
     var onReceive = function (name, json, callbackId) {
-        if (name in receiverDict) {
-            var result = receiverDict[name](json ? JSON.parse(json) : null);
+        if (name in _receiverDict) {
+            var result = _receiverDict[name](json ? JSON.parse(json) : null);
 
-            if (isAndroid()) {
+            if (_isAndroid()) {
                 return { callbackId: callbackId, result: result };
             }
             else {
@@ -299,7 +350,7 @@ window.Kamome = (function (Undefined) {
             }
         }
 
-        if (isAndroid()) {
+        if (_isAndroid()) {
             return { callbackId: callbackId, result: null };
         }
         else {
@@ -323,11 +374,11 @@ window.Kamome = (function (Undefined) {
      * @return {*}
      */
     var addWebHandler = function (name, handler) {
-        webHandlerDict[name] = handler;
+        _webHandlerDict[name] = handler;
         return this;
     };
 
-    return {
+    var _module = {
         Error:                    Error,
         setDefaultRequestTimeout: setDefaultRequestTimeout,
         addReceiver:              addReceiver,
@@ -339,5 +390,28 @@ window.Kamome = (function (Undefined) {
         onReceive:                onReceive,
         addWebHandler:            addWebHandler,
     };
+
+    _module.extension = {
+        /**
+         * Adds a command method with default value to Kamome object.
+         *
+         * @param {string} commandName A command name
+         * @param {Object|null} defaultValue Default value of the command
+         * @param {string|null} methodName A method name of the command if it is given
+         * @return {*}
+         */
+        addCommand: function (commandName, defaultValue, methodName) {
+            _module[methodName || commandName] = (function (name, defaultValue) {
+                return function (dataOrFunc, callback, timeout) {
+                    var value = _isFun(dataOrFunc) ? dataOrFunc(_merge({}, defaultValue)) : _merge(_merge({}, defaultValue), dataOrFunc);
+                    return send(name, value, callback, timeout);
+                }
+            })(commandName, defaultValue);
+
+            return this;
+        }
+    };
+
+    return _module;
 })();
-// export default Kamome = window.Kamome;
+// export const Kamome = window.Kamome;

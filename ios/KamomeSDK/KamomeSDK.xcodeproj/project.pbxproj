@@ -22,7 +22,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		5E4EC3F120F4232700C60D7A /* KMMUserContentController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EC3E520F4232600C60D7A /* KMMUserContentController.m */; };
 		5E4EC3F220F4232700C60D7A /* KMMCompletion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EC3E720F4232600C60D7A /* KMMCompletion.m */; };
 		5E4EC3F320F4232700C60D7A /* KMMMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EC3E820F4232600C60D7A /* KMMMessenger.m */; };
 		5E4EC3F420F4232700C60D7A /* KMMException.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EC3EA20F4232600C60D7A /* KMMException.m */; };
@@ -55,7 +54,6 @@
 /* Begin PBXFileReference section */
 		5E4EC3D220F4223700C60D7A /* libKamomeSDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKamomeSDK.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E4EC3E420F4232600C60D7A /* KMMCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMMCompletion.h; sourceTree = "<group>"; };
-		5E4EC3E520F4232600C60D7A /* KMMUserContentController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KMMUserContentController.m; sourceTree = "<group>"; };
 		5E4EC3E620F4232600C60D7A /* KMMCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMMCommand.h; sourceTree = "<group>"; };
 		5E4EC3E720F4232600C60D7A /* KMMCompletion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KMMCompletion.m; sourceTree = "<group>"; };
 		5E4EC3E820F4232600C60D7A /* KMMMessenger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KMMMessenger.m; sourceTree = "<group>"; };
@@ -64,7 +62,6 @@
 		5E4EC3EB20F4232600C60D7A /* KMMException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMMException.h; sourceTree = "<group>"; };
 		5E4EC3EC20F4232700C60D7A /* KMMKamome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMMKamome.h; sourceTree = "<group>"; };
 		5E4EC3ED20F4232700C60D7A /* KMMCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KMMCommand.m; sourceTree = "<group>"; };
-		5E4EC3EE20F4232700C60D7A /* KMMUserContentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMMUserContentController.h; sourceTree = "<group>"; };
 		5E4EC3EF20F4232700C60D7A /* KMMKamome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KMMKamome.m; sourceTree = "<group>"; };
 		5E4EC3F020F4232700C60D7A /* KMMMessenger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMMMessenger.h; sourceTree = "<group>"; };
 		5E4EC40320F477BA00C60D7A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -123,7 +120,6 @@
 				5E4EC3E420F4232600C60D7A /* KMMCompletion.h */,
 				5E4EC3EB20F4232600C60D7A /* KMMException.h */,
 				5E4EC3EC20F4232700C60D7A /* KMMKamome.h */,
-				5E4EC3EE20F4232700C60D7A /* KMMUserContentController.h */,
 			);
 			path = Headers;
 			sourceTree = "<group>";
@@ -136,7 +132,6 @@
 				5E4EC3E720F4232600C60D7A /* KMMCompletion.m */,
 				5E4EC3EA20F4232600C60D7A /* KMMException.m */,
 				5E4EC3EF20F4232700C60D7A /* KMMKamome.m */,
-				5E4EC3E520F4232600C60D7A /* KMMUserContentController.m */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -226,7 +221,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E4EC3F120F4232700C60D7A /* KMMUserContentController.m in Sources */,
 				5E4EC3F420F4232700C60D7A /* KMMException.m in Sources */,
 				5E4EC3F220F4232700C60D7A /* KMMCompletion.m in Sources */,
 				5E4EC3F320F4232700C60D7A /* KMMMessenger.m in Sources */,

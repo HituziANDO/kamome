@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, getter=isCompleted) BOOL completed;
 
-- (instancetype)initWithWebView:(id)webView name:(NSString *)name;
+- (instancetype)initWithWebView:(id)webView requestId:(NSString *)requestId;
 
 - (void)complete DEPRECATED_MSG_ATTRIBUTE("Uses `resolve` method.");
 

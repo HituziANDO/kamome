@@ -56,7 +56,7 @@
 
 - (void)completeMessageWithWebView:(id)webView
                               data:(nullable id)data
-                           forName:(NSString *)name {
+                      forRequestId:(NSString *)requestId {
 
     if (data) {
         if (![NSJSONSerialization isValidJSONObject:data]) {
@@ -67,25 +67,25 @@
                                                                                           options:0
                                                                                             error:nil]
                                                  encoding:NSUTF8StringEncoding];
-        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onComplete('%@', '%@', null)", name, params]
+        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onComplete('%@', '%@')", params, requestId]
                 withWebView:webView];
     }
     else {
-        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onComplete('%@', null, null)", name]
+        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onComplete(null, '%@')", requestId]
                 withWebView:webView];
     }
 }
 
 - (void)failMessageWithWebView:(id)webView
                          error:(nullable NSString *)error
-                       forName:(NSString *)name {
+                  forRequestId:(NSString *)requestId {
 
     if (error) {
-        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onError('%@', '%@')", name, error]
+        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onError('%@', '%@')", error, requestId]
                 withWebView:webView];
     }
     else {
-        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onError('%@', null)", name]
+        [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onError(null, '%@')", requestId]
                 withWebView:webView];
     }
 }
@@ -140,8 +140,9 @@
 
             [((WKWebView *) webView) evaluateJavaScript:js completionHandler:^(id value, NSError *error) {
                 if (error) {
-                    @throw [KMMException exceptionWithReason:[NSString stringWithFormat:@"%@ %@", error.localizedDescription, error.userInfo]
-                                                    userInfo:nil];
+                    NSLog(@"[Kamome] ERROR: %@ %@", error.localizedDescription, error.userInfo);
+
+                    return;
                 }
 
                 if (value == [NSNull null] || ![value isKindOfClass:[NSString class]]) {
@@ -174,8 +175,11 @@
             // MessageCallback not supported.
             [((UIWebView *) webView) stringByEvaluatingJavaScriptFromString:js];
         }
+        else if (webView == nil) {
+            @throw [KMMException exceptionWithReason:@"The webView is nil." userInfo:nil];
+        }
         else {
-            @throw [KMMException exceptionWithReason:@"webView is not WKWebView or UIWebView instance." userInfo:nil];
+            @throw [KMMException exceptionWithReason:@"The webView is not WKWebView or UIWebView instance." userInfo:nil];
         }
     });
 }

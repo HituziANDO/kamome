@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 #import "KMMKamome.h"
-#import "KMMUserContentController.h"
 #import "KMMCommand.h"
 #import "KMMCompletion.h"
 #import "KMMMessenger.h"
@@ -32,7 +31,7 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 @interface KMMKamome ()
 
 @property (nonatomic, weak) id webView;
-@property (nonatomic) KMMUserContentController *userContentController;
+@property (nonatomic) WKUserContentController *contentController;
 @property (nonatomic, copy) NSMutableArray<KMMCommand *> *commands;
 
 @end
@@ -43,8 +42,8 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     self = [super init];
 
     if (self) {
-        _userContentController = [KMMUserContentController new];
-        [_userContentController addScriptMessageHandler:self name:KMMScriptMessageHandlerName];
+        _contentController = [WKUserContentController new];
+        [_contentController addScriptMessageHandler:self name:KMMScriptMessageHandlerName];
         _commands = [NSMutableArray new];
     }
 
@@ -53,7 +52,8 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 
 #pragma mark - WKScriptMessageHandler
 
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
+- (void)userContentController:(WKUserContentController *)userContentController
+      didReceiveScriptMessage:(WKScriptMessage *)message {
     if (![message.name isEqualToString:KMMScriptMessageHandlerName] || [message.body length] <= 0) {
         return;
     }
@@ -70,7 +70,7 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
         }
     }
 
-    KMMCompletion *completion = [[KMMCompletion alloc] initWithWebView:self.webView name:data[@"name"]];
+    KMMCompletion *completion = [[KMMCompletion alloc] initWithWebView:self.webView requestId:data[@"id"]];
 
     if (command) {
         NSDictionary *params = data[@"data"] != [NSNull null] ? data[@"data"] : nil;
@@ -83,19 +83,20 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 
 #pragma mark - public method
 
-+ (instancetype)createInstanceAndWebView:(WKWebView **)webView withFrame:(CGRect)frame {
++ (instancetype)createInstanceAndWebView:(id *)webView class:(Class)webViewClass frame:(CGRect)frame {
     KMMKamome *kamome = [KMMKamome new];
-
-    WKUserContentController *userContentController = [WKUserContentController new];
-    [userContentController addScriptMessageHandler:kamome name:KMMScriptMessageHandlerName];
-
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration new];
-    configuration.userContentController = userContentController;
-
-    *webView = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
+    WKWebViewConfiguration *config = [WKWebViewConfiguration new];
+    config.userContentController = kamome.contentController;
+    SEL sel = NSSelectorFromString(@"initWithFrame:configuration:");
+    IMP method = [webViewClass instanceMethodForSelector:sel];
+    id (*func)(id, SEL, CGRect, WKWebViewConfiguration *) = (void *) method;
+    *webView = func([webViewClass alloc], sel, frame, config);
     kamome.webView = *webView;
-
     return kamome;
+}
+
++ (instancetype)createInstanceAndWebView:(WKWebView **)webView withFrame:(CGRect)frame {
+    return [self createInstanceAndWebView:webView class:[WKWebView class] frame:frame];
 }
 
 - (void)setWebView:(id)webView {
@@ -114,7 +115,9 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     [self sendMessageWithDictionary:nil block:block forName:name];
 }
 
-- (void)sendMessageWithDictionary:(nullable NSDictionary *)data block:(nullable void (^)(id _Nullable))block forName:(NSString *)name {
+- (void)sendMessageWithDictionary:(nullable NSDictionary *)data
+                            block:(nullable void (^)(id _Nullable))block
+                          forName:(NSString *)name {
     if (block) {
         [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
                                                           data:data
@@ -131,7 +134,9 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     }
 }
 
-- (void)sendMessageWithArray:(nullable NSArray *)data block:(nullable void (^)(id _Nullable))block forName:(NSString *)name {
+- (void)sendMessageWithArray:(nullable NSArray *)data
+                       block:(nullable void (^)(id _Nullable))block
+                     forName:(NSString *)name {
     if (block) {
         [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
                                                           data:data

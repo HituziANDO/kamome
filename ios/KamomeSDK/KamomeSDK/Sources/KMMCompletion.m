@@ -29,19 +29,19 @@
 @interface KMMCompletion ()
 
 @property (nonatomic, weak) id webView;
-@property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString *requestId;
 @property (nonatomic) BOOL completed;
 
 @end
 
 @implementation KMMCompletion
 
-- (instancetype)initWithWebView:(id)webView name:(NSString *)name {
+- (instancetype)initWithWebView:(id)webView requestId:(NSString *)requestId {
     self = [super init];
 
     if (self) {
         _webView = webView;
-        _name = name;
+        _requestId = requestId;
     }
 
     return self;
@@ -70,7 +70,7 @@
 
     self.completed = YES;
 
-    [[KMMMessenger sharedMessenger] completeMessageWithWebView:self.webView data:data forName:self.name];
+    [[KMMMessenger sharedMessenger] completeMessageWithWebView:self.webView data:data forRequestId:self.requestId];
 }
 
 - (void)resolveWithArray:(nullable NSArray *)data {
@@ -80,7 +80,7 @@
 
     self.completed = YES;
 
-    [[KMMMessenger sharedMessenger] completeMessageWithWebView:self.webView data:data forName:self.name];
+    [[KMMMessenger sharedMessenger] completeMessageWithWebView:self.webView data:data forRequestId:self.requestId];
 }
 
 - (void)reject {
@@ -94,7 +94,7 @@
 
     self.completed = YES;
 
-    [[KMMMessenger sharedMessenger] failMessageWithWebView:self.webView error:errorMessage forName:self.name];
+    [[KMMMessenger sharedMessenger] failMessageWithWebView:self.webView error:errorMessage forRequestId:self.requestId];
 }
 
 @end

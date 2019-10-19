@@ -25,7 +25,7 @@
 
     // Creates a kamome instance with default webView.
     WKWebView *webView = nil;
-    self.kamome = [KMMKamome createInstanceAndWebView:&webView withFrame:self.view.frame];
+    self.kamome = [KMMKamome createInstanceAndWebView:&webView class:[WKWebView class] frame:self.view.frame];
     self.webView = webView;
 
     // Creates a kamome instance for a customized webView.

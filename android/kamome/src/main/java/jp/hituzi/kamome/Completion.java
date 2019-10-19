@@ -11,12 +11,12 @@ import jp.hituzi.kamome.internal.Messenger;
 public final class Completion {
 
     private final WebView webView;
-    private final String name;
+    private final String requestId;
     private boolean completed;
 
-    public Completion(WebView webView, String name) {
+    Completion(WebView webView, String requestId) {
         this.webView = webView;
-        this.name = name;
+        this.requestId = requestId;
     }
 
     public boolean isCompleted() {
@@ -49,7 +49,7 @@ public final class Completion {
 
         completed = true;
 
-        Messenger.completeMessage(webView, name, data);
+        Messenger.completeMessage(webView, data, requestId);
     }
 
     public void resolve(@Nullable JSONArray data) {
@@ -59,7 +59,7 @@ public final class Completion {
 
         completed = true;
 
-        Messenger.completeMessage(webView, name, data);
+        Messenger.completeMessage(webView, data, requestId);
     }
 
     public void reject() {
@@ -73,6 +73,6 @@ public final class Completion {
 
         completed = true;
 
-        Messenger.failMessage(webView, name, errorMessage);
+        Messenger.failMessage(webView, errorMessage, requestId);
     }
 }

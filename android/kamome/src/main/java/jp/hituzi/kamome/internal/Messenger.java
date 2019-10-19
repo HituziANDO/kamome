@@ -22,19 +22,19 @@ public final class Messenger {
     private static final Object LOCK_OBJECT = new Object();
     private static final HashMap<String, IMessageCallback> MESSAGE_CALLBACKS = new HashMap<>();
 
-    public static void completeMessage(final WebView webView, final String name, @Nullable final Object data) {
+    public static void completeMessage(final WebView webView, @Nullable final Object data, String requestId) {
         if (data != null) {
-            runJavaScript(String.format("window.Kamome.onComplete('%s', '%s', null)", name, data.toString()), webView);
+            runJavaScript(String.format("window.Kamome.onComplete('%s', '%s')", data.toString(), requestId), webView);
         } else {
-            runJavaScript(String.format("window.Kamome.onComplete('%s', null, null)", name), webView);
+            runJavaScript(String.format("window.Kamome.onComplete(null, '%s')", requestId), webView);
         }
     }
 
-    public static void failMessage(final WebView webView, final String name, @Nullable final String error) {
+    public static void failMessage(final WebView webView, @Nullable final String error, String requestId) {
         if (error != null) {
-            runJavaScript(String.format("window.Kamome.onError('%s', '%s')", name, error), webView);
+            runJavaScript(String.format("window.Kamome.onError('%s', '%s')", error, requestId), webView);
         } else {
-            runJavaScript(String.format("window.Kamome.onError('%s', null)", name), webView);
+            runJavaScript(String.format("window.Kamome.onError(null, '%s')", requestId), webView);
         }
     }
 
