@@ -10,13 +10,13 @@ Kamome provides common JavaScript interface for iOS and Android.
 
 1. Downloads latest [kamome SDK](https://github.com/HituziANDO/kamome/releases)
 
-1. Imports kamome.min.js
+1. Imports kamome.js
 	
 	```html
-	<script src="kamome.min.js"></script>
+	<script src="kamome.js"></script>
 	```
 	
-	Or copies the code in [kamome[.min].js](https://github.com/HituziANDO/kamome/blob/master/js/src/kamome.js) to your JavaScript.
+	Or copies the code in [kamome.js](https://github.com/HituziANDO/kamome/blob/master/js/src/kamome.js) to your JavaScript.
 
 1. Imports KamomeSDK.framework to your iOS app
 	
@@ -32,7 +32,20 @@ it, simply add the following line to your Podfile:
 	### Manual Installation
 	
 	1. Drags & Drops KamomeSDK.framework into your Xcode project
-	1. Writes `#import <KamomeSDK/KamomeSDK.h>` in your source code
+	
+1. Writes the import statement in your source code
+	
+	**Swift**
+	
+	```swift
+	import KamomeSDK
+	```
+	
+	**Objective-C**
+	
+	```objc
+	#import <KamomeSDK/KamomeSDK.h>
+	```
 
 1. Imports kamome-x.x.x.jar to your Android app
 	
@@ -56,7 +69,7 @@ it, simply add the following line to your Podfile:
 	```groovy
 	dependencies {
 		
-		implementation 'jp.hituzi:kamome:1.4.0'
+		implementation 'jp.hituzi:kamome:1.5.0'
 	}
 	```
 	
@@ -102,28 +115,28 @@ it, simply add the following line to your Podfile:
 
 	```swift
 	// Properties
-	private var webView: WKWebView?
-	private var kamome:  KMMKamome?
+	private var webView: WKWebView!
+	private var kamome:  KMMKamome!
 	```
 	
 	```swift
 	// Creates a kamome instance with default webView
-	var webView: WKWebView? = nil
-	kamome = KMMKamome.createInstanceAndWebView(&webView, withFrame: view.frame)
-	self.webView = webView
+	var webView: AnyObject!
+   kamome = KMMKamome.create(webView: &webView, class: WKWebView.self, frame: view.frame)
+   self.webView = webView as? WKWebView
 	
 	// Registers `echo` command
-	kamome?.add(KMMCommand(name: "echo") { data, completion in
-	           // Receives `echo` command
-	           
-	           // Then sends resolved result to the JavaScript callback function
-	           completion.resolve(with: ["message": data!["message"]!])
-	           // Or sends rejected result if failed
-	           //completion.reject(with: "Error message")
-	       })
+	kamome.add(KMMCommand(name: "echo") { data, completion in
+	          // Receives `echo` command
+	          
+	          // Then sends resolved result to the JavaScript callback function
+	          completion.resolve(with: ["message": data!["message"]!])
+	          // Or sends rejected result if failed
+	          //completion.reject(with: "Error message")
+	      })
 	
 	// Adds the webView to a ViewController's view
-	view.addSubview(self.webView!)
+	view.addSubview(self.webView)
 	```
 	
 	**Objective-C**
@@ -136,7 +149,7 @@ it, simply add the following line to your Podfile:
 	```objc
 	// Creates a kamome instance with default webView
     WKWebView *webView = nil;
-    self.kamome = [KMMKamome createInstanceAndWebView:&webView withFrame:self.view.frame];
+    self.kamome = [KMMKamome createInstanceAndWebView:&webView class:[WKWebView class] frame:self.view.frame];
     self.webView = webView;
 	
 	// Registers `echo` command
@@ -200,7 +213,7 @@ it, simply add the following line to your Podfile:
 	
 	```swift
 	// Sends data to JavaScript
-	kamome?.sendMessage(with: ["greeting": "Hello!"], block: { result in
+	kamome.sendMessage(with: ["greeting": "Hello!"], block: { result in
 	    guard let result = result else { return }
 	    print("result: \(result)")    // => 'World!'
 	}, forName: "greeting")
