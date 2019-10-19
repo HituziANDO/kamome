@@ -27,22 +27,34 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class KMMCommand;
-@class KMMUserContentController;
 
-UIKIT_EXTERN NSString *const KMMScriptMessageHandlerName;
+FOUNDATION_EXTERN NSString *const KMMScriptMessageHandlerName;
 
 @interface KMMKamome : NSObject <WKScriptMessageHandler>
 
-@property (nonatomic, readonly) KMMUserContentController *userContentController DEPRECATED_ATTRIBUTE;
+@property (nonatomic, readonly) WKUserContentController *contentController;
 
 /**
- * Creates a KMMKamome instance and a default WKWebView instance initialized by Kamome.
-
- * @param webView Returns a WKWebView instance created by Kamome.
+ * Creates a KMMKamome object and default webView object of specified class initialized by Kamome.
+ *
+ * @param webView Returns a webView object created by Kamome.
+ * @param webViewClass A webView's class.
  * @param frame A webView's frame.
- * @return Returns a KMMKamome instance.
+ * @return A KMMKamome object.
  */
-+ (instancetype)createInstanceAndWebView:(WKWebView **)webView withFrame:(CGRect)frame;
++ (instancetype)createInstanceAndWebView:(id *)webView
+                                   class:(Class)webViewClass
+                                   frame:(CGRect)frame NS_SWIFT_NAME(create(webView:class:frame:));
+
+/**
+ * Creates a KMMKamome object and default WKWebView object initialized by Kamome.
+ *
+ * @param webView Returns a WKWebView object created by Kamome.
+ * @param frame A webView's frame.
+ * @return A KMMKamome object.
+ */
++ (instancetype)createInstanceAndWebView:(WKWebView **)webView withFrame:(CGRect)frame
+DEPRECATED_MSG_ATTRIBUTE("Use `createInstanceAndWebView:class:frame:` instead of this.");
 
 - (void)setWebView:(id)webView;
 
