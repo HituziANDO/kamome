@@ -25,15 +25,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class WKWebView;
+
 @interface KMMCompletion : NSObject
 
 @property (nonatomic, readonly, getter=isCompleted) BOOL completed;
 
-- (instancetype)initWithWebView:(id)webView requestId:(NSString *)requestId;
+- (instancetype)initWithWebView:(__kindof WKWebView *)webView requestId:(NSString *)requestId;
 
 - (void)complete DEPRECATED_MSG_ATTRIBUTE("Uses `resolve` method.");
 
-- (void)completeWithDictionary:(nullable NSDictionary *)data DEPRECATED_MSG_ATTRIBUTE("Uses `resolveWithDictionary:` method.");
+- (void)completeWithDictionary:(nullable NSDictionary *)data DEPRECATED_MSG_ATTRIBUTE(
+    "Uses `resolveWithDictionary:` method.");
 
 - (void)completeWithArray:(nullable NSArray *)data DEPRECATED_MSG_ATTRIBUTE("Uses `resolveWithArray:` method.");
 /**

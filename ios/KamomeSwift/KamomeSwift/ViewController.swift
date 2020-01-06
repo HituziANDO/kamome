@@ -57,9 +57,9 @@ class ViewController: UIViewController {
 
     @IBAction func sendButtonPressed(_ sender: Any) {
         // Send data to JavaScript.
-        kamome.sendMessage(with: ["greeting": "Hello!"], block: { result in
+        kamome.sendMessage(dictionary: ["greeting": "Hello!"], name: "greeting") { result in
             guard let result = result else { return }
             print("result: \(result)")
-        }, forName: "greeting")
+        }
     }
 }

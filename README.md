@@ -213,21 +213,19 @@ it, simply add the following line to your Podfile:
 	
 	```swift
 	// Sends data to JavaScript
-	kamome.sendMessage(with: ["greeting": "Hello!"], block: { result in
-	    guard let result = result else { return }
-	    print("result: \(result)")    // => 'World!'
-	}, forName: "greeting")
+	kamome.sendMessage(dictionary: ["greeting": "Hello!"], name: "greeting") { result in
+       guard let result = result else { return }
+       print("result: \(result)")
+   }
 	```
 	
 	**Objective-C**
 	
 	```objc
 	// Sends data to JavaScript
-	[self.kamome sendMessageWithDictionary:@{ @"greeting": @"Hello!" }
-                                     block:^(id result) {
-                                         NSLog(@"result: %@", result);	// => 'World!'
-                                     }
-                                   forName:@"greeting"];
+	[self.kamome sendMessageWithDictionary:@{ @"greeting": @"Hello!" } forName:@"greeting" block:^(id  _Nullable result) {
+        NSLog(@"result: %@", result);
+    }];
 	```
 	
 	#### Android

@@ -30,7 +30,7 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 
 @interface KMMKamome ()
 
-@property (nonatomic, weak) id webView;
+@property (nonatomic, weak) WKWebView *webView;
 @property (nonatomic) WKUserContentController *contentController;
 @property (nonatomic, copy) NSMutableArray<KMMCommand *> *commands;
 
@@ -95,10 +95,6 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     return kamome;
 }
 
-+ (instancetype)createInstanceAndWebView:(WKWebView **)webView withFrame:(CGRect)frame {
-    return [self createInstanceAndWebView:webView class:[WKWebView class] frame:frame];
-}
-
 - (void)setWebView:(id)webView {
     _webView = webView;
 }
@@ -112,12 +108,31 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 }
 
 - (void)sendMessageWithBlock:(nullable void (^)(id _Nullable))block forName:(NSString *)name {
-    [self sendMessageWithDictionary:nil block:block forName:name];
+    [self sendMessageForName:name block:block];
 }
 
 - (void)sendMessageWithDictionary:(nullable NSDictionary *)data
                             block:(nullable void (^)(id _Nullable))block
                           forName:(NSString *)name {
+
+    [self sendMessageWithDictionary:data forName:name block:block];
+}
+
+- (void)sendMessageWithArray:(nullable NSArray *)data
+                       block:(nullable void (^)(id _Nullable))block
+                     forName:(NSString *)name {
+
+    [self sendMessageWithArray:data forName:name block:block];
+}
+
+- (void)sendMessageForName:(NSString *)name block:(nullable void (^)(id _Nullable result))block {
+    [self sendMessageWithDictionary:nil forName:name block:block];
+}
+
+- (void)sendMessageWithDictionary:(nullable NSDictionary *)data
+                          forName:(NSString *)name
+                            block:(nullable void (^)(id _Nullable result))block {
+
     if (block) {
         [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
                                                           data:data
@@ -135,8 +150,9 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 }
 
 - (void)sendMessageWithArray:(nullable NSArray *)data
-                       block:(nullable void (^)(id _Nullable))block
-                     forName:(NSString *)name {
+                     forName:(NSString *)name
+                       block:(nullable void (^)(id _Nullable result))block {
+
     if (block) {
         [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
                                                           data:data

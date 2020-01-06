@@ -46,29 +46,33 @@ FOUNDATION_EXTERN NSString *const KMMScriptMessageHandlerName;
                                    class:(Class)webViewClass
                                    frame:(CGRect)frame NS_SWIFT_NAME(create(webView:class:frame:));
 
-/**
- * Creates a KMMKamome object and default WKWebView object initialized by Kamome.
- *
- * @param webView Returns a WKWebView object created by Kamome.
- * @param frame A webView's frame.
- * @return A KMMKamome object.
- */
-+ (instancetype)createInstanceAndWebView:(WKWebView **)webView withFrame:(CGRect)frame
-DEPRECATED_MSG_ATTRIBUTE("Use `createInstanceAndWebView:class:frame:` instead of this.");
-
 - (void)setWebView:(id)webView;
 
 - (instancetype)addCommand:(KMMCommand *)command;
 
-- (void)sendMessageWithBlock:(nullable void (^)(id _Nullable result))block forName:(NSString *)name;
+- (void)sendMessageWithBlock:(nullable void (^)(id _Nullable result))block
+                     forName:(NSString *)name DEPRECATED_MSG_ATTRIBUTE("Uses `sendMessageForName:block:` method.");
 
 - (void)sendMessageWithDictionary:(nullable NSDictionary *)data
                             block:(nullable void (^)(id _Nullable result))block
-                          forName:(NSString *)name;
+                          forName:(NSString *)name DEPRECATED_MSG_ATTRIBUTE(
+    "Uses `sendMessageWithDictionary:forName:block:` method.");
 
 - (void)sendMessageWithArray:(nullable NSArray *)data
                        block:(nullable void (^)(id _Nullable result))block
-                     forName:(NSString *)name;
+                     forName:(NSString *)name DEPRECATED_MSG_ATTRIBUTE(
+    "Uses `sendMessageWithArray:forName:block:` method.");
+
+- (void)sendMessageForName:(NSString *)name
+                     block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(name:block:));
+
+- (void)sendMessageWithDictionary:(nullable NSDictionary *)data
+                          forName:(NSString *)name
+                            block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(dictionary:name:block:));
+
+- (void)sendMessageWithArray:(nullable NSArray *)data
+                     forName:(NSString *)name
+                       block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(array:name:block:));
 
 @end
 

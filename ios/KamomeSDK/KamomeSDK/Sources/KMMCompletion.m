@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-@import WebKit;
+#import <WebKit/WebKit.h>
 
 #import "KMMCompletion.h"
 #import "KMMMessenger.h"
 
 @interface KMMCompletion ()
 
-@property (nonatomic, weak) id webView;
+@property (nonatomic, weak) WKWebView *webView;
 @property (nonatomic, copy) NSString *requestId;
 @property (nonatomic) BOOL completed;
 
@@ -36,7 +36,7 @@
 
 @implementation KMMCompletion
 
-- (instancetype)initWithWebView:(id)webView requestId:(NSString *)requestId {
+- (instancetype)initWithWebView:(__kindof WKWebView *)webView requestId:(NSString *)requestId {
     self = [super init];
 
     if (self) {

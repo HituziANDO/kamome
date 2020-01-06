@@ -64,11 +64,9 @@
 
 - (IBAction)sendButtonPressed:(id)sender {
     // Send data to JavaScript.
-    [self.kamome sendMessageWithDictionary:@{ @"greeting": @"Hello!" }
-                                     block:^(id result) {
-                                         NSLog(@"result: %@", result);
-                                     }
-                                   forName:@"greeting"];
+    [self.kamome sendMessageWithDictionary:@{ @"greeting": @"Hello!" } forName:@"greeting" block:^(id  _Nullable result) {
+        NSLog(@"result: %@", result);
+    }];
 }
 
 @end
