@@ -30,7 +30,7 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 
 @interface KMMKamome ()
 
-@property (nonatomic, weak) WKWebView *webView;
+@property (nonatomic, weak) __kindof WKWebView *webView;
 @property (nonatomic) WKUserContentController *contentController;
 @property (nonatomic, copy) NSMutableArray<KMMCommand *> *commands;
 
@@ -83,7 +83,10 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 
 #pragma mark - public method
 
-+ (instancetype)createInstanceAndWebView:(id *)webView class:(Class)webViewClass frame:(CGRect)frame {
++ (instancetype)createInstanceAndWebView:(id _Nullable *_Nullable)webView
+                                   class:(Class)webViewClass
+                                   frame:(CGRect)frame {
+
     KMMKamome *kamome = [KMMKamome new];
     WKWebViewConfiguration *config = [WKWebViewConfiguration new];
     config.userContentController = kamome.contentController;
@@ -95,7 +98,7 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     return kamome;
 }
 
-- (void)setWebView:(id)webView {
+- (void)setWebView:(__kindof WKWebView *)webView {
     _webView = webView;
 }
 

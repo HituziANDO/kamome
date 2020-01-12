@@ -35,19 +35,26 @@ FOUNDATION_EXTERN NSString *const KMMScriptMessageHandlerName;
 @property (nonatomic, readonly) WKUserContentController *contentController;
 
 /**
- * Creates a KMMKamome object and default webView object of specified class initialized by Kamome.
+ * Creates a Kamome object and a webView object of specified class initialized by Kamome.
  *
  * @param webView Returns a webView object created by Kamome.
  * @param webViewClass A webView's class.
  * @param frame A webView's frame.
- * @return A KMMKamome object.
+ * @return A Kamome object.
  */
-+ (instancetype)createInstanceAndWebView:(id *)webView
++ (instancetype)createInstanceAndWebView:(id _Nullable *_Nullable)webView
                                    class:(Class)webViewClass
                                    frame:(CGRect)frame NS_SWIFT_NAME(create(webView:class:frame:));
-
-- (void)setWebView:(id)webView;
-
+/**
+ * Sets a webView using this Kamome object.
+ */
+- (void)setWebView:(__kindof WKWebView *)webView;
+/**
+ * Adds a command called by JavaScript code.
+ *
+ * @param command A command object.
+ * @return Self.
+ */
 - (instancetype)addCommand:(KMMCommand *)command;
 
 - (void)sendMessageWithBlock:(nullable void (^)(id _Nullable result))block
@@ -63,16 +70,34 @@ FOUNDATION_EXTERN NSString *const KMMScriptMessageHandlerName;
                      forName:(NSString *)name DEPRECATED_MSG_ATTRIBUTE(
     "Uses `sendMessageWithArray:forName:block:` method.");
 
+/**
+ * Sends a message to the JavaScript receiver.
+ *
+ * @param name A command name.
+ * @param block A callback.
+ */
 - (void)sendMessageForName:(NSString *)name
                      block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(name:block:));
-
+/**
+ * Sends a message with data as NSDictionary to the JavaScript receiver.
+ *
+ * @param data A data as NSDictionary.
+ * @param name A command name.
+ * @param block A callback.
+ */
 - (void)sendMessageWithDictionary:(nullable NSDictionary *)data
                           forName:(NSString *)name
-                            block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(dictionary:name:block:));
-
+                            block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(with:name:block:));
+/**
+ * Sends a message with data as NSArray to the JavaScript receiver.
+ *
+ * @param data A data as NSArray.
+ * @param name A command name.
+ * @param block A callback.
+ */
 - (void)sendMessageWithArray:(nullable NSArray *)data
                      forName:(NSString *)name
-                       block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(array:name:block:));
+                       block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(with:name:block:));
 
 @end
 

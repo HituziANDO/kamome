@@ -2,11 +2,11 @@
 //  AppDelegate.m
 //  Kamome
 //
-//  Created by Masaki Ando on 2018/07/05.
-//  Copyright © 2018年 Hituzi Ando. All rights reserved.
+//  Copyright (c) 2020 Hituzi Ando. All rights reserved.
 //
 
 #import "AppDelegate.h"
+#import "ViewController.h"
 
 @interface AppDelegate ()
 
@@ -16,7 +16,10 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    self.window.rootViewController = [ViewController new];
+    [self.window makeKeyAndVisible];
+
     return YES;
 }
 

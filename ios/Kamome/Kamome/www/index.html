@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
@@ -21,25 +21,30 @@
 
         .container {
             padding: 0 1rem;
+            text-align: center;
         }
 
         .btn {
-            border: 0;
             border-radius: 5px;
-            background-color: #3498db;
-            color: white;
+            border: solid 1px #3498db;
+            color: #3498db;
+            font-size: .9rem;
             font-weight: bold;
             letter-spacing: .05em;
             padding: .5rem 1rem;
+            width: 100%;
+            max-width: 320px;
             min-height: 44px;
         }
 
         .btn.warn {
-            background-color: #f1c40f !important;
+            border-color: #f1c40f !important;
+            color: #f1c40f !important;
         }
 
         .btn.error {
-            background-color: #e74c3c !important;
+            border-color: #e74c3c !important;
+            color: #e74c3c !important;
         }
 
         .mt-1 {
@@ -47,6 +52,7 @@
         }
 
         #message {
+            text-align: left;
             border: solid 1px gray;
             border-radius: 5px;
             font-size: .9rem;
@@ -60,19 +66,18 @@
     <h1>Kamome</h1>
     <div>
         <div>
-            <button id="echoButton1" class="btn">Echo (Callback)</button>
-            <button id="echoButton2" class="btn">Echo (Promise)</button>
-            <button id="echoButton3" class="btn">Echo</button>
+            <button id="echoButton1" class="btn">Send Data to Native (Callback)</button>
+            <button id="echoButton2" class="btn">Send Data to Native (Promise)</button>
         </div>
         <div class="mt-1">
-            <button id="getButton1" class="btn error">Get (Callback)</button>
-            <button id="getButton2" class="btn error">Get (Promise)</button>
+            <button id="echoButton3" class="btn error">Error from Native (Callback)</button>
+            <button id="echoButton4" class="btn error">Error from Native (Promise)</button>
         </div>
         <div class="mt-1">
             <button id="timeoutButton" class="btn warn">Timeout Sample</button>
             <button id="cancelButton" class="btn warn">Cancel</button>
         </div>
-        <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message:</div>
+        <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message</div>
         <div id="message"></div>
     </div>
 </section>
@@ -84,11 +89,6 @@
 
         // Sets default timeout in millisecond.
         Kamome.setDefaultRequestTimeout(15000);
-
-        // Adds a command method with default value to Kamome object.
-        Kamome.extension
-            .addCommand('echo', { message: 'Hello World!' })
-            .addCommand('get');
 
         document.getElementById('echoButton1').addEventListener('click', function () {
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }, function (data, error) {
@@ -111,20 +111,7 @@
         });
 
         document.getElementById('echoButton3').addEventListener('click', function () {
-            // Calls `echo` command method.
-            Kamome.echo(function (defaultValue) {
-                // Modifies sending data from default.
-                return { message: defaultValue.message + ' (' + (++count) + ')' };
-            }).then(function (data) {
-                document.getElementById('message').innerHTML += data.message + '<br>';
-            }).catch(function (error) {
-                // Not call
-                document.getElementById('message').innerHTML += error + '<br>';
-            });
-        });
-
-        document.getElementById('getButton1').addEventListener('click', function () {
-            Kamome.send('get', {}, function (data, error) {
+            Kamome.send('echoError', {}, function (data, error) {
                 if (data) {
                     // Not call
                     document.getElementById('message').innerHTML += data.message + '<br>';
@@ -134,9 +121,8 @@
             });
         });
 
-        document.getElementById('getButton2').addEventListener('click', function () {
-            // Calls `get` command method.
-            Kamome.get().then(function (data) {
+        document.getElementById('echoButton4').addEventListener('click', function () {
+            Kamome.send('echoError').then(function (data) {
                 // Not call
                 document.getElementById('message').innerHTML += data.message + '<br>';
             }).catch(function (error) {
@@ -145,7 +131,7 @@
         });
 
         document.getElementById('timeoutButton').addEventListener('click', function () {
-            Kamome.send('tooLong', null, null, 5000).then(function (data) {
+            Kamome.send('tooLong', null, null, 3000).then(function (data) {
                 // Not call
             }).catch(function (error) {
                 document.getElementById('message').innerHTML += error + '<br>';
@@ -159,7 +145,7 @@
         Kamome.addReceiver('greeting', function (data) {
             document.getElementById('message').innerHTML += data.greeting + '<br>';
 
-            return 'World!';
+            return 'OK!';
         });
     });
 </script>
