@@ -40,7 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @return A command object.
  */
 + (instancetype)commandWithName:(NSString *)name
-                        handler:(void (^)(NSDictionary *_Nullable data, KMMCompletion *completion))handler;
+                        handler:(void (^)(NSString *commandName,
+                                          NSDictionary *_Nullable data,
+                                          KMMCompletion *completion))handler;
 
 - (void)execute:(nullable NSDictionary *)data withCompletion:(KMMCompletion *)completion;
 

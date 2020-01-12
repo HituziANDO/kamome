@@ -49,15 +49,15 @@ class ViewController: UIViewController {
 //
 //        kamome.setWebView(self.webView)
 
-        kamome.add(KMMCommand(name: "echo") { data, completion in
+        kamome.add(KMMCommand(name: "echo") { commandName, data, completion in
                   // Success
                   completion.resolve(with: ["message": data!["message"]!])
               })
-              .add(KMMCommand(name: "echoError") { data, completion in
+              .add(KMMCommand(name: "echoError") { commandName, data, completion in
                   // Failure
                   completion.reject(with: "Echo Error!")
               })
-              .add(KMMCommand(name: "tooLong") { data, completion in
+              .add(KMMCommand(name: "tooLong") { commandName, data, completion in
                   // Too long process
                   Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { timer in
                       completion.resolve()

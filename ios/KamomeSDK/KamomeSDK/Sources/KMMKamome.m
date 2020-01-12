@@ -32,7 +32,7 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 
 @property (nonatomic, weak) __kindof WKWebView *webView;
 @property (nonatomic) WKUserContentController *contentController;
-@property (nonatomic, copy) NSMutableArray<KMMCommand *> *commands;
+@property (nonatomic, copy) NSMutableDictionary<NSString *, KMMCommand *> *commands;
 
 @end
 
@@ -44,7 +44,7 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     if (self) {
         _contentController = [WKUserContentController new];
         [_contentController addScriptMessageHandler:self name:KMMScriptMessageHandlerName];
-        _commands = [NSMutableArray new];
+        _commands = [NSMutableDictionary new];
     }
 
     return self;
@@ -61,15 +61,7 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     NSDictionary *data = [NSJSONSerialization JSONObjectWithData:[message.body dataUsingEncoding:NSUTF8StringEncoding]
                                                          options:NSJSONReadingAllowFragments
                                                            error:nil];
-    KMMCommand *command = nil;
-
-    for (KMMCommand *cmd in self.commands) {
-        if ([cmd.name isEqualToString:data[@"name"]]) {
-            command = cmd;
-            break;
-        }
-    }
-
+    KMMCommand *command = self.commands[data[@"name"]];
     KMMCompletion *completion = [[KMMCompletion alloc] initWithWebView:self.webView requestId:data[@"id"]];
 
     if (command) {
@@ -104,7 +96,7 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 
 - (instancetype)addCommand:(KMMCommand *)command {
     if (command) {
-        [self.commands addObject:command];
+        self.commands[command.name] = command;
     }
 
     return self;

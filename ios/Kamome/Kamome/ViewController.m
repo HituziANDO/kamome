@@ -40,19 +40,25 @@
 //    [self.kamome setWebView:self.webView];
 
     [self.kamome addCommand:[KMMCommand commandWithName:@"echo"
-                                                handler:^(NSDictionary *data, KMMCompletion *completion) {
+                                                handler:^(NSString *_Nonnull commandName,
+                                                          NSDictionary *_Nullable data,
+                                                          KMMCompletion *_Nonnull completion) {
                                                     // Success
                                                     [completion resolveWithDictionary:@{ @"message": data[@"message"] }];
                                                 }]];
 
     [self.kamome addCommand:[KMMCommand commandWithName:@"echoError"
-                                                handler:^(NSDictionary *data, KMMCompletion *completion) {
+                                                handler:^(NSString *_Nonnull commandName,
+                                                          NSDictionary *_Nullable data,
+                                                          KMMCompletion *_Nonnull completion) {
                                                     // Failure
                                                     [completion rejectWithErrorMessage:@"Echo Error!"];
                                                 }]];
 
     [self.kamome addCommand:[KMMCommand commandWithName:@"tooLong"
-                                                handler:^(NSDictionary *data, KMMCompletion *completion) {
+                                                handler:^(NSString *_Nonnull commandName,
+                                                          NSDictionary *_Nullable data,
+                                                          KMMCompletion *_Nonnull completion) {
                                                     // Too long process
                                                     [NSTimer scheduledTimerWithTimeInterval:30.0
                                                                                     repeats:NO
