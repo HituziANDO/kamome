@@ -24,9 +24,16 @@
 #import "KMMKamome.h"
 #import "KMMCommand.h"
 #import "KMMCompletion.h"
+#import "KMMLocalCompletion.h"
 #import "KMMMessenger.h"
 
 NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
+
+@interface KMMCommand ()
+
+- (void)execute:(nullable NSDictionary *)data withCompletion:(id <KMMCompleting>)completion;
+
+@end
 
 @interface KMMKamome ()
 
@@ -108,24 +115,6 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     }
 }
 
-- (void)sendMessageWithBlock:(nullable void (^)(id _Nullable))block forName:(NSString *)name {
-    [self sendMessageForName:name block:block];
-}
-
-- (void)sendMessageWithDictionary:(nullable NSDictionary *)data
-                            block:(nullable void (^)(id _Nullable))block
-                          forName:(NSString *)name {
-
-    [self sendMessageWithDictionary:data forName:name block:block];
-}
-
-- (void)sendMessageWithArray:(nullable NSArray *)data
-                       block:(nullable void (^)(id _Nullable))block
-                     forName:(NSString *)name {
-
-    [self sendMessageWithArray:data forName:name block:block];
-}
-
 - (void)sendMessageForName:(NSString *)name block:(nullable void (^)(id _Nullable result))block {
     [self sendMessageWithDictionary:nil forName:name block:block];
 }
@@ -167,6 +156,27 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
                                                          block:nil
                                                     callbackId:nil
                                                        forName:name];
+    }
+}
+
+- (void)executeCommand:(NSString *)name
+              callback:(nullable void (^)(id _Nullable result, NSString *_Nullable errorMessage))callback {
+
+    [self executeCommand:name withData:nil callback:callback];
+}
+
+- (void)executeCommand:(NSString *)name
+              withData:(nullable NSDictionary *)data
+              callback:(nullable void (^)(id _Nullable result, NSString *_Nullable errorMessage))callback {
+
+    KMMCommand *command = self.commands[name];
+    KMMLocalCompletion *completion = [[KMMLocalCompletion alloc] initWithCallback:callback];
+
+    if (command) {
+        [command execute:data withCompletion:completion];
+    }
+    else {
+        [completion resolve];
     }
 }
 

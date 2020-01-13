@@ -62,20 +62,6 @@ FOUNDATION_EXTERN NSString *const KMMScriptMessageHandlerName;
  * @param name A command name that you will remove.
  */
 - (void)removeCommandForName:(NSString *)name NS_SWIFT_NAME(removeCommand(name:));
-
-- (void)sendMessageWithBlock:(nullable void (^)(id _Nullable result))block
-                     forName:(NSString *)name DEPRECATED_MSG_ATTRIBUTE("Uses `sendMessageForName:block:` method.");
-
-- (void)sendMessageWithDictionary:(nullable NSDictionary *)data
-                            block:(nullable void (^)(id _Nullable result))block
-                          forName:(NSString *)name DEPRECATED_MSG_ATTRIBUTE(
-    "Uses `sendMessageWithDictionary:forName:block:` method.");
-
-- (void)sendMessageWithArray:(nullable NSArray *)data
-                       block:(nullable void (^)(id _Nullable result))block
-                     forName:(NSString *)name DEPRECATED_MSG_ATTRIBUTE(
-    "Uses `sendMessageWithArray:forName:block:` method.");
-
 /**
  * Sends a message to the JavaScript receiver.
  *
@@ -104,6 +90,26 @@ FOUNDATION_EXTERN NSString *const KMMScriptMessageHandlerName;
 - (void)sendMessageWithArray:(nullable NSArray *)data
                      forName:(NSString *)name
                        block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(with:name:block:));
+/**
+ * Executes a command to the native receiver.
+ *
+ * @param name A command name.
+ * @param callback A callback.
+ */
+- (void)executeCommand:(NSString *)name
+              callback:(nullable void (^)(id _Nullable result, NSString *_Nullable errorMessage))callback
+NS_SWIFT_NAME(executeCommand(_:callback:));
+/**
+ * Executes a command with data to the native receiver.
+ *
+ * @param name A command name.
+ * @param data A data as NSDictionary.
+ * @param callback A callback.
+ */
+- (void)executeCommand:(NSString *)name
+              withData:(nullable NSDictionary *)data
+              callback:(nullable void (^)(id _Nullable result, NSString *_Nullable errorMessage))callback
+NS_SWIFT_NAME(executeCommand(_:data:callback:));
 
 @end
 

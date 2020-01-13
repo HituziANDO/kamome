@@ -22,9 +22,8 @@
 // SOFTWARE.
 
 #import "KMMCommand.h"
-#import "KMMCompletion.h"
 
-typedef void (^Handler)(NSString *, NSDictionary *_Nullable, KMMCompletion *);
+typedef void (^Handler)(NSString *, NSDictionary *_Nullable, id <KMMCompleting>);
 
 @interface KMMCommand ()
 
@@ -38,7 +37,7 @@ typedef void (^Handler)(NSString *, NSDictionary *_Nullable, KMMCompletion *);
 + (instancetype)commandWithName:(NSString *)name
                         handler:(void (^)(NSString *commandName,
                                           NSDictionary *_Nullable data,
-                                          KMMCompletion *completion))handler {
+                                          id <KMMCompleting> completion))handler {
 
     KMMCommand *command = [KMMCommand new];
     command.name = name;
@@ -50,7 +49,7 @@ typedef void (^Handler)(NSString *, NSDictionary *_Nullable, KMMCompletion *);
     self.handler = nil;
 }
 
-- (void)execute:(NSDictionary *)data withCompletion:(KMMCompletion *)completion {
+- (void)execute:(NSDictionary *)data withCompletion:(id <KMMCompleting>)completion {
     if (self.handler) {
         self.handler(self.name, data, completion);
     }

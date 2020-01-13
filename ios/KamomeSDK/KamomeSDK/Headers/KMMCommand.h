@@ -23,9 +23,9 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
+#import "KMMCompletion.h"
 
-@class KMMCompletion;
+NS_ASSUME_NONNULL_BEGIN
 
 @interface KMMCommand : NSObject
 /**
@@ -42,9 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)commandWithName:(NSString *)name
                         handler:(void (^)(NSString *commandName,
                                           NSDictionary *_Nullable data,
-                                          KMMCompletion *completion))handler;
-
-- (void)execute:(nullable NSDictionary *)data withCompletion:(KMMCompletion *)completion;
+                                          id <KMMCompleting> completion))handler;
 
 @end
 

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018-present Hituzi Ando. All rights reserved.
+// Copyright (c) 2020-present Hituzi Ando. All rights reserved.
 //
 // MIT License
 //
@@ -21,8 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#import "KMMKamome.h"
-#import "KMMCommand.h"
 #import "KMMCompletion.h"
-#import "KMMException.h"
-#import "KMMLocalCompletion.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+typedef void (^KMMLocalCompletionCallback)(id _Nullable result, NSString *_Nullable errorMessage);
+
+@interface KMMLocalCompletion : NSObject <KMMCompleting>
+
+- (instancetype)initWithCallback:(nullable KMMLocalCompletionCallback)callback;
+
+@end
+
+NS_ASSUME_NONNULL_END
