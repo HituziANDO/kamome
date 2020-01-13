@@ -56,6 +56,12 @@ FOUNDATION_EXTERN NSString *const KMMScriptMessageHandlerName;
  * @return Self.
  */
 - (instancetype)addCommand:(KMMCommand *)command;
+/**
+ * Removes a command of specified name.
+ *
+ * @param name A command name that you will remove.
+ */
+- (void)removeCommandForName:(NSString *)name NS_SWIFT_NAME(removeCommand(name:));
 
 - (void)sendMessageWithBlock:(nullable void (^)(id _Nullable result))block
                      forName:(NSString *)name DEPRECATED_MSG_ATTRIBUTE("Uses `sendMessageForName:block:` method.");

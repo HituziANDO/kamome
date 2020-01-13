@@ -102,6 +102,12 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     return self;
 }
 
+- (void)removeCommandForName:(NSString *)name {
+    if (self.commands[name]) {
+        [self.commands removeObjectForKey:name];
+    }
+}
+
 - (void)sendMessageWithBlock:(nullable void (^)(id _Nullable))block forName:(NSString *)name {
     [self sendMessageForName:name block:block];
 }
