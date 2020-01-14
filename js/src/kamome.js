@@ -143,6 +143,40 @@ window.Kamome = (function (Undefined) {
         };
     })();
 
+    var hook = (function () {
+        var _beforeActions = {};
+        var _afterActions = {};
+
+        var before = function (commandName, handler) {
+            _beforeActions[commandName] = handler;
+            return this;
+        };
+
+        var after = function (commandName, handler) {
+            _afterActions[commandName] = handler;
+            return this;
+        };
+
+        var _execActionBefore = function (commandName) {
+            if (_beforeActions[commandName]) {
+                _beforeActions[commandName]();
+            }
+        };
+
+        var _execActionAfter = function (commandName) {
+            if (_afterActions[commandName]) {
+                _afterActions[commandName]();
+            }
+        };
+
+        return {
+            before:            before,
+            after:             after,
+            _execActionBefore: _execActionBefore,
+            _execActionAfter:  _execActionAfter,
+        };
+    })();
+
     var _receiverDict = {};
     var _requests = [];
     var _isRequesting = false;
@@ -209,6 +243,8 @@ window.Kamome = (function (Undefined) {
      * @return {Promise|null} Returns a promise if a `callback` is null, otherwise returns null
      */
     var send = function (name, data, callback, timeout) {
+        hook._execActionBefore(name);
+
         if (timeout === null || timeout === Undefined) {
             timeout = _requestTimeout;
         }
@@ -292,12 +328,12 @@ window.Kamome = (function (Undefined) {
                     _isRequesting = false;
 
                     if (_requests.length > 0 && _requests[0].id === id) {
-                        _shiftRequest(function (req) {
-                            if ('callback' in req) {
-                                req.callback(null, Error.requestTimeout + ':' + req.name);
+                        _shiftRequest(function (timedOutReq) {
+                            if ('callback' in timedOutReq) {
+                                timedOutReq.callback(null, Error.requestTimeout + ':' + timedOutReq.name);
                             }
-                            else if ('reject' in req) {
-                                req.reject(Error.requestTimeout + ':' + req.name);
+                            else if ('reject' in timedOutReq) {
+                                timedOutReq.reject(Error.requestTimeout + ':' + timedOutReq.name);
                             }
                         });
                     }
@@ -385,6 +421,8 @@ window.Kamome = (function (Undefined) {
                 else if ('resolve' in req) {
                     req.resolve(data);
                 }
+
+                hook._execActionAfter(req.name);
             });
         }
 
@@ -407,6 +445,8 @@ window.Kamome = (function (Undefined) {
                 else if ('reject' in req) {
                     req.reject(Error.rejected + ':' + req.name + msg);
                 }
+
+                hook._execActionAfter(req.name);
             });
         }
 
@@ -441,6 +481,7 @@ window.Kamome = (function (Undefined) {
         android:                  android,
         iOS:                      iOS,
         browser:                  browser,
+        hook:                     hook,
         setDefaultRequestTimeout: setDefaultRequestTimeout,
         addReceiver:              addReceiver,
         removeReceiver:           removeReceiver,

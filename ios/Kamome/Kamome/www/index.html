@@ -68,6 +68,9 @@
       <button id="timeoutButton" class="btn">Timeout Sample</button>
       <button id="cancelButton" class="btn">Cancel Request</button>
     </div>
+    <div class="mt-1">
+      <button id="hookButton" class="btn">Hook Sample</button>
+    </div>
     <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message</div>
     <div id="message"></div>
   </div>
@@ -83,51 +86,45 @@
 
         document.getElementById('echoButton1').addEventListener('click', function () {
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }, function (data, error) {
-                if (data) {
-                    document.getElementById('message').innerHTML += data.message + '<br>';
+                if (error) {
+                    addMessage(error);
                 }
-                else if (error) {
-                    // Not call
-                    document.getElementById('message').innerHTML += error + '<br>';
+                else {
+                    addMessage(data.message);
                 }
             });
         });
 
         document.getElementById('echoButton2').addEventListener('click', function () {
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }).then(function (data) {
-                document.getElementById('message').innerHTML += data.message + '<br>';
+                addMessage(data.message);
             }).catch(function (error) {
-                // Not call
-                document.getElementById('message').innerHTML += error + '<br>';
+                addMessage(error);
             });
         });
 
         document.getElementById('echoButton3').addEventListener('click', function () {
             Kamome.send('echoError', {}, function (data, error) {
-                if (data) {
-                    // Not call
-                    document.getElementById('message').innerHTML += data.message + '<br>';
+                if (error) {
+                    addMessage(error);
                 }
-                else if (error) {
-                    document.getElementById('message').innerHTML += error + '<br>';
+                else {
+                    addMessage(data.message);
                 }
             });
         });
 
         document.getElementById('echoButton4').addEventListener('click', function () {
             Kamome.send('echoError').then(function (data) {
-                // Not call
-                document.getElementById('message').innerHTML += data.message + '<br>';
+                addMessage(data.message);
             }).catch(function (error) {
-                document.getElementById('message').innerHTML += error + '<br>';
+                addMessage(error);
             });
         });
 
         document.getElementById('timeoutButton').addEventListener('click', function () {
-            Kamome.send('tooLong', null, null, 3000).then(function (data) {
-                // Not call
-            }).catch(function (error) {
-                document.getElementById('message').innerHTML += error + '<br>';
+            Kamome.send('tooLong', null, null, 3000).catch(function (error) {
+                addMessage(error);
             });
         });
 
@@ -135,11 +132,34 @@
             Kamome.cancelCurrentRequest();
         });
 
-        Kamome.addReceiver('greeting', function (data) {
-            document.getElementById('message').innerHTML += data.greeting + '<br>';
-
-            return 'OK!';
+        document.getElementById('hookButton').addEventListener('click', function () {
+            Kamome.send("getScore").then(function (data) {
+                addMessage("Score: " + data.score + " Rank: " + data.rank);
+            });
         });
+
+        // Add a receiver that receives a message sent by the native client.
+        Kamome.addReceiver('greeting', function (data) {
+            addMessage(data.greeting);
+
+            // Return a result to the native client.
+            return 'OK!'; // Any object or null.
+        });
+
+        // Hook.
+        Kamome.hook
+            .before("getScore", function () {
+                // Called before sending "getScore" command.
+                Kamome.send("getUser").then(function (data) {
+                    addMessage("Name: " + data.name);
+                });
+            })
+            .after("getScore", function () {
+                // Called after "getScore" command is processed.
+                Kamome.send("getAvg").then(function (data) {
+                    addMessage("Avg: " + data.avg);
+                });
+            });
 
         // When there is no Kamome's iOS/Android native client, that is, when you run with a browser alone,
         // you can register the processing of each command.
@@ -153,12 +173,25 @@
                 reject("Echo Error!");
             })
             .addCommand("tooLong", function (data, resolve, reject) {
-                // Too long process
+                // Too long process...
                 setTimeout(function () {
                     resolve();
                 }, 30000);
+            })
+            .addCommand("getUser", function (data, resolve, reject) {
+                resolve({ name: "Brad" });
+            })
+            .addCommand("getScore", function (data, resolve, reject) {
+                resolve({ score: 90, rank: 2 });
+            })
+            .addCommand("getAvg", function (data, resolve, reject) {
+                resolve({ avg: 68 });
             });
     });
+
+    function addMessage(msg) {
+        document.getElementById('message').innerHTML += msg + '<br>';
+    }
 </script>
 </body>
 </html>

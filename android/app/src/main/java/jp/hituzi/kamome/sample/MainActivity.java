@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void execute(String commandName, JSONObject data, final ICompletion completion) {
-                    // Too long process
+                    // Too long process...
                     new Handler().postDelayed(new Runnable() {
 
                         @Override
@@ -67,6 +67,41 @@ public class MainActivity extends Activity {
                             completion.resolve();
                         }
                     }, 30 * 1000);
+                }
+            }))
+            .add(new Command("getUser", new Command.IHandler() {
+
+                @Override
+                public void execute(String commandName, JSONObject data, ICompletion completion) {
+                    try {
+                        completion.resolve(new JSONObject().put("name", "Brad"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }))
+            .add(new Command("getScore", new Command.IHandler() {
+
+                @Override
+                public void execute(String commandName, JSONObject data, ICompletion completion) {
+                    try {
+                        completion.resolve(new JSONObject()
+                            .put("score", 90)
+                            .put("rank", 2));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }))
+            .add(new Command("getAvg", new Command.IHandler() {
+
+                @Override
+                public void execute(String commandName, JSONObject data, ICompletion completion) {
+                    try {
+                        completion.resolve(new JSONObject().put("avg", 68));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }));
 

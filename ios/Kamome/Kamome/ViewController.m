@@ -42,7 +42,7 @@
     [self.kamome addCommand:[KMMCommand commandWithName:@"echo"
                                                 handler:^(NSString *_Nonnull commandName,
                                                           NSDictionary *_Nullable data,
-                                                          KMMCompletion *_Nonnull completion) {
+                                                          id <KMMCompleting> _Nonnull completion) {
                                                     // Success
                                                     [completion resolveWithDictionary:@{ @"message": data[@"message"] }];
                                                 }]];
@@ -50,7 +50,7 @@
     [self.kamome addCommand:[KMMCommand commandWithName:@"echoError"
                                                 handler:^(NSString *_Nonnull commandName,
                                                           NSDictionary *_Nullable data,
-                                                          KMMCompletion *_Nonnull completion) {
+                                                          id <KMMCompleting> _Nonnull completion) {
                                                     // Failure
                                                     [completion rejectWithErrorMessage:@"Echo Error!"];
                                                 }]];
@@ -58,13 +58,34 @@
     [self.kamome addCommand:[KMMCommand commandWithName:@"tooLong"
                                                 handler:^(NSString *_Nonnull commandName,
                                                           NSDictionary *_Nullable data,
-                                                          KMMCompletion *_Nonnull completion) {
-                                                    // Too long process
+                                                          id <KMMCompleting> _Nonnull completion) {
+                                                    // Too long process...
                                                     [NSTimer scheduledTimerWithTimeInterval:30.0
                                                                                     repeats:NO
                                                                                       block:^(NSTimer *timer) {
                                                                                           [completion resolve];
                                                                                       }];
+                                                }]];
+
+    [self.kamome addCommand:[KMMCommand commandWithName:@"getUser"
+                                                handler:^(NSString *_Nonnull commandName,
+                                                          NSDictionary *_Nullable data,
+                                                          id <KMMCompleting> _Nonnull completion) {
+                                                    [completion resolveWithDictionary:@{ @"name": @"Brad" }];
+                                                }]];
+
+    [self.kamome addCommand:[KMMCommand commandWithName:@"getScore"
+                                                handler:^(NSString *_Nonnull commandName,
+                                                          NSDictionary *_Nullable data,
+                                                          id <KMMCompleting> _Nonnull completion) {
+                                                    [completion resolveWithDictionary:@{ @"score": @88, @"rank": @2 }];
+                                                }]];
+
+    [self.kamome addCommand:[KMMCommand commandWithName:@"getAvg"
+                                                handler:^(NSString *_Nonnull commandName,
+                                                          NSDictionary *_Nullable data,
+                                                          id <KMMCompleting> _Nonnull completion) {
+                                                    [completion resolveWithDictionary:@{ @"avg": @68 }];
                                                 }]];
 
     NSURL *htmlURL = [[NSBundle mainBundle] URLForResource:@"index" withExtension:@"html" subdirectory:@"www"];

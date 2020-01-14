@@ -58,10 +58,19 @@ class ViewController: UIViewController {
                   completion.reject(with: "Echo Error!")
               })
               .add(KMMCommand(name: "tooLong") { commandName, data, completion in
-                  // Too long process
+                  // Too long process...
                   Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { timer in
                       completion.resolve()
                   }
+              })
+              .add(KMMCommand(name: "getUser") { commandName, data, completion in
+                  completion.resolve(with: ["name": "Brad"])
+              })
+              .add(KMMCommand(name: "getScore") { commandName, data, completion in
+                  completion.resolve(with: ["score": 88, "rank": 2])
+              })
+              .add(KMMCommand(name: "getAvg") { commandName, data, completion in
+                  completion.resolve(with: ["avg": 68])
               })
 
         let htmlURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "www")!
