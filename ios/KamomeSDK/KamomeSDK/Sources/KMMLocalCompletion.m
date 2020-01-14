@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018-present Hituzi Ando. All rights reserved.
+// Copyright (c) 2020-present Hituzi Ando. All rights reserved.
 //
 // MIT License
 //
@@ -21,28 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#import <WebKit/WebKit.h>
+#import "KMMLocalCompletion.h"
 
-#import "KMMCompletion.h"
-#import "KMMMessenger.h"
+@interface KMMLocalCompletion ()
 
-@interface KMMCompletion ()
-
-@property (nonatomic, weak) WKWebView *webView;
-@property (nonatomic, copy) NSString *requestId;
+@property (nonatomic, copy, nullable) KMMLocalCompletionCallback callback;
 @property (nonatomic) BOOL completed;
 
 @end
 
-@implementation KMMCompletion
+@implementation KMMLocalCompletion
 
-- (instancetype)initWithWebView:(__kindof WKWebView *)webView requestId:(NSString *)requestId {
+- (instancetype)initWithCallback:(nullable KMMLocalCompletionCallback)callback {
     if (self = [super init]) {
-        _webView = webView;
-        _requestId = requestId;
+        _callback = callback;
     }
 
     return self;
+}
+
+- (void)dealloc {
+    self.callback = nil;
 }
 
 #pragma mark - KMMCompleting
@@ -62,7 +61,9 @@
 
     self.completed = YES;
 
-    [[KMMMessenger sharedMessenger] completeMessageWithWebView:self.webView data:data forRequestId:self.requestId];
+    if (self.callback) {
+        self.callback(data, nil);
+    }
 }
 
 - (void)resolveWithArray:(nullable NSArray *)data {
@@ -72,7 +73,9 @@
 
     self.completed = YES;
 
-    [[KMMMessenger sharedMessenger] completeMessageWithWebView:self.webView data:data forRequestId:self.requestId];
+    if (self.callback) {
+        self.callback(data, nil);
+    }
 }
 
 - (void)reject {
@@ -86,7 +89,9 @@
 
     self.completed = YES;
 
-    [[KMMMessenger sharedMessenger] failMessageWithWebView:self.webView error:errorMessage forRequestId:self.requestId];
+    if (self.callback) {
+        self.callback(nil, errorMessage ?: @"Rejected");
+    }
 }
 
 @end

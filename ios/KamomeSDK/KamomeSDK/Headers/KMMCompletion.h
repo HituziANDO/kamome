@@ -25,17 +25,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface KMMCompletion : NSObject
+@class WKWebView;
 
-@property (nonatomic, readonly, getter=isCompleted) BOOL completed;
+@protocol KMMCompleting <NSObject>
 
-- (instancetype)initWithWebView:(id)webView requestId:(NSString *)requestId;
-
-- (void)complete DEPRECATED_MSG_ATTRIBUTE("Uses `resolve` method.");
-
-- (void)completeWithDictionary:(nullable NSDictionary *)data DEPRECATED_MSG_ATTRIBUTE("Uses `resolveWithDictionary:` method.");
-
-- (void)completeWithArray:(nullable NSArray *)data DEPRECATED_MSG_ATTRIBUTE("Uses `resolveWithArray:` method.");
+- (BOOL)isCompleted;
 /**
  * Sends resolved result to a JavaScript callback function.
  */
@@ -62,6 +56,12 @@ NS_ASSUME_NONNULL_BEGIN
  * @param errorMessage An error message.
  */
 - (void)rejectWithErrorMessage:(nullable NSString *)errorMessage NS_SWIFT_NAME(reject(with:));
+
+@end
+
+@interface KMMCompletion : NSObject <KMMCompleting>
+
+- (instancetype)initWithWebView:(__kindof WKWebView *)webView requestId:(NSString *)requestId;
 
 @end
 

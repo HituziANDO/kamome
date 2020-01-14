@@ -1,19 +1,19 @@
 package jp.hituzi.kamome.sample;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.ImageButton;
+import android.widget.Button;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import jp.hituzi.kamome.ApiVersionException;
 import jp.hituzi.kamome.Command;
-import jp.hituzi.kamome.Completion;
+import jp.hituzi.kamome.ICompletion;
 import jp.hituzi.kamome.Kamome;
 
 public class MainActivity extends Activity {
@@ -27,63 +27,103 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        WebView webView = (WebView) findViewById(R.id.webView);
-
-        try {
-            kamome = Kamome.createInstanceForWebView(webView)
-                .addCommand(new Command("echo", new Command.IHandler() {
-
-                    @Override
-                    public void execute(JSONObject data, Completion completion) {
-                        try {
-                            // Success
-                            completion.resolve(new JSONObject().put("message", data.getString("message")));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }))
-                .addCommand(new Command("get", new Command.IHandler() {
-
-                    @Override
-                    public void execute(JSONObject data, Completion completion) {
-                        // Failure
-                        completion.reject("Error message");
-                    }
-                }))
-                .addCommand(new Command("tooLong", new Command.IHandler() {
-
-                    @Override
-                    public void execute(JSONObject data, final Completion completion) {
-                        // Too long process
-                        new Handler().postDelayed(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                completion.resolve();
-                            }
-                        }, 30 * 1000);
-                    }
-                }));
-        } catch (ApiVersionException e) {
-            e.printStackTrace();
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
         }
+
+        WebView webView = findViewById(R.id.webView);
+
+        kamome = new Kamome(webView)
+            .add(new Command("echo", new Command.IHandler() {
+
+                @Override
+                public void execute(String commandName, JSONObject data, ICompletion completion) {
+                    try {
+                        // Received `echo` command.
+                        // Then send resolved result to the JavaScript callback function.
+                        completion.resolve(new JSONObject().put("message", data.getString("message")));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }))
+            .add(new Command("echoError", new Command.IHandler() {
+
+                @Override
+                public void execute(String commandName, JSONObject data, ICompletion completion) {
+                    // Send rejected result if failed.
+                    completion.reject("Echo Error!");
+                }
+            }))
+            .add(new Command("tooLong", new Command.IHandler() {
+
+                @Override
+                public void execute(String commandName, JSONObject data, final ICompletion completion) {
+                    // Too long process...
+                    new Handler().postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            completion.resolve();
+                        }
+                    }, 30 * 1000);
+                }
+            }))
+            .add(new Command("getUser", new Command.IHandler() {
+
+                @Override
+                public void execute(String commandName, JSONObject data, ICompletion completion) {
+                    try {
+                        completion.resolve(new JSONObject().put("name", "Brad"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }))
+            .add(new Command("getScore", new Command.IHandler() {
+
+                @Override
+                public void execute(String commandName, JSONObject data, ICompletion completion) {
+                    try {
+                        completion.resolve(new JSONObject()
+                            .put("score", 90)
+                            .put("rank", 2));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }))
+            .add(new Command("getAvg", new Command.IHandler() {
+
+                @Override
+                public void execute(String commandName, JSONObject data, ICompletion completion) {
+                    try {
+                        completion.resolve(new JSONObject().put("avg", 68));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }));
+
+        kamome.howToHandleNonExistentCommand = Kamome.HowToHandleNonExistentCommand.REJECTED;
 
         webView.loadUrl("file:///android_asset/www/index.html");
 
-        ImageButton sendButton = (ImageButton) findViewById(R.id.sendButton);
+        Button sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 try {
-                    // Send data to JavaScript.
-                    kamome.sendMessage(new JSONObject().put("greeting", "Hello!"),
+                    // Send a data to JavaScript.
+                    kamome.sendMessage(new JSONObject().put("greeting", "Hello! by Java"),
                         "greeting",
                         new Kamome.IResultCallback() {
 
                             @Override
                             public void onReceiveResult(Object result) {
+                                // Received a result from the JS code.
                                 Log.d(TAG, "result: " + result);
                             }
                         });

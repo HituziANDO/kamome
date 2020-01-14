@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018-present Hituzi Ando. All rights reserved.
+// Copyright (c) 2020-present Hituzi Ando. All rights reserved.
 //
 // MIT License
 //
@@ -21,31 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#import <Foundation/Foundation.h>
+#import "KMMCompletion.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class WKWebView;
+typedef void (^KMMLocalCompletionCallback)(id _Nullable result, NSString *_Nullable errorMessage);
 
-typedef void (^KMMReceiveResultBlock)(id _Nullable result);
+@interface KMMLocalCompletion : NSObject <KMMCompleting>
 
-@interface KMMMessenger : NSObject
-
-+ (instancetype)sharedMessenger;
-
-- (void)completeMessageWithWebView:(__kindof WKWebView *)webView
-                              data:(nullable id)data
-                      forRequestId:(NSString *)requestId;
-
-- (void)failMessageWithWebView:(__kindof WKWebView *)webView
-                         error:(nullable NSString *)error
-                  forRequestId:(NSString *)requestId;
-
-- (void)sendMessageWithWebView:(__kindof WKWebView *)webView
-                          data:(nullable id)data
-                         block:(nullable KMMReceiveResultBlock)block
-                    callbackId:(nullable NSString *)callbackId
-                       forName:(NSString *)name;
+- (instancetype)initWithCallback:(nullable KMMLocalCompletionCallback)callback;
 
 @end
 

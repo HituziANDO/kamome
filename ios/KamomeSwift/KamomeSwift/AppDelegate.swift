@@ -2,8 +2,7 @@
 //  AppDelegate.swift
 //  KamomeSwift
 //
-//  Created by Masaki Ando on 2019/02/03.
-//  Copyright © 2019年 Hituzi Ando. All rights reserved.
+//  Copyright (c) 2020 Hituzi Ando. All rights reserved.
 //
 
 import UIKit
@@ -15,7 +14,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.rootViewController = ViewController()
+        window?.makeKeyAndVisible()
+
         return true
     }
 

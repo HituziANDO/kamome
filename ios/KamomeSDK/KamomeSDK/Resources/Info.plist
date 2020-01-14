@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.5.0</string>
+	<string>2.0.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>7</string>
+	<string>10</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright Hituzi Ando. All rights reserved.</string>
 </dict>

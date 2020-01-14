@@ -1,10 +1,10 @@
 /**
- * kamome.js Rev.10
+ * kamome.js Rev.12
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
  *
- * Copyright (c) 2019 Hituzi Ando
+ * Copyright (c) 2020 Hituzi Ando
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,8 +32,152 @@ window.Kamome = (function (Undefined) {
         canceled:       'Canceled',
     };
 
+    var android = (function () {
+        /**
+         * Tells whether your app has the Kamome Android client.
+         *
+         * @return {boolean}
+         */
+        var hasClient = function () {
+            return (navigator.userAgent.toLowerCase().indexOf('android') > 0) && 'kamomeAndroid' in window;
+        };
+
+        var _send = function (json) {
+            setTimeout(function () {
+                window.kamomeAndroid.kamomeSend(json);
+            }, 0);
+        };
+
+        return {
+            hasClient: hasClient,
+            _send:     _send,
+        };
+    })();
+
+    var iOS = (function () {
+        /**
+         * Tells whether your app has the Kamome iOS client.
+         *
+         * @return {boolean}
+         */
+        var hasClient = function () {
+            // Require WKWebView
+            return 'webkit' in window;
+        };
+
+        var _send = function (json) {
+            setTimeout(function () {
+                window.webkit.messageHandlers.kamomeSend.postMessage(json);
+            }, 0);
+        };
+
+        return {
+            hasClient: hasClient,
+            _send:     _send,
+        };
+    })();
+
+    var browser = (function () {
+        var _handlerDict = {};
+
+        /**
+         * Adds a command when it will be processed in the browser not the WebView.
+         * The handler format is following.
+         *
+         *  ```
+         *  function (data, resolve, reject) {
+         *      // Something to do
+         *      // Then, if succeeded
+         *      // resolve(response);   // response is any object or null
+         *      // Else
+         *      // reject('Error Message');
+         *  }
+         *  ```
+         *
+         * @param name {string} A command name.
+         * @param handler {Function} A handler.
+         * @return {*}
+         */
+        var addCommand = function (name, handler) {
+            _handlerDict[name] = handler;
+            return this;
+        };
+
+        /**
+         * Tells whether specified command is registered.
+         *
+         * @param name {string} A command name.
+         * @return {boolean}
+         */
+        var _hasCommand = function (name) {
+            return (name in _handlerDict);
+        };
+
+        /**
+         * Executes a command with specified request.
+         *
+         * @param req {{id:string, name:string, data:Object}} A request object.
+         */
+        var _execCommand = function (req) {
+            setTimeout(function () {
+                var resolve = (function (name, id) {
+                    return function (data) {
+                        onComplete(data ? JSON.stringify(data) : null, id);
+                    }
+                })(req.name, req.id);
+
+                var reject = (function (id) {
+                    return function (errorMessage) {
+                        onError(errorMessage, id);
+                    }
+                })(req.id);
+
+                _handlerDict[req.name](req.data, resolve, reject);
+            }, 0);
+        };
+
+        return {
+            addCommand:   addCommand,
+            _hasCommand:  _hasCommand,
+            _execCommand: _execCommand,
+        };
+    })();
+
+    var hook = (function () {
+        var _beforeActions = {};
+        var _afterActions = {};
+
+        var before = function (commandName, handler) {
+            _beforeActions[commandName] = handler;
+            return this;
+        };
+
+        var after = function (commandName, handler) {
+            _afterActions[commandName] = handler;
+            return this;
+        };
+
+        var _execActionBefore = function (commandName) {
+            if (_beforeActions[commandName]) {
+                _beforeActions[commandName]();
+            }
+        };
+
+        var _execActionAfter = function (commandName) {
+            if (_afterActions[commandName]) {
+                _afterActions[commandName]();
+            }
+        };
+
+        return {
+            before:            before,
+            after:             after,
+            _execActionBefore: _execActionBefore,
+            _execActionAfter:  _execActionAfter,
+        };
+    })();
+
     var _receiverDict = {};
-    var _webHandlerDict = {};
     var _requests = [];
     var _isRequesting = false;
     var _requestTimeout = 10000;    // Default value is 10 seconds
@@ -99,6 +243,8 @@ window.Kamome = (function (Undefined) {
      * @return {Promise|null} Returns a promise if a `callback` is null, otherwise returns null
      */
     var send = function (name, data, callback, timeout) {
+        hook._execActionBefore(name);
+
         if (timeout === null || timeout === Undefined) {
             timeout = _requestTimeout;
         }
@@ -166,34 +312,14 @@ window.Kamome = (function (Undefined) {
         var req = _requests[0];
         var json = JSON.stringify({ name: req.name, data: req.data, id: req.id });
 
-        if (_isIOS() && 'webkit' in window) {  // Require WKWebView
-            setTimeout(function () {
-                window.webkit.messageHandlers.kamomeSend.postMessage(json);
-            }, 0);
+        if (iOS.hasClient()) {
+            iOS._send(json);
         }
-        else if (_isAndroid() && 'kamomeAndroid' in window) {
-            setTimeout(function () {
-                window.kamomeAndroid.kamomeSend(json);
-            }, 0);
+        else if (android.hasClient()) {
+            android._send(json);
         }
-        else {
-            if (req.name in _webHandlerDict) {
-                setTimeout(function () {
-                    var resolve = (function (name, id) {
-                        return function (data) {
-                            onComplete(data ? JSON.stringify(data) : null, id);
-                        }
-                    })(req.name, req.id);
-
-                    var reject = (function (id) {
-                        return function (errorMessage) {
-                            onError(errorMessage, id);
-                        }
-                    })(req.id);
-
-                    _webHandlerDict[req.name](req.data, resolve, reject);
-                }, 0);
-            }
+        else if (browser._hasCommand(req.name)) {
+            browser._execCommand(req);
         }
 
         if (req.timeout > 0) {
@@ -202,12 +328,12 @@ window.Kamome = (function (Undefined) {
                     _isRequesting = false;
 
                     if (_requests.length > 0 && _requests[0].id === id) {
-                        _shiftRequest(function (req) {
-                            if ('callback' in req) {
-                                req.callback(null, Error.requestTimeout + ':' + req.name);
+                        _shiftRequest(function (timedOutReq) {
+                            if ('callback' in timedOutReq) {
+                                timedOutReq.callback(null, Error.requestTimeout + ':' + timedOutReq.name);
                             }
-                            else if ('reject' in req) {
-                                req.reject(Error.requestTimeout + ':' + req.name);
+                            else if ('reject' in timedOutReq) {
+                                timedOutReq.reject(Error.requestTimeout + ':' + timedOutReq.name);
                             }
                         });
                     }
@@ -222,27 +348,6 @@ window.Kamome = (function (Undefined) {
     var _shiftRequest = function (didShift) {
         didShift(_requests.shift());
         _send();
-    };
-
-    /**
-     * Tells whether the OS is Android.
-     *
-     * @return {boolean} Returns true if the OS is Android
-     * @private
-     */
-    var _isAndroid = function () {
-        return (navigator.userAgent.toLowerCase().indexOf('android') > 0);
-    };
-
-    /**
-     * Tells whether the OS is iOS.
-     *
-     * @return {boolean} Returns true if the OS is iOS
-     * @private
-     */
-    var _isIOS = function () {
-        var ua = navigator.userAgent.toLowerCase();
-        return (ua.indexOf('iphone') > 0 || ua.indexOf('ipad') > 0 || ua.indexOf('ipod') > 0);
     };
 
     /**
@@ -300,6 +405,9 @@ window.Kamome = (function (Undefined) {
         return obj1;
     };
 
+    /**
+     * Called from the native client when sent message is processed successfully.
+     */
     var onComplete = function (json, requestId) {
         _isRequesting = false;
 
@@ -313,12 +421,17 @@ window.Kamome = (function (Undefined) {
                 else if ('resolve' in req) {
                     req.resolve(data);
                 }
+
+                hook._execActionAfter(req.name);
             });
         }
 
         return null;
     };
 
+    /**
+     * Called from the native client when sent message is processed incorrectly.
+     */
     var onError = function (errorMessage, requestId) {
         _isRequesting = false;
 
@@ -332,17 +445,22 @@ window.Kamome = (function (Undefined) {
                 else if ('reject' in req) {
                     req.reject(Error.rejected + ':' + req.name + msg);
                 }
+
+                hook._execActionAfter(req.name);
             });
         }
 
         return null;
     };
 
+    /**
+     * Receives a message from the native client.
+     */
     var onReceive = function (name, json, callbackId) {
         if (name in _receiverDict) {
             var result = _receiverDict[name](json ? JSON.parse(json) : null);
 
-            if (_isAndroid()) {
+            if (android.hasClient()) {
                 return { callbackId: callbackId, result: result };
             }
             else {
@@ -350,7 +468,7 @@ window.Kamome = (function (Undefined) {
             }
         }
 
-        if (_isAndroid()) {
+        if (android.hasClient()) {
             return { callbackId: callbackId, result: null };
         }
         else {
@@ -358,28 +476,12 @@ window.Kamome = (function (Undefined) {
         }
     };
 
-    /**
-     *
-     * @param {string} name A command name
-     * @param {Function} handler A handler is
-     * ```
-     *  function (data, resolve, reject) {
-     *      // Something to do
-     *      // Then, if succeeded
-     *      // resolve(response);   // response is any object or null
-     *      // Else
-     *      // reject('Error Message');
-     *  }
-     * ```
-     * @return {*}
-     */
-    var addWebHandler = function (name, handler) {
-        _webHandlerDict[name] = handler;
-        return this;
-    };
-
     var _module = {
         Error:                    Error,
+        android:                  android,
+        iOS:                      iOS,
+        browser:                  browser,
+        hook:                     hook,
         setDefaultRequestTimeout: setDefaultRequestTimeout,
         addReceiver:              addReceiver,
         removeReceiver:           removeReceiver,
@@ -388,7 +490,6 @@ window.Kamome = (function (Undefined) {
         onComplete:               onComplete,
         onError:                  onError,
         onReceive:                onReceive,
-        addWebHandler:            addWebHandler,
     };
 
     _module.extension = {
@@ -399,6 +500,7 @@ window.Kamome = (function (Undefined) {
          * @param {Object|null} defaultValue Default value of the command
          * @param {string|null} methodName A method name of the command if it is given
          * @return {*}
+         * @deprecated
          */
         addCommand: function (commandName, defaultValue, methodName) {
             _module[methodName || commandName] = (function (name, defaultValue) {

@@ -16,13 +16,9 @@ mkdir $LIBS_DIR/ios
 
 cd ./js
 
-if [ -e ./src/kamome.min.js ]; then
-    rm ./src/kamome.min.js
-fi
-
-gulp build
+npm run prod
 cp ./src/kamome.js ../$LIBS_DIR/js
-cp ./src/kamome.min.js ../$LIBS_DIR/js
+cp ./public/kamome.js ../$LIBS_DIR/js/kamome.min.js
 cd ../
 
 # Make Android

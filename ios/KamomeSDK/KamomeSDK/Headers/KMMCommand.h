@@ -23,17 +23,26 @@
 
 #import <Foundation/Foundation.h>
 
+#import "KMMCompletion.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-@class KMMCompletion;
-
 @interface KMMCommand : NSObject
-
+/**
+ * A command name.
+ */
 @property (nonatomic, copy, readonly) NSString *name;
-
-+ (instancetype)commandWithName:(NSString *)name handler:(void (^)(NSDictionary *_Nullable data, KMMCompletion *completion))handler;
-
-- (void)execute:(nullable NSDictionary *)data withCompletion:(KMMCompletion *)completion;
+/**
+ * Creates a command object.
+ *
+ * @param name A command name.
+ * @param handler A function that processes the command.
+ * @return A command object.
+ */
++ (instancetype)commandWithName:(NSString *)name
+                        handler:(void (^)(NSString *commandName,
+                                          NSDictionary *_Nullable data,
+                                          id <KMMCompleting> completion))handler;
 
 @end
 

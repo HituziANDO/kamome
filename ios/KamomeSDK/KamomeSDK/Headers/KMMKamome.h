@@ -30,45 +30,105 @@ NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXTERN NSString *const KMMScriptMessageHandlerName;
 
+typedef NS_ENUM(NSInteger, KMMHowToHandleNonExistentCommand) {
+    /**
+     * Anyway resolved passing null.
+     */
+        KMMHowToHandleNonExistentCommandResolved,
+    /**
+     * Always rejected and passing an error message.
+     */
+        KMMHowToHandleNonExistentCommandRejected,
+    /**
+     * Always raises an exception.
+     */
+        KMMHowToHandleNonExistentCommandException
+};
+
 @interface KMMKamome : NSObject <WKScriptMessageHandler>
 
 @property (nonatomic, readonly) WKUserContentController *contentController;
+/**
+ * How to handle non-existent command.
+ */
+@property (nonatomic) KMMHowToHandleNonExistentCommand howToHandleNonExistentCommand;
 
 /**
- * Creates a KMMKamome object and default webView object of specified class initialized by Kamome.
+ * Creates a Kamome object and a webView object of specified class initialized by Kamome.
  *
  * @param webView Returns a webView object created by Kamome.
  * @param webViewClass A webView's class.
  * @param frame A webView's frame.
- * @return A KMMKamome object.
+ * @return A Kamome object.
  */
-+ (instancetype)createInstanceAndWebView:(id *)webView
++ (instancetype)createInstanceAndWebView:(id _Nullable *_Nullable)webView
                                    class:(Class)webViewClass
                                    frame:(CGRect)frame NS_SWIFT_NAME(create(webView:class:frame:));
-
 /**
- * Creates a KMMKamome object and default WKWebView object initialized by Kamome.
- *
- * @param webView Returns a WKWebView object created by Kamome.
- * @param frame A webView's frame.
- * @return A KMMKamome object.
+ * Sets a webView using this Kamome object.
  */
-+ (instancetype)createInstanceAndWebView:(WKWebView **)webView withFrame:(CGRect)frame
-DEPRECATED_MSG_ATTRIBUTE("Use `createInstanceAndWebView:class:frame:` instead of this.");
-
-- (void)setWebView:(id)webView;
-
+- (void)setWebView:(__kindof WKWebView *)webView;
+/**
+ * Adds a command called by JavaScript code.
+ *
+ * @param command A command object.
+ * @return Self.
+ */
 - (instancetype)addCommand:(KMMCommand *)command;
-
-- (void)sendMessageWithBlock:(nullable void (^)(id _Nullable result))block forName:(NSString *)name;
-
+/**
+ * Removes a command of specified name.
+ *
+ * @param name A command name that you will remove.
+ */
+- (void)removeCommandForName:(NSString *)name NS_SWIFT_NAME(removeCommand(name:));
+/**
+ * Sends a message to the JavaScript receiver.
+ *
+ * @param name A command name.
+ * @param block A callback.
+ */
+- (void)sendMessageForName:(NSString *)name
+                     block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(name:block:));
+/**
+ * Sends a message with data as NSDictionary to the JavaScript receiver.
+ *
+ * @param data A data as NSDictionary.
+ * @param name A command name.
+ * @param block A callback.
+ */
 - (void)sendMessageWithDictionary:(nullable NSDictionary *)data
-                            block:(nullable void (^)(id _Nullable result))block
-                          forName:(NSString *)name;
-
+                          forName:(NSString *)name
+                            block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(with:name:block:));
+/**
+ * Sends a message with data as NSArray to the JavaScript receiver.
+ *
+ * @param data A data as NSArray.
+ * @param name A command name.
+ * @param block A callback.
+ */
 - (void)sendMessageWithArray:(nullable NSArray *)data
-                       block:(nullable void (^)(id _Nullable result))block
-                     forName:(NSString *)name;
+                     forName:(NSString *)name
+                       block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(with:name:block:));
+/**
+ * Executes a command to the native receiver.
+ *
+ * @param name A command name.
+ * @param callback A callback.
+ */
+- (void)executeCommand:(NSString *)name
+              callback:(nullable void (^)(id _Nullable result, NSString *_Nullable errorMessage))callback
+NS_SWIFT_NAME(executeCommand(_:callback:));
+/**
+ * Executes a command with data to the native receiver.
+ *
+ * @param name A command name.
+ * @param data A data as NSDictionary.
+ * @param callback A callback.
+ */
+- (void)executeCommand:(NSString *)name
+              withData:(nullable NSDictionary *)data
+              callback:(nullable void (^)(id _Nullable result, NSString *_Nullable errorMessage))callback
+NS_SWIFT_NAME(executeCommand(_:data:callback:));
 
 @end
 

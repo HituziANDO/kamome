@@ -24,15 +24,23 @@
 #import "KMMKamome.h"
 #import "KMMCommand.h"
 #import "KMMCompletion.h"
+#import "KMMException.h"
+#import "KMMLocalCompletion.h"
 #import "KMMMessenger.h"
 
 NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 
+@interface KMMCommand ()
+
+- (void)execute:(nullable NSDictionary *)data withCompletion:(id <KMMCompleting>)completion;
+
+@end
+
 @interface KMMKamome ()
 
-@property (nonatomic, weak) id webView;
+@property (nonatomic, weak) __kindof WKWebView *webView;
 @property (nonatomic) WKUserContentController *contentController;
-@property (nonatomic, copy) NSMutableArray<KMMCommand *> *commands;
+@property (nonatomic, copy) NSMutableDictionary<NSString *, KMMCommand *> *commands;
 
 @end
 
@@ -44,7 +52,8 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     if (self) {
         _contentController = [WKUserContentController new];
         [_contentController addScriptMessageHandler:self name:KMMScriptMessageHandlerName];
-        _commands = [NSMutableArray new];
+        _howToHandleNonExistentCommand = KMMHowToHandleNonExistentCommandResolved;
+        _commands = [NSMutableDictionary new];
     }
 
     return self;
@@ -61,29 +70,18 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     NSDictionary *data = [NSJSONSerialization JSONObjectWithData:[message.body dataUsingEncoding:NSUTF8StringEncoding]
                                                          options:NSJSONReadingAllowFragments
                                                            error:nil];
-    KMMCommand *command = nil;
 
-    for (KMMCommand *cmd in self.commands) {
-        if ([cmd.name isEqualToString:data[@"name"]]) {
-            command = cmd;
-            break;
-        }
-    }
-
+    NSDictionary *params = data[@"data"] != [NSNull null] ? data[@"data"] : nil;
     KMMCompletion *completion = [[KMMCompletion alloc] initWithWebView:self.webView requestId:data[@"id"]];
-
-    if (command) {
-        NSDictionary *params = data[@"data"] != [NSNull null] ? data[@"data"] : nil;
-        [command execute:params withCompletion:completion];
-    }
-    else {
-        [completion resolve];
-    }
+    [self handleCommand:data[@"name"] withData:params completion:completion];
 }
 
 #pragma mark - public method
 
-+ (instancetype)createInstanceAndWebView:(id *)webView class:(Class)webViewClass frame:(CGRect)frame {
++ (instancetype)createInstanceAndWebView:(id _Nullable *_Nullable)webView
+                                   class:(Class)webViewClass
+                                   frame:(CGRect)frame {
+
     KMMKamome *kamome = [KMMKamome new];
     WKWebViewConfiguration *config = [WKWebViewConfiguration new];
     config.userContentController = kamome.contentController;
@@ -95,29 +93,32 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     return kamome;
 }
 
-+ (instancetype)createInstanceAndWebView:(WKWebView **)webView withFrame:(CGRect)frame {
-    return [self createInstanceAndWebView:webView class:[WKWebView class] frame:frame];
-}
-
-- (void)setWebView:(id)webView {
+- (void)setWebView:(__kindof WKWebView *)webView {
     _webView = webView;
 }
 
 - (instancetype)addCommand:(KMMCommand *)command {
     if (command) {
-        [self.commands addObject:command];
+        self.commands[command.name] = command;
     }
 
     return self;
 }
 
-- (void)sendMessageWithBlock:(nullable void (^)(id _Nullable))block forName:(NSString *)name {
-    [self sendMessageWithDictionary:nil block:block forName:name];
+- (void)removeCommandForName:(NSString *)name {
+    if (self.commands[name]) {
+        [self.commands removeObjectForKey:name];
+    }
+}
+
+- (void)sendMessageForName:(NSString *)name block:(nullable void (^)(id _Nullable result))block {
+    [self sendMessageWithDictionary:nil forName:name block:block];
 }
 
 - (void)sendMessageWithDictionary:(nullable NSDictionary *)data
-                            block:(nullable void (^)(id _Nullable))block
-                          forName:(NSString *)name {
+                          forName:(NSString *)name
+                            block:(nullable void (^)(id _Nullable result))block {
+
     if (block) {
         [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
                                                           data:data
@@ -135,8 +136,9 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
 }
 
 - (void)sendMessageWithArray:(nullable NSArray *)data
-                       block:(nullable void (^)(id _Nullable))block
-                     forName:(NSString *)name {
+                     forName:(NSString *)name
+                       block:(nullable void (^)(id _Nullable result))block {
+
     if (block) {
         [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
                                                           data:data
@@ -150,6 +152,44 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
                                                          block:nil
                                                     callbackId:nil
                                                        forName:name];
+    }
+}
+
+- (void)executeCommand:(NSString *)name
+              callback:(nullable void (^)(id _Nullable result, NSString *_Nullable errorMessage))callback {
+
+    [self executeCommand:name withData:nil callback:callback];
+}
+
+- (void)executeCommand:(NSString *)name
+              withData:(nullable NSDictionary *)data
+              callback:(nullable void (^)(id _Nullable result, NSString *_Nullable errorMessage))callback {
+
+    [self handleCommand:name withData:data completion:[[KMMLocalCompletion alloc] initWithCallback:callback]];
+}
+
+#pragma mark - private method
+
+- (void)handleCommand:(NSString *)name
+             withData:(nullable NSDictionary *)data
+           completion:(id <KMMCompleting>)completion {
+
+    KMMCommand *command = self.commands[name];
+
+    if (command) {
+        [command execute:data withCompletion:completion];
+    }
+    else {
+        switch (self.howToHandleNonExistentCommand) {
+            case KMMHowToHandleNonExistentCommandRejected:
+                [completion rejectWithErrorMessage:@"CommandNotAdded"];
+                break;
+            case KMMHowToHandleNonExistentCommandException:
+                @throw [KMMException exceptionWithReason:[NSString stringWithFormat:@"%@ command not added.", name]
+                                                userInfo:nil];
+            default:
+                [completion resolve];
+        }
     }
 }
 

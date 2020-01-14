@@ -1,154 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-    <meta name="format-detection" content="telephone=no">
-    <title></title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+  <meta name="format-detection" content="telephone=no">
+  <title></title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-        }
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
 
-        body {
-            font-family: sans-serif;
-        }
+    body {
+      font-family: sans-serif;
+    }
 
-        .container {
-            padding: 0 1rem;
-        }
+    .container {
+      padding: 0 1rem;
+      text-align: center;
+    }
 
-        .btn {
-            border: 0;
-            border-radius: 5px;
-            background-color: #3498db;
-            color: white;
-            font-weight: bold;
-            letter-spacing: .05em;
-            padding: .5rem 1rem;
-            min-height: 44px;
-        }
+    .btn {
+      background-color: rgba(0, 0, 0, 0);
+      border-radius: 5px;
+      border: solid 1px #3498db;
+      color: #3498db;
+      font-size: .9rem;
+      font-weight: bold;
+      letter-spacing: .05em;
+      padding: .5rem 1rem;
+      width: 100%;
+      max-width: 320px;
+      min-height: 44px;
+    }
 
-        .btn.warn {
-            background-color: #f1c40f !important;
-        }
+    .mt-1 {
+      margin-top: 1rem;
+    }
 
-        .btn.error {
-            background-color: #e74c3c !important;
-        }
-
-        .mt-1 {
-            margin-top: 1rem;
-        }
-
-        #message {
-            border: solid 1px gray;
-            border-radius: 5px;
-            font-size: .9rem;
-            color: gray;
-            padding: .5rem;
-        }
-    </style>
+    #message {
+      text-align: left;
+      border: solid 1px gray;
+      border-radius: 5px;
+      font-size: .9rem;
+      color: gray;
+      padding: .5rem;
+    }
+  </style>
 </head>
 <body>
 <section class="container">
-    <h1>Kamome</h1>
+  <h1>Kamome</h1>
+  <div>
     <div>
-        <div>
-            <button id="echoButton1" class="btn">Echo (Callback)</button>
-            <button id="echoButton2" class="btn">Echo (Promise)</button>
-            <button id="echoButton3" class="btn">Echo</button>
-        </div>
-        <div class="mt-1">
-            <button id="getButton1" class="btn error">Get (Callback)</button>
-            <button id="getButton2" class="btn error">Get (Promise)</button>
-        </div>
-        <div class="mt-1">
-            <button id="timeoutButton" class="btn warn">Timeout Sample</button>
-            <button id="cancelButton" class="btn warn">Cancel</button>
-        </div>
-        <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message:</div>
-        <div id="message"></div>
+      <button id="echoButton1" class="btn">Send Data to Native (Callback)</button>
+      <button id="echoButton2" class="btn">Send Data to Native (Promise)</button>
     </div>
+    <div class="mt-1">
+      <button id="echoButton3" class="btn">Error from Native (Callback)</button>
+      <button id="echoButton4" class="btn">Error from Native (Promise)</button>
+    </div>
+    <div class="mt-1">
+      <button id="timeoutButton" class="btn">Timeout Sample</button>
+      <button id="cancelButton" class="btn">Cancel Request</button>
+    </div>
+    <div class="mt-1">
+      <button id="hookButton" class="btn">Hook Sample</button>
+      <button id="nonExistButton" class="btn">Non-existent Command</button>
+    </div>
+    <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message</div>
+    <div id="message"></div>
+  </div>
 </section>
 
-<script src="kamome.min.js"></script>
+<script src="kamome.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var count = 0;
 
-        // Sets default timeout in millisecond.
+        // Set default timeout in millisecond.
         Kamome.setDefaultRequestTimeout(15000);
-
-        // Adds a command method with default value to Kamome object.
-        Kamome.extension
-            .addCommand('echo', { message: 'Hello World!' })
-            .addCommand('get');
 
         document.getElementById('echoButton1').addEventListener('click', function () {
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }, function (data, error) {
-                if (data) {
-                    document.getElementById('message').innerHTML += data.message + '<br>';
-                } else if (error) {
-                    // Not call
-                    document.getElementById('message').innerHTML += error + '<br>';
+                if (error) {
+                    addMessage(error);
+                }
+                else {
+                    addMessage(data.message);
                 }
             });
         });
 
         document.getElementById('echoButton2').addEventListener('click', function () {
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }).then(function (data) {
-                document.getElementById('message').innerHTML += data.message + '<br>';
+                addMessage(data.message);
             }).catch(function (error) {
-                // Not call
-                document.getElementById('message').innerHTML += error + '<br>';
+                addMessage(error);
             });
         });
 
         document.getElementById('echoButton3').addEventListener('click', function () {
-            // Calls `echo` command method.
-            Kamome.echo(function (defaultValue) {
-                // Modifies sending data from default.
-                return { message: defaultValue.message + ' (' + (++count) + ')' };
-            }).then(function (data) {
-                document.getElementById('message').innerHTML += data.message + '<br>';
-            }).catch(function (error) {
-                // Not call
-                document.getElementById('message').innerHTML += error + '<br>';
-            });
-        });
-
-        document.getElementById('getButton1').addEventListener('click', function () {
-            Kamome.send('get', {}, function (data, error) {
-                if (data) {
-                    // Not call
-                    document.getElementById('message').innerHTML += data.message + '<br>';
-                } else if (error) {
-                    document.getElementById('message').innerHTML += error + '<br>';
+            Kamome.send('echoError', {}, function (data, error) {
+                if (error) {
+                    addMessage(error);
+                }
+                else {
+                    addMessage(data.message);
                 }
             });
         });
 
-        document.getElementById('getButton2').addEventListener('click', function () {
-            // Calls `get` command method.
-            Kamome.get().then(function (data) {
-                // Not call
-                document.getElementById('message').innerHTML += data.message + '<br>';
+        document.getElementById('echoButton4').addEventListener('click', function () {
+            Kamome.send('echoError').then(function (data) {
+                addMessage(data.message);
             }).catch(function (error) {
-                document.getElementById('message').innerHTML += error + '<br>';
+                addMessage(error);
             });
         });
 
         document.getElementById('timeoutButton').addEventListener('click', function () {
-            Kamome.send('tooLong', null, null, 5000).then(function (data) {
-                // Not call
-            }).catch(function (error) {
-                document.getElementById('message').innerHTML += error + '<br>';
+            Kamome.send('tooLong', null, null, 3000).catch(function (error) {
+                addMessage(error);
             });
         });
 
@@ -156,12 +133,73 @@
             Kamome.cancelCurrentRequest();
         });
 
-        Kamome.addReceiver('greeting', function (data) {
-            document.getElementById('message').innerHTML += data.greeting + '<br>';
-
-            return 'World!';
+        document.getElementById('hookButton').addEventListener('click', function () {
+            Kamome.send("getScore").then(function (data) {
+                addMessage("Score: " + data.score + " Rank: " + data.rank);
+            });
         });
+
+        document.getElementById("nonExistButton").addEventListener("click", function () {
+            Kamome.send("deleteUser").then(function (data) {
+            }).catch(function (error) {
+                addMessage(error);
+            })
+        });
+
+        // Add a receiver that receives a message sent by the native client.
+        Kamome.addReceiver('greeting', function (data) {
+            addMessage(data.greeting);
+
+            // Return a result to the native client.
+            return 'OK!'; // Any object or null.
+        });
+
+        // Hook.
+        Kamome.hook
+            .before("getScore", function () {
+                // Called before sending "getScore" command.
+                Kamome.send("getUser").then(function (data) {
+                    addMessage("Name: " + data.name);
+                });
+            })
+            .after("getScore", function () {
+                // Called after "getScore" command is processed.
+                Kamome.send("getAvg").then(function (data) {
+                    addMessage("Avg: " + data.avg);
+                });
+            });
+
+        // When there is no Kamome's iOS/Android native client, that is, when you run with a browser alone,
+        // you can register the processing of each command.
+        Kamome.browser
+            .addCommand("echo", function (data, resolve, reject) {
+                // Success
+                resolve({ message: data["message"] });
+            })
+            .addCommand("echoError", function (data, resolve, reject) {
+                // Failure
+                reject("Echo Error!");
+            })
+            .addCommand("tooLong", function (data, resolve, reject) {
+                // Too long process...
+                setTimeout(function () {
+                    resolve();
+                }, 30000);
+            })
+            .addCommand("getUser", function (data, resolve, reject) {
+                resolve({ name: "Brad" });
+            })
+            .addCommand("getScore", function (data, resolve, reject) {
+                resolve({ score: 90, rank: 2 });
+            })
+            .addCommand("getAvg", function (data, resolve, reject) {
+                resolve({ avg: 68 });
+            });
     });
+
+    function addMessage(msg) {
+        document.getElementById('message').innerHTML += msg + '<br>';
+    }
 </script>
 </body>
 </html>

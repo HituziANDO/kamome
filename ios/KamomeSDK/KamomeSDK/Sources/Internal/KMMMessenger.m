@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-@import WebKit;
+#import <WebKit/WebKit.h>
 
 #import "KMMMessenger.h"
 #import "KMMException.h"
@@ -54,7 +54,7 @@
     return self;
 }
 
-- (void)completeMessageWithWebView:(id)webView
+- (void)completeMessageWithWebView:(__kindof WKWebView *)webView
                               data:(nullable id)data
                       forRequestId:(NSString *)requestId {
 
@@ -76,7 +76,7 @@
     }
 }
 
-- (void)failMessageWithWebView:(id)webView
+- (void)failMessageWithWebView:(__kindof WKWebView *)webView
                          error:(nullable NSString *)error
                   forRequestId:(NSString *)requestId {
 
@@ -90,7 +90,7 @@
     }
 }
 
-- (void)sendMessageWithWebView:(id)webView
+- (void)sendMessageWithWebView:(__kindof WKWebView *)webView
                           data:(nullable id)data
                          block:(nullable KMMReceiveResultBlock)block
                     callbackId:(nullable NSString *)callbackId
@@ -113,7 +113,10 @@
                                                  encoding:NSUTF8StringEncoding];
 
         if (callbackId) {
-            [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onReceive('%@', '%@', '%@')", name, params, callbackId]
+            [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onReceive('%@', '%@', '%@')",
+                                                           name,
+                                                           params,
+                                                           callbackId]
                     withWebView:webView];
         }
         else {
@@ -123,7 +126,9 @@
     }
     else {
         if (callbackId) {
-            [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onReceive('%@', null, '%@')", name, callbackId]
+            [self runJavaScript:[NSString stringWithFormat:@"window.Kamome.onReceive('%@', null, '%@')",
+                                                           name,
+                                                           callbackId]
                     withWebView:webView];
         }
         else {
@@ -133,12 +138,12 @@
     }
 }
 
-- (void)runJavaScript:(NSString *)js withWebView:(id)webView {
+- (void)runJavaScript:(NSString *)js withWebView:(__kindof WKWebView *)webView {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if ([webView isKindOfClass:[WKWebView class]]) {
+        if (webView) {
             __weak typeof(self) weakSelf = self;
 
-            [((WKWebView *) webView) evaluateJavaScript:js completionHandler:^(id value, NSError *error) {
+            [webView evaluateJavaScript:js completionHandler:^(id value, NSError *error) {
                 if (error) {
                     NSLog(@"[Kamome] ERROR: %@ %@", error.localizedDescription, error.userInfo);
 
@@ -171,15 +176,8 @@
                 }
             }];
         }
-        else if ([webView isKindOfClass:[UIWebView class]]) {
-            // MessageCallback not supported.
-            [((UIWebView *) webView) stringByEvaluatingJavaScriptFromString:js];
-        }
-        else if (webView == nil) {
-            @throw [KMMException exceptionWithReason:@"The webView is nil." userInfo:nil];
-        }
         else {
-            @throw [KMMException exceptionWithReason:@"The webView is not WKWebView or UIWebView instance." userInfo:nil];
+            @throw [KMMException exceptionWithReason:@"The webView is nil." userInfo:nil];
         }
     });
 }

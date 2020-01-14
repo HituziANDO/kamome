@@ -2,28 +2,43 @@
 //  ViewController.swift
 //  KamomeSwift
 //
-//  Created by Masaki Ando on 2019/02/03.
-//  Copyright © 2019年 Hituzi Ando. All rights reserved.
+//  Copyright (c) 2020 Hituzi Ando. All rights reserved.
 //
 
 import UIKit
 import WebKit
 import KamomeSDK
 
+class MyWebView: WKWebView {
+    // Something
+}
+
 class ViewController: UIViewController {
 
-    private var webView: WKWebView!
-    private var kamome:  KMMKamome!
+    private lazy var sendButton: UIButton = {
+        let sendButton = UIButton(frame: CGRect(x: 0, y: 0, width: 200.0, height: 44.0))
+        sendButton.backgroundColor = .purple
+        sendButton.layer.cornerRadius = 22.0
+        sendButton.layer.shadowColor = UIColor.black.cgColor
+        sendButton.layer.shadowOpacity = 0.4
+        sendButton.layer.shadowOffset = CGSize(width: 0, height: 4.0)
+        sendButton.setTitle("Send Data to Web", for: .normal)
+        sendButton.addTarget(self, action: #selector(sendButtonPressed(_:)), for: .touchUpInside)
+        return sendButton
+    }()
+
+    private var webView: MyWebView!
+    private var kamome: KMMKamome!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Creates a kamome instance with default webView.
+        // Create the Kamome object with default webView.
         var webView: AnyObject!
-        kamome = KMMKamome.create(webView: &webView, class: WKWebView.self, frame: view.frame)
-        self.webView = webView as? WKWebView
+        kamome = KMMKamome.create(webView: &webView, class: MyWebView.self, frame: view.frame)
+        self.webView = webView as? MyWebView
 
-        // Creates a kamome instance for a customized webView.
+        // Create the Kamome object for a customized webView.
 //        kamome = KMMKamome()
 //
 //        let userContentController = WKUserContentController()
@@ -34,32 +49,53 @@ class ViewController: UIViewController {
 //
 //        kamome.setWebView(self.webView)
 
-        kamome.add(KMMCommand(name: "echo") { data, completion in
-                  // Success
+        kamome.add(KMMCommand(name: "echo") { commandName, data, completion in
+                  // Received `echo` command.
+                  // Then send resolved result to the JavaScript callback function.
                   completion.resolve(with: ["message": data!["message"]!])
               })
-              .add(KMMCommand(name: "get") { data, completion in
-                  // Failure
-                  completion.reject(with: "Error message")
+              .add(KMMCommand(name: "echoError") { commandName, data, completion in
+                  // Send rejected result if failed.
+                  completion.reject(with: "Echo Error!")
               })
-              .add(KMMCommand(name: "tooLong") { data, completion in
-                  // Too long process
+              .add(KMMCommand(name: "tooLong") { commandName, data, completion in
+                  // Too long process...
                   Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { timer in
                       completion.resolve()
                   }
               })
+              .add(KMMCommand(name: "getUser") { commandName, data, completion in
+                  completion.resolve(with: ["name": "Brad"])
+              })
+              .add(KMMCommand(name: "getScore") { commandName, data, completion in
+                  completion.resolve(with: ["score": 88, "rank": 2])
+              })
+              .add(KMMCommand(name: "getAvg") { commandName, data, completion in
+                  completion.resolve(with: ["avg": 68])
+              })
 
-        let htmlURL = URL(fileURLWithPath: Bundle.main.path(forResource: "index", ofType: "html", inDirectory: "www")!)
+        kamome.howToHandleNonExistentCommand = .rejected
+
+        let htmlURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "www")!
         self.webView.loadFileURL(htmlURL, allowingReadAccessTo: htmlURL)
         view.addSubview(self.webView)
         view.sendSubviewToBack(self.webView)
+
+        self.view.addSubview(self.sendButton)
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+
+        self.sendButton.center = CGPoint(x: self.view.center.x, y: self.view.frame.size.height - 70.0)
     }
 
     @IBAction func sendButtonPressed(_ sender: Any) {
-        // Send data to JavaScript.
-        kamome.sendMessage(with: ["greeting": "Hello!"], block: { result in
+        // Send a data to JavaScript.
+        kamome.sendMessage(with: ["greeting": "Hello! by Swift"], name: "greeting") { result in
+            // Received a result from the JS code.
             guard let result = result else { return }
             print("result: \(result)")
-        }, forName: "greeting")
+        }
     }
 }

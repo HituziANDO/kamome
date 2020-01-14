@@ -25,3 +25,4 @@
 #import "KMMCommand.h"
 #import "KMMCompletion.h"
 #import "KMMException.h"
+#import "KMMLocalCompletion.h"

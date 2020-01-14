@@ -1,18 +1,21 @@
 package jp.hituzi.kamome;
 
+import android.support.annotation.Nullable;
+
 import org.json.JSONObject;
 
 public final class Command {
 
     public interface IHandler {
 
-        void execute(JSONObject data, Completion completion);
+        void execute(String commandName, @Nullable JSONObject data, ICompletion completion);
     }
 
     private String name;
+    @Nullable
     private IHandler handler;
 
-    public Command(String name, IHandler handler) {
+    public Command(String name, @Nullable IHandler handler) {
         this.name = name;
         this.handler = handler;
     }
@@ -21,9 +24,9 @@ public final class Command {
         return name;
     }
 
-    void execute(JSONObject data, Completion completion) {
+    void execute(@Nullable JSONObject data, ICompletion completion) {
         if (handler != null) {
-            handler.execute(data, completion);
+            handler.execute(name, data, completion);
         }
     }
 }
