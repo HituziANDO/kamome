@@ -23,12 +23,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    // Creates a Kamome object with default webView.
+    // Create the Kamome object with default webView.
     WKWebView *webView = nil;
     self.kamome = [KMMKamome createInstanceAndWebView:&webView class:[WKWebView class] frame:self.view.frame];
     self.webView = webView;
 
-    // Creates a Kamome object for a customized webView.
+    // Create the Kamome object for a customized webView.
 //    self.kamome = [KMMKamome new];
 //
 //    WKUserContentController *userContentController = [WKUserContentController new];
@@ -43,7 +43,8 @@
                                                 handler:^(NSString *_Nonnull commandName,
                                                           NSDictionary *_Nullable data,
                                                           id <KMMCompleting> _Nonnull completion) {
-                                                    // Success
+                                                    // Received `echo` command.
+                                                    // Then send resolved result to the JavaScript callback function.
                                                     [completion resolveWithDictionary:@{ @"message": data[@"message"] }];
                                                 }]];
 
@@ -51,7 +52,7 @@
                                                 handler:^(NSString *_Nonnull commandName,
                                                           NSDictionary *_Nullable data,
                                                           id <KMMCompleting> _Nonnull completion) {
-                                                    // Failure
+                                                    // Send rejected result if failed.
                                                     [completion rejectWithErrorMessage:@"Echo Error!"];
                                                 }]];
 
@@ -113,10 +114,11 @@
 }
 
 - (void)sendButtonPressed:(id)sender {
-    // Send data to JavaScript.
+    // Send a data to JavaScript.
     [self.kamome sendMessageWithDictionary:@{ @"greeting": @"Hello! by ObjC" }
                                    forName:@"greeting"
                                      block:^(id _Nullable result) {
+                                         // Received a result from the JS code.
                                          NSLog(@"result: %@", result);
                                      }];
 }

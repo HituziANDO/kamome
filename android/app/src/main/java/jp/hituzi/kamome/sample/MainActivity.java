@@ -40,7 +40,8 @@ public class MainActivity extends Activity {
                 @Override
                 public void execute(String commandName, JSONObject data, ICompletion completion) {
                     try {
-                        // Success
+                        // Received `echo` command.
+                        // Then send resolved result to the JavaScript callback function.
                         completion.resolve(new JSONObject().put("message", data.getString("message")));
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -51,7 +52,7 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void execute(String commandName, JSONObject data, ICompletion completion) {
-                    // Failure
+                    // Send rejected result if failed.
                     completion.reject("Echo Error!");
                 }
             }))
@@ -115,13 +116,14 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 try {
-                    // Send data to JavaScript.
+                    // Send a data to JavaScript.
                     kamome.sendMessage(new JSONObject().put("greeting", "Hello! by Java"),
                         "greeting",
                         new Kamome.IResultCallback() {
 
                             @Override
                             public void onReceiveResult(Object result) {
+                                // Received a result from the JS code.
                                 Log.d(TAG, "result: " + result);
                             }
                         });

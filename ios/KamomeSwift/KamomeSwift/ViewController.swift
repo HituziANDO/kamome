@@ -33,12 +33,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Creates a Kamome object with default webView.
+        // Create the Kamome object with default webView.
         var webView: AnyObject!
         kamome = KMMKamome.create(webView: &webView, class: MyWebView.self, frame: view.frame)
         self.webView = webView as? MyWebView
 
-        // Creates a Kamome object for a customized webView.
+        // Create the Kamome object for a customized webView.
 //        kamome = KMMKamome()
 //
 //        let userContentController = WKUserContentController()
@@ -50,11 +50,12 @@ class ViewController: UIViewController {
 //        kamome.setWebView(self.webView)
 
         kamome.add(KMMCommand(name: "echo") { commandName, data, completion in
-                  // Success
+                  // Received `echo` command.
+                  // Then send resolved result to the JavaScript callback function.
                   completion.resolve(with: ["message": data!["message"]!])
               })
               .add(KMMCommand(name: "echoError") { commandName, data, completion in
-                  // Failure
+                  // Send rejected result if failed.
                   completion.reject(with: "Echo Error!")
               })
               .add(KMMCommand(name: "tooLong") { commandName, data, completion in
@@ -90,8 +91,9 @@ class ViewController: UIViewController {
     }
 
     @IBAction func sendButtonPressed(_ sender: Any) {
-        // Send data to JavaScript.
+        // Send a data to JavaScript.
         kamome.sendMessage(with: ["greeting": "Hello! by Swift"], name: "greeting") { result in
+            // Received a result from the JS code.
             guard let result = result else { return }
             print("result: \(result)")
         }
