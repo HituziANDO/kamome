@@ -89,45 +89,45 @@ Kamome provides common JavaScript interface for iOS and Android.
 ### Send a message from the native code to the JS code
 
 1. Send a message from the native code on iOS
-
-```swift
-// Send data to JavaScript.
-kamome.sendMessage(with: ["greeting": "Hello! by Swift"], name: "greeting") { result in
-    // Received a result from the JS code.
-    guard let result = result else { return }
-    print("result: \(result)")
-}
-```
+	
+	```swift
+	// Send a data to JavaScript.
+	kamome.sendMessage(with: ["greeting": "Hello! by Swift"], name: "greeting") { result in
+	    // Received a result from the JS code.
+	    guard let result = result else { return }
+	    print("result: \(result)")
+	}
+	```
 
 1. Send a message from the native code on Android
-
-```java
-try {
-    // Send a data to JavaScript.
-    kamome.sendMessage(new JSONObject().put("greeting", "Hello! by Java"),
-        "greeting",
-        new Kamome.IResultCallback() {
-
-            @Override
-            public void onReceiveResult(Object result) {
-                // Received a result from the JS code.
-                Log.d(TAG, "result: " + result);
-            }
-        });
-} catch (JSONException e) {}
-```
+	
+	```java
+	try {
+	    // Send a data to JavaScript.
+	    kamome.sendMessage(new JSONObject().put("greeting", "Hello! by Java"),
+	        "greeting",
+	        new Kamome.IResultCallback() {
+	
+	            @Override
+	            public void onReceiveResult(Object result) {
+	                // Received a result from the JS code.
+	                Log.d(TAG, "result: " + result);
+	            }
+	        });
+	} catch (JSONException e) {}
+	```
 
 1. Receive a message on the JavaScript code
-
-```javascript
-// Add a receiver that receives a message sent by the native client.
-Kamome.addReceiver('greeting', function (data) {
-    console.log(data.greeting);
-
-    // Return a result to the native client.
-    return 'OK!'; // Any object or null.
-});
-```
+	
+	```javascript
+	// Add a receiver that receives a message sent by the native client.
+	Kamome.addReceiver('greeting', function (data) {
+	    console.log(data.greeting);
+	
+	    // Return a result to the native client.
+	    return 'OK!'; // Any object or null.
+	});
+	```
 
 ## Include Library in Your Project
 
