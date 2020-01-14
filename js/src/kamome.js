@@ -32,6 +32,51 @@ window.Kamome = (function (Undefined) {
         canceled:       'Canceled',
     };
 
+    var android = (function () {
+        /**
+         * Tells whether your app has the Kamome Android client.
+         *
+         * @return {boolean}
+         */
+        var hasClient = function () {
+            return (navigator.userAgent.toLowerCase().indexOf('android') > 0) && 'kamomeAndroid' in window;
+        };
+
+        var _send = function (json) {
+            setTimeout(function () {
+                window.kamomeAndroid.kamomeSend(json);
+            }, 0);
+        };
+
+        return {
+            hasClient: hasClient,
+            _send:     _send,
+        };
+    })();
+
+    var iOS = (function () {
+        /**
+         * Tells whether your app has the Kamome iOS client.
+         *
+         * @return {boolean}
+         */
+        var hasClient = function () {
+            // Require WKWebView
+            return 'webkit' in window;
+        };
+
+        var _send = function (json) {
+            setTimeout(function () {
+                window.webkit.messageHandlers.kamomeSend.postMessage(json);
+            }, 0);
+        };
+
+        return {
+            hasClient: hasClient,
+            _send:     _send,
+        };
+    })();
+
     var browser = (function () {
         var _handlerDict = {};
 
@@ -231,15 +276,11 @@ window.Kamome = (function (Undefined) {
         var req = _requests[0];
         var json = JSON.stringify({ name: req.name, data: req.data, id: req.id });
 
-        if (_isIOS()) {
-            setTimeout(function () {
-                window.webkit.messageHandlers.kamomeSend.postMessage(json);
-            }, 0);
+        if (iOS.hasClient()) {
+            iOS._send(json);
         }
-        else if (_isAndroid()) {
-            setTimeout(function () {
-                window.kamomeAndroid.kamomeSend(json);
-            }, 0);
+        else if (android.hasClient()) {
+            android._send(json);
         }
         else if (browser._hasCommand(req.name)) {
             browser._execCommand(req);
@@ -271,27 +312,6 @@ window.Kamome = (function (Undefined) {
     var _shiftRequest = function (didShift) {
         didShift(_requests.shift());
         _send();
-    };
-
-    /**
-     * Tells whether your app has the Kamome Android client.
-     *
-     * @return {boolean}
-     * @private
-     */
-    var _isAndroid = function () {
-        return (navigator.userAgent.toLowerCase().indexOf('android') > 0) && 'kamomeAndroid' in window;
-    };
-
-    /**
-     * Tells whether your app has the Kamome iOS client.
-     *
-     * @return {boolean}
-     * @private
-     */
-    var _isIOS = function () {
-        // Require WKWebView
-        return 'webkit' in window;
     };
 
     /**
@@ -400,7 +420,7 @@ window.Kamome = (function (Undefined) {
         if (name in _receiverDict) {
             var result = _receiverDict[name](json ? JSON.parse(json) : null);
 
-            if (_isAndroid()) {
+            if (android.hasClient()) {
                 return { callbackId: callbackId, result: result };
             }
             else {
@@ -408,7 +428,7 @@ window.Kamome = (function (Undefined) {
             }
         }
 
-        if (_isAndroid()) {
+        if (android.hasClient()) {
             return { callbackId: callbackId, result: null };
         }
         else {
@@ -418,6 +438,8 @@ window.Kamome = (function (Undefined) {
 
     var _module = {
         Error:                    Error,
+        android:                  android,
+        iOS:                      iOS,
         browser:                  browser,
         setDefaultRequestTimeout: setDefaultRequestTimeout,
         addReceiver:              addReceiver,
