@@ -38,10 +38,18 @@ public final class Completion {
         resolve(data);
     }
 
+    /**
+     * Sends resolved result to a JavaScript callback function.
+     */
     public void resolve() {
         resolve((JSONObject) null);
     }
 
+    /**
+     * Sends resolved result with a data to a JavaScript callback function.
+     *
+     * @param data A data as JSONObject.
+     */
     public void resolve(@Nullable JSONObject data) {
         if (completed) {
             return;
@@ -52,6 +60,11 @@ public final class Completion {
         Messenger.completeMessage(webView, data, requestId);
     }
 
+    /**
+     * Sends resolved result with a data to a JavaScript callback function.
+     *
+     * @param data A data as JSONArray.
+     */
     public void resolve(@Nullable JSONArray data) {
         if (completed) {
             return;
@@ -62,10 +75,18 @@ public final class Completion {
         Messenger.completeMessage(webView, data, requestId);
     }
 
+    /**
+     * Sends rejected result to a JavaScript callback function.
+     */
     public void reject() {
         reject(null);
     }
 
+    /**
+     * Sends rejected result with an error message to a JavaScript callback function.
+     *
+     * @param errorMessage An error message.
+     */
     public void reject(@Nullable String errorMessage) {
         if (completed) {
             return;

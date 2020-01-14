@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Kamome</string>
+    <string name="send_data_to_web">Send Data to Web</string>
 </resources>

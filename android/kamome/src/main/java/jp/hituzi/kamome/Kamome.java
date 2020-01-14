@@ -10,8 +10,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import jp.hituzi.kamome.internal.Messenger;
@@ -24,34 +24,62 @@ public final class Kamome {
     }
 
     private final WebView webView;
-    private final List<Command> commands = new ArrayList<>();
+    private final Map<String, Command> commands = new HashMap<>();
 
+    @Deprecated
     @SuppressLint("SetJavaScriptEnabled")
     public static Kamome createInstanceForWebView(WebView webView) throws ApiVersionException {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
             throw new ApiVersionException();
         }
 
-        Kamome kamome = new Kamome(webView);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(kamome, "kamomeAndroid");
-
-        return kamome;
+        return new Kamome(webView);
     }
 
-    private Kamome(WebView webView) {
+    @SuppressLint("SetJavaScriptEnabled")
+    public Kamome(WebView webView) {
         this.webView = webView;
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(this, "kamomeAndroid");
     }
 
-    public Kamome addCommand(Command command) {
-        commands.add(command);
+    /**
+     * Adds a command called by JavaScript code.
+     *
+     * @param command A command.
+     * @return Self.
+     */
+    public Kamome add(Command command) {
+        commands.put(command.getName(), command);
         return this;
     }
 
+    /**
+     * Removes a command of specified name.
+     *
+     * @param name A command name that you will remove.
+     */
+    public void removeCommand(String name) {
+        commands.remove(name);
+    }
+
+    /**
+     * Sends a message to the JavaScript receiver.
+     *
+     * @param name     A command name.
+     * @param callback A callback.
+     */
     public void sendMessage(String name, @Nullable final IResultCallback callback) {
         sendMessage((JSONObject) null, name, callback);
     }
 
+    /**
+     * Sends a message with data as JSONObject to the JavaScript receiver.
+     *
+     * @param data     A data as JSONObject.
+     * @param name     A command name.
+     * @param callback A callback.
+     */
     public void sendMessage(JSONObject data, String name, @Nullable final IResultCallback callback) {
         if (callback != null) {
             Messenger.sendMessage(webView, name, data, new Messenger.IMessageCallback() {
@@ -66,6 +94,13 @@ public final class Kamome {
         }
     }
 
+    /**
+     * Sends a message with data as JSONArray to the JavaScript receiver.
+     *
+     * @param data     A data as JSONArray.
+     * @param name     A command name.
+     * @param callback A callback.
+     */
     public void sendMessage(JSONArray data, String name, @Nullable final IResultCallback callback) {
         if (callback != null) {
             Messenger.sendMessage(webView, name, data, new Messenger.IMessageCallback() {
@@ -92,16 +127,7 @@ public final class Kamome {
             String requestId = object.getString("id");
             String name = object.getString("name");
             JSONObject data = object.isNull("data") ? null : object.getJSONObject("data");
-
-            Command command = null;
-
-            for (Command cmd : commands) {
-                if (name.equals(cmd.getName())) {
-                    command = cmd;
-                    break;
-                }
-            }
-
+            Command command = commands.get(name);
             Completion completion = new Completion(webView, requestId);
 
             if (command != null) {
