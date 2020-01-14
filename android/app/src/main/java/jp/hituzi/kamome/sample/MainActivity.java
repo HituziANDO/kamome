@@ -105,6 +105,8 @@ public class MainActivity extends Activity {
                 }
             }));
 
+        kamome.howToHandleNonExistentCommand = Kamome.HowToHandleNonExistentCommand.REJECTED;
+
         webView.loadUrl("file:///android_asset/www/index.html");
 
         Button sendButton = findViewById(R.id.sendButton);

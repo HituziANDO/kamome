@@ -30,9 +30,28 @@ NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXTERN NSString *const KMMScriptMessageHandlerName;
 
+typedef NS_ENUM(NSInteger, KMMHowToHandleNonExistentCommand) {
+    /**
+     * Anyway resolved passing null.
+     */
+        KMMHowToHandleNonExistentCommandResolved,
+    /**
+     * Always rejected and passing an error message.
+     */
+        KMMHowToHandleNonExistentCommandRejected,
+    /**
+     * Always raises an exception.
+     */
+        KMMHowToHandleNonExistentCommandException
+};
+
 @interface KMMKamome : NSObject <WKScriptMessageHandler>
 
 @property (nonatomic, readonly) WKUserContentController *contentController;
+/**
+ * How to handle non-existent command.
+ */
+@property (nonatomic) KMMHowToHandleNonExistentCommand howToHandleNonExistentCommand;
 
 /**
  * Creates a Kamome object and a webView object of specified class initialized by Kamome.

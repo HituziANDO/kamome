@@ -88,6 +88,8 @@
                                                     [completion resolveWithDictionary:@{ @"avg": @68 }];
                                                 }]];
 
+    self.kamome.howToHandleNonExistentCommand = KMMHowToHandleNonExistentCommandRejected;
+
     NSURL *htmlURL = [[NSBundle mainBundle] URLForResource:@"index" withExtension:@"html" subdirectory:@"www"];
     [self.webView loadFileURL:htmlURL allowingReadAccessToURL:htmlURL];
     [self.view addSubview:self.webView];

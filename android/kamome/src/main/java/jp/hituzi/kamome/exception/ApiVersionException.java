@@ -1,4 +1,4 @@
-package jp.hituzi.kamome;
+package jp.hituzi.kamome.exception;
 
 public final class ApiVersionException extends Exception {
 

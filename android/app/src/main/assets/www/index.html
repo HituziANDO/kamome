@@ -70,6 +70,7 @@
     </div>
     <div class="mt-1">
       <button id="hookButton" class="btn">Hook Sample</button>
+      <button id="nonExistButton" class="btn">Non-existent Command</button>
     </div>
     <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message</div>
     <div id="message"></div>
@@ -136,6 +137,13 @@
             Kamome.send("getScore").then(function (data) {
                 addMessage("Score: " + data.score + " Rank: " + data.rank);
             });
+        });
+
+        document.getElementById("nonExistButton").addEventListener("click", function () {
+            Kamome.send("deleteUser").then(function (data) {
+            }).catch(function (error) {
+                addMessage(error);
+            })
         });
 
         // Add a receiver that receives a message sent by the native client.

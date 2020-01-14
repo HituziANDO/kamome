@@ -1,9 +1,9 @@
 Pod::Spec.new do |s|
   s.name         = "KamomeSDK"
-  s.version      = "1.5.1"
-  s.summary      = "Kamome is bridging JavaScript and Objective-C/Swift."
+  s.version      = "2.0.0"
+  s.summary      = "Kamome bridges a gap between JavaScript in the WKWebView and the native code written by Swift or Objective-C."
   s.description  = <<-DESC
-  Kamome is a library sending messages between JavaScript and native code written by Objective-C/Swift in WKWebView.
+  Kamome is a library for iOS and Android apps using the WebView. This library bridges a gap between JavaScript in the WebView and the native code written by Swift, Objective-C, Java or Kotlin.
                    DESC
   s.homepage     = "https://github.com/HituziANDO/kamome"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }

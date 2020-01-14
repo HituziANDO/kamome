@@ -73,6 +73,8 @@ class ViewController: UIViewController {
                   completion.resolve(with: ["avg": 68])
               })
 
+        kamome.howToHandleNonExistentCommand = .rejected
+
         let htmlURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "www")!
         self.webView.loadFileURL(htmlURL, allowingReadAccessTo: htmlURL)
         view.addSubview(self.webView)

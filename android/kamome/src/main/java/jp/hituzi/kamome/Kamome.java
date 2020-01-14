@@ -14,9 +14,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import jp.hituzi.kamome.exception.ApiVersionException;
+import jp.hituzi.kamome.exception.CommandNotAddedException;
 import jp.hituzi.kamome.internal.Messenger;
 
 public final class Kamome {
+
+    public enum HowToHandleNonExistentCommand {
+        /**
+         * Anyway resolved passing null.
+         */
+        RESOLVED,
+        /**
+         * Always rejected and passing an error message.
+         */
+        REJECTED,
+        /**
+         * Always raises an exception.
+         */
+        EXCEPTION
+    }
 
     public interface IResultCallback {
 
@@ -27,6 +44,11 @@ public final class Kamome {
          */
         void onReceiveResult(@Nullable Object result);
     }
+
+    /**
+     * How to handle non-existent command.
+     */
+    public HowToHandleNonExistentCommand howToHandleNonExistentCommand = HowToHandleNonExistentCommand.RESOLVED;
 
     private final WebView webView;
     private final Map<String, Command> commands = new HashMap<>();
@@ -138,14 +160,7 @@ public final class Kamome {
      * @param callback A callback.
      */
     public void executeCommand(String name, @Nullable JSONObject data, @Nullable LocalCompletion.ICallback callback) {
-        Command command = commands.get(name);
-        LocalCompletion completion = new LocalCompletion(callback);
-
-        if (command != null) {
-            command.execute(data, completion);
-        } else {
-            completion.resolve();
-        }
+        handleCommand(name, data, new LocalCompletion(callback));
     }
 
     /**
@@ -160,16 +175,27 @@ public final class Kamome {
             String requestId = object.getString("id");
             String name = object.getString("name");
             JSONObject data = object.isNull("data") ? null : object.getJSONObject("data");
-            Command command = commands.get(name);
-            Completion completion = new Completion(webView, requestId);
-
-            if (command != null) {
-                command.execute(data, completion);
-            } else {
-                completion.resolve();
-            }
+            handleCommand(name, data, new Completion(webView, requestId));
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void handleCommand(String name, @Nullable JSONObject data, ICompletion completion) {
+        Command command = commands.get(name);
+
+        if (command != null) {
+            command.execute(data, completion);
+        } else {
+            switch (howToHandleNonExistentCommand) {
+                case REJECTED:
+                    completion.reject("CommandNotAdded");
+                    break;
+                case EXCEPTION:
+                    throw new CommandNotAddedException(name);
+                default:
+                    completion.resolve();
+            }
         }
     }
 }
