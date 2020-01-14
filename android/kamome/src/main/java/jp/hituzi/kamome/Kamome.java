@@ -20,6 +20,11 @@ public final class Kamome {
 
     public interface IResultCallback {
 
+        /**
+         * Receives a result from the JavaScript receiver when it processed a task of a command.
+         *
+         * @param result A result.
+         */
         void onReceiveResult(@Nullable Object result);
     }
 
@@ -116,9 +121,37 @@ public final class Kamome {
     }
 
     /**
+     * Executes a command to the native receiver.
+     *
+     * @param name     A command name.
+     * @param callback A callback.
+     */
+    public void executeCommand(String name, @Nullable LocalCompletion.ICallback callback) {
+        executeCommand(name, null, callback);
+    }
+
+    /**
+     * Executes a command with data to the native receiver.
+     *
+     * @param name     A command name.
+     * @param data     A data as NSDictionary.
+     * @param callback A callback.
+     */
+    public void executeCommand(String name, @Nullable JSONObject data, @Nullable LocalCompletion.ICallback callback) {
+        Command command = commands.get(name);
+        LocalCompletion completion = new LocalCompletion(callback);
+
+        if (command != null) {
+            command.execute(data, completion);
+        } else {
+            completion.resolve();
+        }
+    }
+
+    /**
      * [NOTE] This method should not be executed directly.
      *
-     * @param message A JSON passed from JavaScript.
+     * @param message A JSON passed from the JavaScript object.
      */
     @JavascriptInterface
     public void kamomeSend(String message) {

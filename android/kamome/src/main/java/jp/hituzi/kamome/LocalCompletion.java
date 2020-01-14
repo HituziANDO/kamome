@@ -1,22 +1,34 @@
 package jp.hituzi.kamome;
 
 import android.support.annotation.Nullable;
-import android.webkit.WebView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import jp.hituzi.kamome.internal.Messenger;
+public final class LocalCompletion implements ICompletion {
 
-public final class Completion implements ICompletion {
+    public interface ICallback {
 
-    private final WebView webView;
-    private final String requestId;
+        /**
+         * Calls when a command is processed successfully.
+         *
+         * @param result A result as JSONObject or JSONArray.
+         */
+        void onResolved(@Nullable Object result);
+
+        /**
+         * Calls when a command is processed incorrectly.
+         *
+         * @param errorMessage An error message.
+         */
+        void onRejected(String errorMessage);
+    }
+
+    private final ICallback callback;
     private boolean completed;
 
-    Completion(WebView webView, String requestId) {
-        this.webView = webView;
-        this.requestId = requestId;
+    LocalCompletion(ICallback callback) {
+        this.callback = callback;
     }
 
     @Override
@@ -37,7 +49,7 @@ public final class Completion implements ICompletion {
 
         completed = true;
 
-        Messenger.completeMessage(webView, data, requestId);
+        callback.onResolved(data);
     }
 
     @Override
@@ -48,7 +60,7 @@ public final class Completion implements ICompletion {
 
         completed = true;
 
-        Messenger.completeMessage(webView, data, requestId);
+        callback.onResolved(data);
     }
 
     @Override
@@ -64,6 +76,10 @@ public final class Completion implements ICompletion {
 
         completed = true;
 
-        Messenger.failMessage(webView, errorMessage, requestId);
+        if (errorMessage != null && !errorMessage.isEmpty()) {
+            callback.onRejected(errorMessage);
+        } else {
+            callback.onRejected("Rejected");
+        }
     }
 }

@@ -13,7 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import jp.hituzi.kamome.Command;
-import jp.hituzi.kamome.Completion;
+import jp.hituzi.kamome.ICompletion;
 import jp.hituzi.kamome.Kamome;
 
 public class MainActivity extends Activity {
@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
             .add(new Command("echo", new Command.IHandler() {
 
                 @Override
-                public void execute(String commandName, JSONObject data, Completion completion) {
+                public void execute(String commandName, JSONObject data, ICompletion completion) {
                     try {
                         // Success
                         completion.resolve(new JSONObject().put("message", data.getString("message")));
@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
             .add(new Command("echoError", new Command.IHandler() {
 
                 @Override
-                public void execute(String commandName, JSONObject data, Completion completion) {
+                public void execute(String commandName, JSONObject data, ICompletion completion) {
                     // Failure
                     completion.reject("Echo Error!");
                 }
@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
             .add(new Command("tooLong", new Command.IHandler() {
 
                 @Override
-                public void execute(String commandName, JSONObject data, final Completion completion) {
+                public void execute(String commandName, JSONObject data, final ICompletion completion) {
                     // Too long process
                     new Handler().postDelayed(new Runnable() {
 

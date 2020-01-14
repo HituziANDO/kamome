@@ -8,7 +8,7 @@ public final class Command {
 
     public interface IHandler {
 
-        void execute(String commandName, @Nullable JSONObject data, Completion completion);
+        void execute(String commandName, @Nullable JSONObject data, ICompletion completion);
     }
 
     private String name;
@@ -24,7 +24,7 @@ public final class Command {
         return name;
     }
 
-    void execute(@Nullable JSONObject data, Completion completion) {
+    void execute(@Nullable JSONObject data, ICompletion completion) {
         if (handler != null) {
             handler.execute(name, data, completion);
         }
