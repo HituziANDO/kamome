@@ -1,5 +1,5 @@
 /**
- * kamome.js Rev.11
+ * kamome.js Rev.12
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -32,8 +32,73 @@ window.Kamome = (function (Undefined) {
         canceled:       'Canceled',
     };
 
+    var browser = (function () {
+        var _handlerDict = {};
+
+        /**
+         * Adds a command when it will be processed in the browser not the WebView.
+         * The handler format is following.
+         *
+         *  ```
+         *  function (data, resolve, reject) {
+         *      // Something to do
+         *      // Then, if succeeded
+         *      // resolve(response);   // response is any object or null
+         *      // Else
+         *      // reject('Error Message');
+         *  }
+         *  ```
+         *
+         * @param name {string} A command name.
+         * @param handler {Function} A handler.
+         * @return {*}
+         */
+        var addCommand = function (name, handler) {
+            _handlerDict[name] = handler;
+            return this;
+        };
+
+        /**
+         * Tells whether specified command is registered.
+         *
+         * @param name {string} A command name.
+         * @return {boolean}
+         */
+        var _hasCommand = function (name) {
+            return (name in _handlerDict);
+        };
+
+        /**
+         * Executes a command with specified request.
+         *
+         * @param req {{id:string, name:string, data:Object}} A request object.
+         */
+        var _execCommand = function (req) {
+            setTimeout(function () {
+                var resolve = (function (name, id) {
+                    return function (data) {
+                        onComplete(data ? JSON.stringify(data) : null, id);
+                    }
+                })(req.name, req.id);
+
+                var reject = (function (id) {
+                    return function (errorMessage) {
+                        onError(errorMessage, id);
+                    }
+                })(req.id);
+
+                _handlerDict[req.name](req.data, resolve, reject);
+            }, 0);
+        };
+
+        return {
+            addCommand:   addCommand,
+            _hasCommand:  _hasCommand,
+            _execCommand: _execCommand,
+        };
+    })();
+
     var _receiverDict = {};
-    var _webHandlerDict = {};
     var _requests = [];
     var _isRequesting = false;
     var _requestTimeout = 10000;    // Default value is 10 seconds
@@ -171,29 +236,13 @@ window.Kamome = (function (Undefined) {
                 window.webkit.messageHandlers.kamomeSend.postMessage(json);
             }, 0);
         }
-        else if (_isAndroid() && 'kamomeAndroid' in window) {
+        else if (_isAndroid()) {
             setTimeout(function () {
                 window.kamomeAndroid.kamomeSend(json);
             }, 0);
         }
-        else {
-            if (req.name in _webHandlerDict) {
-                setTimeout(function () {
-                    var resolve = (function (name, id) {
-                        return function (data) {
-                            onComplete(data ? JSON.stringify(data) : null, id);
-                        }
-                    })(req.name, req.id);
-
-                    var reject = (function (id) {
-                        return function (errorMessage) {
-                            onError(errorMessage, id);
-                        }
-                    })(req.id);
-
-                    _webHandlerDict[req.name](req.data, resolve, reject);
-                }, 0);
-            }
+        else if (browser._hasCommand(req.name)) {
+            browser._execCommand(req);
         }
 
         if (req.timeout > 0) {
@@ -225,19 +274,19 @@ window.Kamome = (function (Undefined) {
     };
 
     /**
-     * Tells whether the OS is Android.
+     * Tells whether your app has the Kamome Android client.
      *
-     * @return {boolean} Returns true if the OS is Android
+     * @return {boolean}
      * @private
      */
     var _isAndroid = function () {
-        return (navigator.userAgent.toLowerCase().indexOf('android') > 0);
+        return (navigator.userAgent.toLowerCase().indexOf('android') > 0) && 'kamomeAndroid' in window;
     };
 
     /**
-     * Tells whether the OS is iOS.
+     * Tells whether your app has the Kamome iOS client.
      *
-     * @return {boolean} Returns true if the OS is iOS
+     * @return {boolean}
      * @private
      */
     var _isIOS = function () {
@@ -300,6 +349,9 @@ window.Kamome = (function (Undefined) {
         return obj1;
     };
 
+    /**
+     * Called from the native client when sent message is processed successfully.
+     */
     var onComplete = function (json, requestId) {
         _isRequesting = false;
 
@@ -319,6 +371,9 @@ window.Kamome = (function (Undefined) {
         return null;
     };
 
+    /**
+     * Called from the native client when sent message is processed incorrectly.
+     */
     var onError = function (errorMessage, requestId) {
         _isRequesting = false;
 
@@ -338,6 +393,9 @@ window.Kamome = (function (Undefined) {
         return null;
     };
 
+    /**
+     * Receives a message from the native client.
+     */
     var onReceive = function (name, json, callbackId) {
         if (name in _receiverDict) {
             var result = _receiverDict[name](json ? JSON.parse(json) : null);
@@ -358,28 +416,9 @@ window.Kamome = (function (Undefined) {
         }
     };
 
-    /**
-     *
-     * @param {string} name A command name
-     * @param {Function} handler A handler is
-     * ```
-     *  function (data, resolve, reject) {
-     *      // Something to do
-     *      // Then, if succeeded
-     *      // resolve(response);   // response is any object or null
-     *      // Else
-     *      // reject('Error Message');
-     *  }
-     * ```
-     * @return {*}
-     */
-    var addWebHandler = function (name, handler) {
-        _webHandlerDict[name] = handler;
-        return this;
-    };
-
     var _module = {
         Error:                    Error,
+        browser:                  browser,
         setDefaultRequestTimeout: setDefaultRequestTimeout,
         addReceiver:              addReceiver,
         removeReceiver:           removeReceiver,
@@ -388,7 +427,6 @@ window.Kamome = (function (Undefined) {
         onComplete:               onComplete,
         onError:                  onError,
         onReceive:                onReceive,
-        addWebHandler:            addWebHandler,
     };
 
     _module.extension = {
@@ -399,6 +437,7 @@ window.Kamome = (function (Undefined) {
          * @param {Object|null} defaultValue Default value of the command
          * @param {string|null} methodName A method name of the command if it is given
          * @return {*}
+         * @deprecated
          */
         addCommand: function (commandName, defaultValue, methodName) {
             _module[methodName || commandName] = (function (name, defaultValue) {

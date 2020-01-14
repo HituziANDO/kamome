@@ -1,11 +1,13 @@
-# Setup
+# kamome.js
+
+## Setup development environment
 
 ```
 npm install
 ```
 
-# Build
+## Minify JS
 
 ```
-gulp build
+npm run prod
 ```

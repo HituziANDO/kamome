@@ -1,77 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-    <meta name="format-detection" content="telephone=no">
-    <title></title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+  <meta name="format-detection" content="telephone=no">
+  <title></title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-        }
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
 
-        body {
-            font-family: sans-serif;
-        }
+    body {
+      font-family: sans-serif;
+    }
 
-        .container {
-            padding: 0 1rem;
-            text-align: center;
-        }
+    .container {
+      padding: 0 1rem;
+      text-align: center;
+    }
 
-        .btn {
-            background-color: rgba(0, 0, 0, 0);
-            border-radius: 5px;
-            border: solid 1px #3498db;
-            color: #3498db;
-            font-size: .9rem;
-            font-weight: bold;
-            letter-spacing: .05em;
-            padding: .5rem 1rem;
-            width: 100%;
-            max-width: 320px;
-            min-height: 44px;
-        }
+    .btn {
+      background-color: rgba(0, 0, 0, 0);
+      border-radius: 5px;
+      border: solid 1px #3498db;
+      color: #3498db;
+      font-size: .9rem;
+      font-weight: bold;
+      letter-spacing: .05em;
+      padding: .5rem 1rem;
+      width: 100%;
+      max-width: 320px;
+      min-height: 44px;
+    }
 
-        .mt-1 {
-            margin-top: 1rem;
-        }
+    .mt-1 {
+      margin-top: 1rem;
+    }
 
-        #message {
-            text-align: left;
-            border: solid 1px gray;
-            border-radius: 5px;
-            font-size: .9rem;
-            color: gray;
-            padding: .5rem;
-        }
-
-    </style>
+    #message {
+      text-align: left;
+      border: solid 1px gray;
+      border-radius: 5px;
+      font-size: .9rem;
+      color: gray;
+      padding: .5rem;
+    }
+  </style>
 </head>
 <body>
 <section class="container">
-    <h1>Kamome</h1>
+  <h1>Kamome</h1>
+  <div>
     <div>
-        <div>
-            <button id="echoButton1" class="btn">Send Data to Native (Callback)</button>
-            <button id="echoButton2" class="btn">Send Data to Native (Promise)</button>
-        </div>
-        <div class="mt-1">
-            <button id="echoButton3" class="btn">Error from Native (Callback)</button>
-            <button id="echoButton4" class="btn">Error from Native (Promise)</button>
-        </div>
-        <div class="mt-1">
-            <button id="timeoutButton" class="btn">Timeout Sample</button>
-            <button id="cancelButton" class="btn">Cancel Request</button>
-        </div>
-        <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message</div>
-        <div id="message"></div>
+      <button id="echoButton1" class="btn">Send Data to Native (Callback)</button>
+      <button id="echoButton2" class="btn">Send Data to Native (Promise)</button>
     </div>
+    <div class="mt-1">
+      <button id="echoButton3" class="btn">Error from Native (Callback)</button>
+      <button id="echoButton4" class="btn">Error from Native (Promise)</button>
+    </div>
+    <div class="mt-1">
+      <button id="timeoutButton" class="btn">Timeout Sample</button>
+      <button id="cancelButton" class="btn">Cancel Request</button>
+    </div>
+    <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message</div>
+    <div id="message"></div>
+  </div>
 </section>
 
 <script src="kamome.js"></script>
@@ -86,7 +85,8 @@
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }, function (data, error) {
                 if (data) {
                     document.getElementById('message').innerHTML += data.message + '<br>';
-                } else if (error) {
+                }
+                else if (error) {
                     // Not call
                     document.getElementById('message').innerHTML += error + '<br>';
                 }
@@ -107,7 +107,8 @@
                 if (data) {
                     // Not call
                     document.getElementById('message').innerHTML += data.message + '<br>';
-                } else if (error) {
+                }
+                else if (error) {
                     document.getElementById('message').innerHTML += error + '<br>';
                 }
             });
@@ -139,6 +140,24 @@
 
             return 'OK!';
         });
+
+        // When there is no Kamome's iOS/Android native client, that is, when you run with a browser alone,
+        // you can register the processing of each command.
+        Kamome.browser
+            .addCommand("echo", function (data, resolve, reject) {
+                // Success
+                resolve({ message: data["message"] });
+            })
+            .addCommand("echoError", function (data, resolve, reject) {
+                // Failure
+                reject("Echo Error!");
+            })
+            .addCommand("tooLong", function (data, resolve, reject) {
+                // Too long process
+                setTimeout(function () {
+                    resolve();
+                }, 30000);
+            });
     });
 </script>
 </body>

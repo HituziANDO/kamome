@@ -1,17 +1,15 @@
 {
-  "name": "Kamome",
-  "version": "1.0.0",
-  "description": "",
-  "main": "kamome.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "ando",
+  "name": "kamome",
   "license": "MIT",
+  "scripts": {
+    "dev": "NODE_ENV=development webpack --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "NODE_ENV=production webpack --config=node_modules/laravel-mix/setup/webpack.config.js --watch",
+    "prod": "NODE_ENV=production  webpack --config=node_modules/laravel-mix/setup/webpack.config.js"
+  },
   "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-rename": "^1.4.0",
-    "gulp-uglify": "^1.4.0",
-    "gulp-watch": "^4.3.5"
+    "browser-sync": "^2.26.7",
+    "browser-sync-webpack-plugin": "^2.2.2",
+    "laravel-mix": "^5.0.1",
+    "vue-template-compiler": "^2.6.11"
   }
 }
