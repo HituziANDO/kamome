@@ -29,5 +29,5 @@
     **[] $VALUES;
     public *;
 }
--keep public class jp.hituzi.kamome.*
--keepclassmembers class jp.hituzi.kamome.* { public <methods>; }
+-keep public class jp.hituzi.kamome.* { public *; }
+-keep public class jp.hituzi.kamome.exception.* { public *; }
