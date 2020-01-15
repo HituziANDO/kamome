@@ -90,6 +90,7 @@
     }
 }
 
+// TODO: kamome.jsがロード完了していないときの処理
 - (void)sendMessageWithWebView:(__kindof WKWebView *)webView
                           data:(nullable id)data
                          block:(nullable KMMReceiveResultBlock)block
