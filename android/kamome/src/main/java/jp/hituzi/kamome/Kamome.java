@@ -35,14 +35,16 @@ public final class Kamome {
         EXCEPTION
     }
 
-    public interface IResultCallback {
+    public interface ISendMessageCallback {
 
         /**
          * Receives a result from the JavaScript receiver when it processed a task of a command.
          *
-         * @param result A result.
+         * @param commandName A command name.
+         * @param result      A result when the native client receives it successfully from the JavaScript receiver.
+         * @param error       An error when the native client receives it from the JavaScript receiver. If a task in JavaScript results in successful, the error will be null.
          */
-        void onReceiveResult(@Nullable Object result);
+        void onReceiveResult(String commandName, @Nullable Object result, @Nullable Error error);
     }
 
     /**
@@ -96,7 +98,7 @@ public final class Kamome {
      * @param name     A command name.
      * @param callback A callback.
      */
-    public void sendMessage(String name, @Nullable final IResultCallback callback) {
+    public void sendMessage(String name, @Nullable ISendMessageCallback callback) {
         sendMessage((JSONObject) null, name, callback);
     }
 
@@ -107,17 +109,12 @@ public final class Kamome {
      * @param name     A command name.
      * @param callback A callback.
      */
-    public void sendMessage(JSONObject data, String name, @Nullable final IResultCallback callback) {
+    public void sendMessage(JSONObject data, String name, @Nullable ISendMessageCallback callback) {
         if (callback != null) {
-            Messenger.sendMessage(webView, name, data, new Messenger.IMessageCallback() {
-
-                @Override
-                public void onReceiveResult(Object result) {
-                    callback.onReceiveResult(result);
-                }
-            }, UUID.randomUUID().toString());
+            String callbackId = addSendMessageCallback(callback);
+            Messenger.sendMessage(webView, name, data, callbackId);
         } else {
-            Messenger.sendMessage(webView, name, null, null, null);
+            Messenger.sendMessage(webView, name, data, null);
         }
     }
 
@@ -128,17 +125,12 @@ public final class Kamome {
      * @param name     A command name.
      * @param callback A callback.
      */
-    public void sendMessage(JSONArray data, String name, @Nullable final IResultCallback callback) {
+    public void sendMessage(JSONArray data, String name, @Nullable ISendMessageCallback callback) {
         if (callback != null) {
-            Messenger.sendMessage(webView, name, data, new Messenger.IMessageCallback() {
-
-                @Override
-                public void onReceiveResult(Object result) {
-                    callback.onReceiveResult(result);
-                }
-            }, UUID.randomUUID().toString());
+            String callbackId = addSendMessageCallback(callback);
+            Messenger.sendMessage(webView, name, data, callbackId);
         } else {
-            Messenger.sendMessage(webView, name, null, null, null);
+            Messenger.sendMessage(webView, name, data, null);
         }
     }
 
@@ -197,5 +189,34 @@ public final class Kamome {
                     completion.resolve();
             }
         }
+    }
+
+    private String addSendMessageCallback(final ISendMessageCallback callback) {
+        final String callbackId = UUID.randomUUID().toString();
+
+        // Add a temporary command receiving a result from the JavaScript handler.
+        add(new Command(callbackId, new Command.IHandler() {
+
+            @Override
+            public void execute(String commandName, @Nullable JSONObject data, ICompletion completion) {
+                assert data != null;
+                boolean success = data.optBoolean("success");
+
+                if (success) {
+                    callback.onReceiveResult(commandName, data.opt("result"), null);
+                } else {
+                    String errorMessage = data.optString("error");
+                    Error error = new Error(errorMessage != null && !errorMessage.isEmpty() ? errorMessage : "UnknownError");
+                    callback.onReceiveResult(commandName, null, error);
+                }
+
+                completion.resolve();
+
+                // Remove the temporary command.
+                removeCommand(callbackId);
+            }
+        }));
+
+        return callbackId;
     }
 }

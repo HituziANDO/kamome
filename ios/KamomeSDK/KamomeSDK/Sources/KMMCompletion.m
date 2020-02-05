@@ -62,7 +62,7 @@
 
     self.completed = YES;
 
-    [[KMMMessenger sharedMessenger] completeMessageWithWebView:self.webView data:data forRequestId:self.requestId];
+    [KMMMessenger completeMessageWithWebView:self.webView data:data forRequestId:self.requestId];
 }
 
 - (void)resolveWithArray:(nullable NSArray *)data {
@@ -72,7 +72,7 @@
 
     self.completed = YES;
 
-    [[KMMMessenger sharedMessenger] completeMessageWithWebView:self.webView data:data forRequestId:self.requestId];
+    [KMMMessenger completeMessageWithWebView:self.webView data:data forRequestId:self.requestId];
 }
 
 - (void)reject {
@@ -86,7 +86,7 @@
 
     self.completed = YES;
 
-    [[KMMMessenger sharedMessenger] failMessageWithWebView:self.webView error:errorMessage forRequestId:self.requestId];
+    [KMMMessenger failMessageWithWebView:self.webView error:errorMessage forRequestId:self.requestId];
 }
 
 @end

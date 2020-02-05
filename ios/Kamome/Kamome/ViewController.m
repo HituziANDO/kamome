@@ -117,7 +117,7 @@
     // Send a data to JavaScript.
     [self.kamome sendMessageWithDictionary:@{ @"greeting": @"Hello! by ObjC" }
                                    forName:@"greeting"
-                                     block:^(id _Nullable result) {
+                                     block:^(NSString *commandName, id _Nullable result, NSError *_Nullable error) {
                                          // Received a result from the JS code.
                                          NSLog(@"result: %@", result);
                                      }];

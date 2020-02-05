@@ -29,6 +29,7 @@
 #import "KMMMessenger.h"
 
 NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
+NSString *const KMMErrorDomain = @"jp.hituzi.KamomeSDKError";
 
 @interface KMMCommand ()
 
@@ -111,47 +112,33 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
     }
 }
 
-- (void)sendMessageForName:(NSString *)name block:(nullable void (^)(id _Nullable result))block {
+- (void)sendMessageForName:(NSString *)name block:(nullable KMMSendMessageCallback)block {
     [self sendMessageWithDictionary:nil forName:name block:block];
 }
 
 - (void)sendMessageWithDictionary:(nullable NSDictionary *)data
                           forName:(NSString *)name
-                            block:(nullable void (^)(id _Nullable result))block {
+                            block:(nullable KMMSendMessageCallback)block {
 
     if (block) {
-        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
-                                                          data:data
-                                                         block:block
-                                                    callbackId:[NSUUID UUID].UUIDString
-                                                       forName:name];
+        NSString *callbackId = [self addSendMessageCallback:block];
+        [KMMMessenger sendMessageWithWebView:self.webView data:data callbackId:callbackId forName:name];
     }
     else {
-        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
-                                                          data:data
-                                                         block:nil
-                                                    callbackId:nil
-                                                       forName:name];
+        [KMMMessenger sendMessageWithWebView:self.webView data:data callbackId:nil forName:name];
     }
 }
 
 - (void)sendMessageWithArray:(nullable NSArray *)data
                      forName:(NSString *)name
-                       block:(nullable void (^)(id _Nullable result))block {
+                       block:(nullable KMMSendMessageCallback)block {
 
     if (block) {
-        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
-                                                          data:data
-                                                         block:block
-                                                    callbackId:[NSUUID UUID].UUIDString
-                                                       forName:name];
+        NSString *callbackId = [self addSendMessageCallback:block];
+        [KMMMessenger sendMessageWithWebView:self.webView data:data callbackId:callbackId forName:name];
     }
     else {
-        [[KMMMessenger sharedMessenger] sendMessageWithWebView:self.webView
-                                                          data:data
-                                                         block:nil
-                                                    callbackId:nil
-                                                       forName:name];
+        [KMMMessenger sendMessageWithWebView:self.webView data:data callbackId:nil forName:name];
     }
 }
 
@@ -191,6 +178,38 @@ NSString *const KMMScriptMessageHandlerName = @"kamomeSend";
                 [completion resolve];
         }
     }
+}
+
+- (NSString *)addSendMessageCallback:(KMMSendMessageCallback)block {
+    NSString *callbackId = [NSUUID UUID].UUIDString;
+    __weak typeof(self) weakSelf = self;
+
+    // Add a temporary command receiving a result from the JavaScript handler.
+    [self addCommand:[KMMCommand commandWithName:callbackId
+                                         handler:^(NSString *commandName,
+                                                   NSDictionary *data,
+                                                   id <KMMCompleting> completion) {
+                                             BOOL success = [data[@"success"] boolValue];
+
+                                             if (success) {
+                                                 block(commandName, data[@"result"], nil);
+                                             }
+                                             else {
+                                                 NSError *error = [NSError errorWithDomain:KMMErrorDomain
+                                                                                      code:1
+                                                                                  userInfo:@{
+                                                                                      NSLocalizedFailureReasonErrorKey: data[@"error"] ?: @"UnknownError"
+                                                                                  }];
+                                                 block(commandName, nil, error);
+                                             }
+
+                                             [completion resolve];
+
+                                             // Remove the temporary command.
+                                             [weakSelf removeCommandForName:callbackId];
+                                         }]];
+
+    return callbackId;
 }
 
 @end

@@ -119,10 +119,10 @@ public class MainActivity extends Activity {
                     // Send a data to JavaScript.
                     kamome.sendMessage(new JSONObject().put("greeting", "Hello! by Java"),
                         "greeting",
-                        new Kamome.IResultCallback() {
+                        new Kamome.ISendMessageCallback() {
 
                             @Override
-                            public void onReceiveResult(Object result) {
+                            public void onReceiveResult(String commandName, Object result, Error error) {
                                 // Received a result from the JS code.
                                 Log.d(TAG, "result: " + result);
                             }
