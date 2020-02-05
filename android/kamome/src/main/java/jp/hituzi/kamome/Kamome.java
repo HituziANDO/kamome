@@ -117,7 +117,7 @@ public final class Kamome {
                 }
             }, UUID.randomUUID().toString());
         } else {
-            Messenger.sendMessage(webView, name, null, null, null);
+            Messenger.sendMessage(webView, name, data, null, null);
         }
     }
 
@@ -138,7 +138,7 @@ public final class Kamome {
                 }
             }, UUID.randomUUID().toString());
         } else {
-            Messenger.sendMessage(webView, name, null, null, null);
+            Messenger.sendMessage(webView, name, data, null, null);
         }
     }
 
