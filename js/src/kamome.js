@@ -1,5 +1,5 @@
 /**
- * kamome.js Rev.13
+ * kamome.js v3.13
  * https://github.com/HituziANDO/kamome
  *
  * MIT License

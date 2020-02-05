@@ -42,6 +42,14 @@
       margin-top: 1rem;
     }
 
+    .mt-0_5 {
+      margin-top: .5rem;
+    }
+
+    .mb-5 {
+      margin-bottom: 5rem;
+    }
+
     #message {
       text-align: left;
       border: solid 1px gray;
@@ -57,23 +65,21 @@
   <h1>Kamome</h1>
   <div>
     <div>
-      <button id="echoButton1" class="btn">Send Data to Native (Callback)</button>
-      <button id="echoButton2" class="btn">Send Data to Native (Promise)</button>
+      <button id="echoButton1" class="btn">Send Data to Native</button>
     </div>
     <div class="mt-1">
-      <button id="echoButton3" class="btn">Error from Native (Callback)</button>
-      <button id="echoButton4" class="btn">Error from Native (Promise)</button>
+      <button id="echoButton2" class="btn">Error from Native</button>
     </div>
     <div class="mt-1">
       <button id="timeoutButton" class="btn">Timeout Sample</button>
-      <button id="cancelButton" class="btn">Cancel Request</button>
+      <button id="cancelButton" class="btn mt-0_5">Cancel Request</button>
     </div>
     <div class="mt-1">
       <button id="hookButton" class="btn">Hook Sample</button>
-      <button id="nonExistButton" class="btn">Non-existent Command</button>
+      <button id="nonExistButton" class="btn mt-0_5">Non-existent Command</button>
     </div>
     <div style="font-weight: bold; font-size: .9rem; margin-top: 1rem; margin-bottom: .25rem">message</div>
-    <div id="message"></div>
+    <div id="message" class="mb-5"></div>
   </div>
 </section>
 
@@ -86,17 +92,6 @@
         Kamome.setDefaultRequestTimeout(15000);
 
         document.getElementById('echoButton1').addEventListener('click', function () {
-            Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }, function (data, error) {
-                if (error) {
-                    addMessage(error);
-                }
-                else {
-                    addMessage(data.message);
-                }
-            });
-        });
-
-        document.getElementById('echoButton2').addEventListener('click', function () {
             Kamome.send('echo', { message: 'Hello World! (' + (++count) + ')' }).then(function (data) {
                 addMessage(data.message);
             }).catch(function (error) {
@@ -104,18 +99,7 @@
             });
         });
 
-        document.getElementById('echoButton3').addEventListener('click', function () {
-            Kamome.send('echoError', {}, function (data, error) {
-                if (error) {
-                    addMessage(error);
-                }
-                else {
-                    addMessage(data.message);
-                }
-            });
-        });
-
-        document.getElementById('echoButton4').addEventListener('click', function () {
+        document.getElementById('echoButton2').addEventListener('click', function () {
             Kamome.send('echoError').then(function (data) {
                 addMessage(data.message);
             }).catch(function (error) {
@@ -147,11 +131,17 @@
         });
 
         // Add a receiver that receives a message sent by the native client.
-        Kamome.addReceiver('greeting', function (data) {
+        Kamome.addReceiver('greeting', function (data, resolve, reject) {
             addMessage(data.greeting);
 
-            // Return a result to the native client.
-            return 'OK!'; // Any object or null.
+            // Run asynchronous something to do...
+            setTimeout(function () {
+
+                // Return a result as any object or null to the native client.
+                resolve('OK!');
+                // If the task is failed, call `reject()` function.
+                //reject('Error message');
+            }, 1000);
         });
 
         // Hook.
