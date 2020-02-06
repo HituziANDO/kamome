@@ -110,8 +110,8 @@ public final class Kamome {
      * @param name     A command name.
      * @param callback A callback.
      */
-    public void sendMessage(Map data, String name, @Nullable ISendMessageCallback callback) {
-        sendMessage(new JSONObject(data), name, callback);
+    public void sendMessage(@Nullable Map data, String name, @Nullable ISendMessageCallback callback) {
+        sendMessage(data != null ? new JSONObject(data) : null, name, callback);
     }
 
     /**
@@ -121,7 +121,7 @@ public final class Kamome {
      * @param name     A command name.
      * @param callback A callback.
      */
-    public void sendMessage(JSONObject data, String name, @Nullable ISendMessageCallback callback) {
+    public void sendMessage(@Nullable JSONObject data, String name, @Nullable ISendMessageCallback callback) {
         if (callback != null) {
             String callbackId = addSendMessageCallback(callback);
             Messenger.sendMessage(webView, name, data, callbackId);
@@ -137,8 +137,8 @@ public final class Kamome {
      * @param name     A command name.
      * @param callback A callback.
      */
-    public void sendMessage(Collection data, String name, @Nullable ISendMessageCallback callback) {
-        sendMessage(new JSONArray(data), name, callback);
+    public void sendMessage(@Nullable Collection data, String name, @Nullable ISendMessageCallback callback) {
+        sendMessage(data != null ? new JSONArray(data) : null, name, callback);
     }
 
     /**
@@ -148,7 +148,7 @@ public final class Kamome {
      * @param name     A command name.
      * @param callback A callback.
      */
-    public void sendMessage(JSONArray data, String name, @Nullable ISendMessageCallback callback) {
+    public void sendMessage(@Nullable JSONArray data, String name, @Nullable ISendMessageCallback callback) {
         if (callback != null) {
             String callbackId = addSendMessageCallback(callback);
             Messenger.sendMessage(webView, name, data, callbackId);
