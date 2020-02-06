@@ -9,8 +9,9 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 
-import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import jp.hituzi.kamome.Command;
 import jp.hituzi.kamome.ICompletion;
@@ -39,13 +40,11 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void execute(String commandName, JSONObject data, ICompletion completion) {
-                    try {
-                        // Received `echo` command.
-                        // Then send resolved result to the JavaScript callback function.
-                        completion.resolve(new JSONObject().put("message", data.getString("message")));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    // Received `echo` command.
+                    // Then send resolved result to the JavaScript callback function.
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("message", data.optString("message"));
+                    completion.resolve(map);
                 }
             }))
             .add(new Command("echoError", new Command.IHandler() {
@@ -74,35 +73,28 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void execute(String commandName, JSONObject data, ICompletion completion) {
-                    try {
-                        completion.resolve(new JSONObject().put("name", "Brad"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("name", "Brad");
+                    completion.resolve(map);
                 }
             }))
             .add(new Command("getScore", new Command.IHandler() {
 
                 @Override
                 public void execute(String commandName, JSONObject data, ICompletion completion) {
-                    try {
-                        completion.resolve(new JSONObject()
-                            .put("score", 90)
-                            .put("rank", 2));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("score", 90);
+                    map.put("rank", 2);
+                    completion.resolve(map);
                 }
             }))
             .add(new Command("getAvg", new Command.IHandler() {
 
                 @Override
                 public void execute(String commandName, JSONObject data, ICompletion completion) {
-                    try {
-                        completion.resolve(new JSONObject().put("avg", 68));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("avg", 68);
+                    completion.resolve(map);
                 }
             }));
 
@@ -115,21 +107,17 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View view) {
-                try {
-                    // Send a data to JavaScript.
-                    kamome.sendMessage(new JSONObject().put("greeting", "Hello! by Java"),
-                        "greeting",
-                        new Kamome.ISendMessageCallback() {
+                // Send a data to JavaScript.
+                HashMap<String, Object> data = new HashMap<>();
+                data.put("greeting", "Hello! by Java");
+                kamome.sendMessage(data, "greeting", new Kamome.ISendMessageCallback() {
 
-                            @Override
-                            public void onReceiveResult(String commandName, Object result, Error error) {
-                                // Received a result from the JS code.
-                                Log.d(TAG, "result: " + result);
-                            }
-                        });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onReceiveResult(String commandName, Object result, Error error) {
+                        // Received a result from the JS code.
+                        Log.d(TAG, "result: " + result);
+                    }
+                });
             }
         });
     }

@@ -5,6 +5,9 @@ import android.support.annotation.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Collection;
+import java.util.Map;
+
 public final class LocalCompletion implements ICompletion {
 
     public interface ICallback {
@@ -42,6 +45,15 @@ public final class LocalCompletion implements ICompletion {
     }
 
     @Override
+    public void resolve(@Nullable Map data) {
+        try {
+            resolve(new JSONObject(data));
+        } catch (Exception e) {
+            reject("Failed to create JSONObject.");
+        }
+    }
+
+    @Override
     public void resolve(@Nullable JSONObject data) {
         if (completed) {
             return;
@@ -50,6 +62,11 @@ public final class LocalCompletion implements ICompletion {
         completed = true;
 
         callback.onResolved(data);
+    }
+
+    @Override
+    public void resolve(@Nullable Collection data) {
+        resolve(new JSONArray(data));
     }
 
     @Override

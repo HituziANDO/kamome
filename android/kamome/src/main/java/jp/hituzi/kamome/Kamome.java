@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -103,6 +104,17 @@ public final class Kamome {
     }
 
     /**
+     * Sends a message with data as Map to the JavaScript receiver.
+     *
+     * @param data     A data as Map.
+     * @param name     A command name.
+     * @param callback A callback.
+     */
+    public void sendMessage(Map data, String name, @Nullable ISendMessageCallback callback) {
+        sendMessage(new JSONObject(data), name, callback);
+    }
+
+    /**
      * Sends a message with data as JSONObject to the JavaScript receiver.
      *
      * @param data     A data as JSONObject.
@@ -116,6 +128,17 @@ public final class Kamome {
         } else {
             Messenger.sendMessage(webView, name, data, null);
         }
+    }
+
+    /**
+     * Sends a message with data as Collection to the JavaScript receiver.
+     *
+     * @param data     A data as Collection.
+     * @param name     A command name.
+     * @param callback A callback.
+     */
+    public void sendMessage(Collection data, String name, @Nullable ISendMessageCallback callback) {
+        sendMessage(new JSONArray(data), name, callback);
     }
 
     /**
@@ -141,14 +164,25 @@ public final class Kamome {
      * @param callback A callback.
      */
     public void executeCommand(String name, @Nullable LocalCompletion.ICallback callback) {
-        executeCommand(name, null, callback);
+        executeCommand(name, (JSONObject) null, callback);
     }
 
     /**
      * Executes a command with data to the native receiver.
      *
      * @param name     A command name.
-     * @param data     A data as NSDictionary.
+     * @param data     A data as Map.
+     * @param callback A callback.
+     */
+    public void executeCommand(String name, @Nullable Map data, @Nullable LocalCompletion.ICallback callback) {
+        handleCommand(name, data != null ? new JSONObject(data) : null, new LocalCompletion(callback));
+    }
+
+    /**
+     * Executes a command with data to the native receiver.
+     *
+     * @param name     A command name.
+     * @param data     A data as JSONObject.
      * @param callback A callback.
      */
     public void executeCommand(String name, @Nullable JSONObject data, @Nullable LocalCompletion.ICallback callback) {
