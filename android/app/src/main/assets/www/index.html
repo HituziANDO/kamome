@@ -132,6 +132,7 @@
 
         // Add a receiver that receives a message sent by the native client.
         Kamome.addReceiver('greeting', function (data, resolve, reject) {
+            // The data is the object sent by the native client.
             addMessage(data.greeting);
 
             // Run asynchronous something to do...
