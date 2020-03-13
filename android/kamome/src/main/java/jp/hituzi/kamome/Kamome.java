@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -35,14 +36,16 @@ public final class Kamome {
         EXCEPTION
     }
 
-    public interface IResultCallback {
+    public interface ISendMessageCallback {
 
         /**
          * Receives a result from the JavaScript receiver when it processed a task of a command.
          *
-         * @param result A result.
+         * @param commandName A command name.
+         * @param result      A result when the native client receives it successfully from the JavaScript receiver.
+         * @param error       An error when the native client receives it from the JavaScript receiver. If a task in JavaScript results in successful, the error will be null.
          */
-        void onReceiveResult(@Nullable Object result);
+        void onReceiveResult(String commandName, @Nullable Object result, @Nullable Error error);
     }
 
     /**
@@ -96,8 +99,19 @@ public final class Kamome {
      * @param name     A command name.
      * @param callback A callback.
      */
-    public void sendMessage(String name, @Nullable final IResultCallback callback) {
+    public void sendMessage(String name, @Nullable ISendMessageCallback callback) {
         sendMessage((JSONObject) null, name, callback);
+    }
+
+    /**
+     * Sends a message with data as Map to the JavaScript receiver.
+     *
+     * @param data     A data as Map.
+     * @param name     A command name.
+     * @param callback A callback.
+     */
+    public void sendMessage(@Nullable Map data, String name, @Nullable ISendMessageCallback callback) {
+        sendMessage(data != null ? new JSONObject(data) : null, name, callback);
     }
 
     /**
@@ -107,18 +121,24 @@ public final class Kamome {
      * @param name     A command name.
      * @param callback A callback.
      */
-    public void sendMessage(JSONObject data, String name, @Nullable final IResultCallback callback) {
+    public void sendMessage(@Nullable JSONObject data, String name, @Nullable ISendMessageCallback callback) {
         if (callback != null) {
-            Messenger.sendMessage(webView, name, data, new Messenger.IMessageCallback() {
-
-                @Override
-                public void onReceiveResult(Object result) {
-                    callback.onReceiveResult(result);
-                }
-            }, UUID.randomUUID().toString());
+            String callbackId = addSendMessageCallback(callback);
+            Messenger.sendMessage(webView, name, data, callbackId);
         } else {
-            Messenger.sendMessage(webView, name, data, null, null);
+            Messenger.sendMessage(webView, name, data, null);
         }
+    }
+
+    /**
+     * Sends a message with data as Collection to the JavaScript receiver.
+     *
+     * @param data     A data as Collection.
+     * @param name     A command name.
+     * @param callback A callback.
+     */
+    public void sendMessage(@Nullable Collection data, String name, @Nullable ISendMessageCallback callback) {
+        sendMessage(data != null ? new JSONArray(data) : null, name, callback);
     }
 
     /**
@@ -128,17 +148,12 @@ public final class Kamome {
      * @param name     A command name.
      * @param callback A callback.
      */
-    public void sendMessage(JSONArray data, String name, @Nullable final IResultCallback callback) {
+    public void sendMessage(@Nullable JSONArray data, String name, @Nullable ISendMessageCallback callback) {
         if (callback != null) {
-            Messenger.sendMessage(webView, name, data, new Messenger.IMessageCallback() {
-
-                @Override
-                public void onReceiveResult(Object result) {
-                    callback.onReceiveResult(result);
-                }
-            }, UUID.randomUUID().toString());
+            String callbackId = addSendMessageCallback(callback);
+            Messenger.sendMessage(webView, name, data, callbackId);
         } else {
-            Messenger.sendMessage(webView, name, data, null, null);
+            Messenger.sendMessage(webView, name, data, null);
         }
     }
 
@@ -149,14 +164,25 @@ public final class Kamome {
      * @param callback A callback.
      */
     public void executeCommand(String name, @Nullable LocalCompletion.ICallback callback) {
-        executeCommand(name, null, callback);
+        executeCommand(name, (JSONObject) null, callback);
     }
 
     /**
      * Executes a command with data to the native receiver.
      *
      * @param name     A command name.
-     * @param data     A data as NSDictionary.
+     * @param data     A data as Map.
+     * @param callback A callback.
+     */
+    public void executeCommand(String name, @Nullable Map data, @Nullable LocalCompletion.ICallback callback) {
+        handleCommand(name, data != null ? new JSONObject(data) : null, new LocalCompletion(callback));
+    }
+
+    /**
+     * Executes a command with data to the native receiver.
+     *
+     * @param name     A command name.
+     * @param data     A data as JSONObject.
      * @param callback A callback.
      */
     public void executeCommand(String name, @Nullable JSONObject data, @Nullable LocalCompletion.ICallback callback) {
@@ -197,5 +223,34 @@ public final class Kamome {
                     completion.resolve();
             }
         }
+    }
+
+    private String addSendMessageCallback(final ISendMessageCallback callback) {
+        final String callbackId = UUID.randomUUID().toString();
+
+        // Add a temporary command receiving a result from the JavaScript handler.
+        add(new Command(callbackId, new Command.IHandler() {
+
+            @Override
+            public void execute(String commandName, @Nullable JSONObject data, ICompletion completion) {
+                assert data != null;
+                boolean success = data.optBoolean("success");
+
+                if (success) {
+                    callback.onReceiveResult(commandName, data.opt("result"), null);
+                } else {
+                    String errorMessage = data.optString("error");
+                    Error error = new Error(errorMessage != null && !errorMessage.isEmpty() ? errorMessage : "UnknownError");
+                    callback.onReceiveResult(commandName, null, error);
+                }
+
+                completion.resolve();
+
+                // Remove the temporary command.
+                removeCommand(callbackId);
+            }
+        }));
+
+        return callbackId;
     }
 }

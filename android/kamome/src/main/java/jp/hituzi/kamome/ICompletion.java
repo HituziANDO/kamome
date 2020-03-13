@@ -5,6 +5,9 @@ import android.support.annotation.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Collection;
+import java.util.Map;
+
 public interface ICompletion {
 
     boolean isCompleted();
@@ -17,9 +20,23 @@ public interface ICompletion {
     /**
      * Sends resolved result with a data to a JavaScript callback function.
      *
+     * @param data A data as Map.
+     */
+    void resolve(@Nullable Map data);
+
+    /**
+     * Sends resolved result with a data to a JavaScript callback function.
+     *
      * @param data A data as JSONObject.
      */
     void resolve(@Nullable JSONObject data);
+
+    /**
+     * Sends resolved result with a data to a JavaScript callback function.
+     *
+     * @param data A data as Collection.
+     */
+    void resolve(@Nullable Collection data);
 
     /**
      * Sends resolved result with a data to a JavaScript callback function.

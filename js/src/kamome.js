@@ -1,5 +1,5 @@
 /**
- * kamome.js Rev.12
+ * kamome.js v3.13
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -200,13 +200,18 @@ window.Kamome = (function (Undefined) {
      * Registers a receiver for given command. The receiver function receives a JSON message from the native.
      *
      * @param {string} name A command name
-     * @param {Function} receiver A receiver is
+     * @param {Function} receiver A receiver is following.
+     *
      *  ```
-     *  function(json) {
-     *      ...
-     *      return result;  // Any object or null
+     *  function(json, resolve, reject) {
+     *      // Something to do
+     *      // Then, if succeeded
+     *      // resolve(response);   // response is any object or null
+     *      // Else
+     *      // reject('Error Message');
      *  }
      *  ```
+     *
      * @return {*}
      */
     var addReceiver = function (name, receiver) {
@@ -458,22 +463,23 @@ window.Kamome = (function (Undefined) {
      */
     var onReceive = function (name, json, callbackId) {
         if (name in _receiverDict) {
-            var result = _receiverDict[name](json ? JSON.parse(json) : null);
+            new Promise(function (resolve, reject) {
+                var handle = _receiverDict[name];
+                var result = handle(json ? JSON.parse(json) : null, resolve, reject);
 
-            if (android.hasClient()) {
-                return { callbackId: callbackId, result: result };
-            }
-            else {
-                return JSON.stringify({ callbackId: callbackId, result: result });
-            }
+                if (result) {
+                    // Resolve synchronously.
+                    resolve(result);
+                }
+            }).then(function (result) {
+                send(callbackId, { result: result, success: true });
+            }).catch(function (error) {
+                // Send an error message as string type.
+                send(callbackId, { error: error, success: false });
+            });
         }
 
-        if (android.hasClient()) {
-            return { callbackId: callbackId, result: null };
-        }
-        else {
-            return JSON.stringify({ callbackId: callbackId, result: null });
-        }
+        return null;
     };
 
     var _module = {

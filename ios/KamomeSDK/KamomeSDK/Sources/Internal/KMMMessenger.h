@@ -27,23 +27,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKWebView;
 
-typedef void (^KMMReceiveResultBlock)(id _Nullable result);
-
 @interface KMMMessenger : NSObject
 
-+ (instancetype)sharedMessenger;
-
-- (void)completeMessageWithWebView:(__kindof WKWebView *)webView
++ (void)completeMessageWithWebView:(__kindof WKWebView *)webView
                               data:(nullable id)data
                       forRequestId:(NSString *)requestId;
 
-- (void)failMessageWithWebView:(__kindof WKWebView *)webView
++ (void)failMessageWithWebView:(__kindof WKWebView *)webView
                          error:(nullable NSString *)error
                   forRequestId:(NSString *)requestId;
 
-- (void)sendMessageWithWebView:(__kindof WKWebView *)webView
++ (void)sendMessageWithWebView:(__kindof WKWebView *)webView
                           data:(nullable id)data
-                         block:(nullable KMMReceiveResultBlock)block
                     callbackId:(nullable NSString *)callbackId
                        forName:(NSString *)name;
 
