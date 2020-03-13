@@ -29,6 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
 @class KMMCommand;
 
 FOUNDATION_EXTERN NSString *const KMMScriptMessageHandlerName;
+FOUNDATION_EXTERN NSString *const KMMErrorDomain;
+
+/**
+ * Receives a result from the JavaScript receiver when it processed a task of a command.
+ * An error occurs when the native client receives it from the JavaScript receiver, otherwise it will be null.
+ */
+typedef void (^KMMSendMessageCallback)(NSString *commandName, id _Nullable result, NSError *_Nullable error);
 
 typedef NS_ENUM(NSInteger, KMMHowToHandleNonExistentCommand) {
     /**
@@ -88,7 +95,7 @@ typedef NS_ENUM(NSInteger, KMMHowToHandleNonExistentCommand) {
  * @param block A callback.
  */
 - (void)sendMessageForName:(NSString *)name
-                     block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(name:block:));
+                     block:(nullable KMMSendMessageCallback)block NS_SWIFT_NAME(sendMessage(name:block:));
 /**
  * Sends a message with data as NSDictionary to the JavaScript receiver.
  *
@@ -98,7 +105,7 @@ typedef NS_ENUM(NSInteger, KMMHowToHandleNonExistentCommand) {
  */
 - (void)sendMessageWithDictionary:(nullable NSDictionary *)data
                           forName:(NSString *)name
-                            block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(with:name:block:));
+                            block:(nullable KMMSendMessageCallback)block NS_SWIFT_NAME(sendMessage(with:name:block:));
 /**
  * Sends a message with data as NSArray to the JavaScript receiver.
  *
@@ -108,7 +115,7 @@ typedef NS_ENUM(NSInteger, KMMHowToHandleNonExistentCommand) {
  */
 - (void)sendMessageWithArray:(nullable NSArray *)data
                      forName:(NSString *)name
-                       block:(nullable void (^)(id _Nullable result))block NS_SWIFT_NAME(sendMessage(with:name:block:));
+                       block:(nullable KMMSendMessageCallback)block NS_SWIFT_NAME(sendMessage(with:name:block:));
 /**
  * Executes a command to the native receiver.
  *

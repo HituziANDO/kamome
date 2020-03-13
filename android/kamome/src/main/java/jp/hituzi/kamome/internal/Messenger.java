@@ -7,20 +7,7 @@ import android.support.annotation.Nullable;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-
 public final class Messenger {
-
-    public interface IMessageCallback {
-
-        void onReceiveResult(Object result);
-    }
-
-    private static final Object LOCK_OBJECT = new Object();
-    private static final HashMap<String, IMessageCallback> MESSAGE_CALLBACKS = new HashMap<>();
 
     public static void completeMessage(final WebView webView, @Nullable final Object data, String requestId) {
         if (data != null) {
@@ -38,15 +25,7 @@ public final class Messenger {
         }
     }
 
-    public static void sendMessage(final WebView webView, final String name, @Nullable final Object data,
-        @Nullable IMessageCallback callback, @Nullable String callbackId) {
-
-        if (callback != null && callbackId != null) {
-            synchronized (LOCK_OBJECT) {
-                MESSAGE_CALLBACKS.put(callbackId, callback);
-            }
-        }
-
+    public static void sendMessage(final WebView webView, final String name, @Nullable final Object data, @Nullable String callbackId) {
         if (data != null) {
             if (callbackId != null) {
                 runJavaScript(String.format("window.Kamome.onReceive('%s', '%s', '%s')", name, data.toString(), callbackId), webView);
@@ -72,28 +51,10 @@ public final class Messenger {
 
                         @Override
                         public void onReceiveValue(String value) {
-                            if (value != null && !"null".equalsIgnoreCase(value)) {
-                                String id = null;
-                                Object result = null;
-
-                                try {
-                                    JSONObject obj = new JSONObject(value);
-                                    id = obj.getString("callbackId");
-                                    result = obj.get("result");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                synchronized (LOCK_OBJECT) {
-                                    if (MESSAGE_CALLBACKS.containsKey(id)) {
-                                        MESSAGE_CALLBACKS.remove(id).onReceiveResult(result);
-                                    }
-                                }
-                            }
+                            // Nothing to do.
                         }
                     });
                 } else {
-                    // MessageCallback not supported.
                     webView.loadUrl("javascript:" + js);
                 }
             }

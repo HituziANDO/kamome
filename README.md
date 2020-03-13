@@ -72,13 +72,13 @@ Kamome provides common JavaScript interface for iOS and Android.
 
 	            @Override
 	            public void execute(String commandName, JSONObject data, ICompletion completion) {
-	                try {
-	                    // Received `echo` command.
-	                    // Then send resolved result to the JavaScript callback function.
-	                    completion.resolve(new JSONObject().put("message", data.getString("message")));
-	                    // Or, send rejected result if failed.
-	                    //completion.reject("Echo Error!");
-	                } catch (JSONException e) {}
+	                // Received `echo` command.
+	                // Then send resolved result to the JavaScript callback function.
+	                HashMap<String, Object> map = new HashMap<>();
+	                map.put("message", data.optString("message"));
+	                completion.resolve(map);
+	                // Or, send rejected result if failed.
+	                //completion.reject("Echo Error!");
 	            }
 	        }));
 
@@ -102,30 +102,35 @@ Kamome provides common JavaScript interface for iOS and Android.
 1. Send a message from the native code on Android
 	
 	```java
-	try {
-	    // Send a data to JavaScript.
-	    kamome.sendMessage(new JSONObject().put("greeting", "Hello! by Java"),
-	        "greeting",
-	        new Kamome.IResultCallback() {
-	
-	            @Override
-	            public void onReceiveResult(Object result) {
-	                // Received a result from the JS code.
-	                Log.d(TAG, "result: " + result);
-	            }
-	        });
-	} catch (JSONException e) {}
+	// Send a data to JavaScript.
+	HashMap<String, Object> data = new HashMap<>();
+	data.put("greeting", "Hello! by Java");
+	kamome.sendMessage(data, "greeting", new Kamome.ISendMessageCallback() {
+
+	    @Override
+	    public void onReceiveResult(String commandName, Object result, Error error) {
+	        // Received a result from the JS code.
+	        Log.d(TAG, "result: " + result);
+	    }
+	});
 	```
 
 1. Receive a message on the JavaScript code
 	
 	```javascript
 	// Add a receiver that receives a message sent by the native client.
-	Kamome.addReceiver('greeting', function (data) {
+	Kamome.addReceiver('greeting', function (data, resolve, reject) {
+	    // The data is the object sent by the native client.
 	    console.log(data.greeting);
-	
-	    // Return a result to the native client.
-	    return 'OK!'; // Any object or null.
+
+	    // Run asynchronous something to do...
+	    setTimeout(function () {
+
+	        // Return a result as any object or null to the native client.
+	        resolve('OK!');
+	        // If the task is failed, call `reject()` function.
+	        //reject('Error message');
+	    }, 1000);
 	});
 	```
 
@@ -185,7 +190,7 @@ Add the following code in build.gradle(app level).
 
 ```groovy
 dependencies {		
-    implementation 'jp.hituzi:kamome:2.0.2'
+    implementation 'jp.hituzi:kamome:3.0.0'
 }
 ```
 

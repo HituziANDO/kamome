@@ -92,7 +92,7 @@ class ViewController: UIViewController {
 
     @IBAction func sendButtonPressed(_ sender: Any) {
         // Send a data to JavaScript.
-        kamome.sendMessage(with: ["greeting": "Hello! by Swift"], name: "greeting") { result in
+        kamome.sendMessage(with: ["greeting": "Hello! by Swift"], name: "greeting") { (commandName, result, error) in
             // Received a result from the JS code.
             guard let result = result else { return }
             print("result: \(result)")

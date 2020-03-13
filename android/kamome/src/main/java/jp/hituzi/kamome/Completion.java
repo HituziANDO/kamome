@@ -6,6 +6,9 @@ import android.webkit.WebView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Collection;
+import java.util.Map;
+
 import jp.hituzi.kamome.internal.Messenger;
 
 public final class Completion implements ICompletion {
@@ -30,6 +33,15 @@ public final class Completion implements ICompletion {
     }
 
     @Override
+    public void resolve(@Nullable Map data) {
+        try {
+            resolve(new JSONObject(data));
+        } catch (Exception e) {
+            reject("Failed to create JSONObject.");
+        }
+    }
+
+    @Override
     public void resolve(@Nullable JSONObject data) {
         if (completed) {
             return;
@@ -38,6 +50,11 @@ public final class Completion implements ICompletion {
         completed = true;
 
         Messenger.completeMessage(webView, data, requestId);
+    }
+
+    @Override
+    public void resolve(@Nullable Collection data) {
+        resolve(new JSONArray(data));
     }
 
     @Override

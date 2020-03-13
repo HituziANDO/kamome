@@ -26,35 +26,9 @@
 #import "KMMMessenger.h"
 #import "KMMException.h"
 
-@interface KMMMessenger ()
-
-@property (nonatomic, copy) NSMutableDictionary<NSString *, KMMReceiveResultBlock> *resultBlocks;
-
-@end
-
 @implementation KMMMessenger
 
-+ (instancetype)sharedMessenger {
-    static KMMMessenger *instance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        instance = [KMMMessenger new];
-    });
-
-    return instance;
-}
-
-- (instancetype)init {
-    self = [super init];
-
-    if (self) {
-        _resultBlocks = [NSMutableDictionary new];
-    }
-
-    return self;
-}
-
-- (void)completeMessageWithWebView:(__kindof WKWebView *)webView
++ (void)completeMessageWithWebView:(__kindof WKWebView *)webView
                               data:(nullable id)data
                       forRequestId:(NSString *)requestId {
 
@@ -76,7 +50,7 @@
     }
 }
 
-- (void)failMessageWithWebView:(__kindof WKWebView *)webView
++ (void)failMessageWithWebView:(__kindof WKWebView *)webView
                          error:(nullable NSString *)error
                   forRequestId:(NSString *)requestId {
 
@@ -91,17 +65,10 @@
 }
 
 // TODO: kamome.jsがロード完了していないときの処理
-- (void)sendMessageWithWebView:(__kindof WKWebView *)webView
++ (void)sendMessageWithWebView:(__kindof WKWebView *)webView
                           data:(nullable id)data
-                         block:(nullable KMMReceiveResultBlock)block
                     callbackId:(nullable NSString *)callbackId
                        forName:(NSString *)name {
-
-    if (block && callbackId.length > 0) {
-        @synchronized (self) {
-            self.resultBlocks[callbackId] = [block copy];
-        }
-    }
 
     if (data) {
         if (![NSJSONSerialization isValidJSONObject:data]) {
@@ -139,41 +106,12 @@
     }
 }
 
-- (void)runJavaScript:(NSString *)js withWebView:(__kindof WKWebView *)webView {
++ (void)runJavaScript:(NSString *)js withWebView:(__kindof WKWebView *)webView {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (webView) {
-            __weak typeof(self) weakSelf = self;
-
             [webView evaluateJavaScript:js completionHandler:^(id value, NSError *error) {
                 if (error) {
                     NSLog(@"[Kamome] ERROR: %@ %@", error.localizedDescription, error.userInfo);
-
-                    return;
-                }
-
-                if (value == [NSNull null] || ![value isKindOfClass:[NSString class]]) {
-                    return;
-                }
-
-                NSString *str = (NSString *) value;
-
-                if (str.length > 0 && ![@"null" isEqualToString:str.lowercaseString]) {
-                    NSDictionary *obj = [NSJSONSerialization JSONObjectWithData:[str dataUsingEncoding:NSUTF8StringEncoding]
-                                                                        options:NSJSONReadingAllowFragments
-                                                                          error:nil];
-                    NSString *cid = obj[@"callbackId"];
-                    id result = obj[@"result"];
-
-                    @synchronized (weakSelf) {
-                        KMMReceiveResultBlock resultBlock = weakSelf.resultBlocks[cid];
-
-                        if (resultBlock) {
-                            resultBlock(result);
-
-                            [weakSelf.resultBlocks removeObjectForKey:cid];
-                            resultBlock = nil;
-                        }
-                    }
                 }
             }];
         }
