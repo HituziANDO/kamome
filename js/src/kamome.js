@@ -1,5 +1,5 @@
 /**
- * kamome.js v3.13
+ * kamome.js v3.14
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -62,7 +62,7 @@ window.Kamome = (function (Undefined) {
          */
         var hasClient = function () {
             // Require WKWebView
-            return 'webkit' in window;
+            return 'webkit' in window && !!window.webkit.messageHandlers.kamomeSend;
         };
 
         var _send = function (json) {
