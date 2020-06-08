@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "KamomeSDK"
-  s.version      = "3.0.0"
+  s.version      = "3.1.0"
   s.summary      = "Kamome bridges a gap between JavaScript in the WKWebView and the native code written by Swift or Objective-C."
   s.description  = <<-DESC
   Kamome is a library for iOS and Android apps using the WebView. This library bridges a gap between JavaScript in the WebView and the native code written by Swift, Objective-C, Java or Kotlin.
