@@ -27,6 +27,7 @@
 		5E4EC3F420F4232700C60D7A /* KMMException.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EC3EA20F4232600C60D7A /* KMMException.m */; };
 		5E4EC3F520F4232700C60D7A /* KMMCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EC3ED20F4232700C60D7A /* KMMCommand.m */; };
 		5E4EC3F620F4232700C60D7A /* KMMKamome.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EC3EF20F4232700C60D7A /* KMMKamome.m */; };
+		5E962A3C248E447E00AF0668 /* KMMConsoleLogAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E962A3B248E447E00AF0668 /* KMMConsoleLogAdapter.m */; };
 		5EECBABC23CC9609003DD100 /* KMMLocalCompletion.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EECBABB23CC9609003DD100 /* KMMLocalCompletion.m */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +67,8 @@
 		5E4EC3EF20F4232700C60D7A /* KMMKamome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KMMKamome.m; sourceTree = "<group>"; };
 		5E4EC3F020F4232700C60D7A /* KMMMessenger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KMMMessenger.h; sourceTree = "<group>"; };
 		5E4EC40320F477BA00C60D7A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5E962A3A248E447E00AF0668 /* KMMConsoleLogAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KMMConsoleLogAdapter.h; sourceTree = "<group>"; };
+		5E962A3B248E447E00AF0668 /* KMMConsoleLogAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KMMConsoleLogAdapter.m; sourceTree = "<group>"; };
 		5EECBABA23CC9609003DD100 /* KMMLocalCompletion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KMMLocalCompletion.h; sourceTree = "<group>"; };
 		5EECBABB23CC9609003DD100 /* KMMLocalCompletion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KMMLocalCompletion.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -121,6 +124,7 @@
 				5E4EC3E920F4232600C60D7A /* KamomeSDK.h */,
 				5E4EC3E620F4232600C60D7A /* KMMCommand.h */,
 				5E4EC3E420F4232600C60D7A /* KMMCompletion.h */,
+				5E962A3A248E447E00AF0668 /* KMMConsoleLogAdapter.h */,
 				5E4EC3EB20F4232600C60D7A /* KMMException.h */,
 				5E4EC3EC20F4232700C60D7A /* KMMKamome.h */,
 				5EECBABA23CC9609003DD100 /* KMMLocalCompletion.h */,
@@ -134,6 +138,7 @@
 				5E4EC40920F5691E00C60D7A /* Internal */,
 				5E4EC3ED20F4232700C60D7A /* KMMCommand.m */,
 				5E4EC3E720F4232600C60D7A /* KMMCompletion.m */,
+				5E962A3B248E447E00AF0668 /* KMMConsoleLogAdapter.m */,
 				5E4EC3EA20F4232600C60D7A /* KMMException.m */,
 				5E4EC3EF20F4232700C60D7A /* KMMKamome.m */,
 				5EECBABB23CC9609003DD100 /* KMMLocalCompletion.m */,
@@ -232,6 +237,7 @@
 				5E4EC3F520F4232700C60D7A /* KMMCommand.m in Sources */,
 				5E4EC3F620F4232700C60D7A /* KMMKamome.m in Sources */,
 				5EECBABC23CC9609003DD100 /* KMMLocalCompletion.m in Sources */,
+				5E962A3C248E447E00AF0668 /* KMMConsoleLogAdapter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

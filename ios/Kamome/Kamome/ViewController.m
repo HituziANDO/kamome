@@ -91,6 +91,9 @@
 
     self.kamome.howToHandleNonExistentCommand = KMMHowToHandleNonExistentCommandRejected;
 
+    // Option: Set console.log/.warn/.error adapter.
+    [[KMMConsoleLogAdapter new] setToWebView:self.webView];
+
     NSURL *htmlURL = [[NSBundle mainBundle] URLForResource:@"index" withExtension:@"html" subdirectory:@"www"];
     [self.webView loadFileURL:htmlURL allowingReadAccessToURL:htmlURL];
     [self.view addSubview:self.webView];

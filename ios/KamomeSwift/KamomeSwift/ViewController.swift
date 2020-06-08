@@ -76,6 +76,9 @@ class ViewController: UIViewController {
 
         kamome.howToHandleNonExistentCommand = .rejected
 
+        // Option: Set console.log/.warn/.error adapter.
+        KMMConsoleLogAdapter().setTo(self.webView)
+
         let htmlURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "www")!
         self.webView.loadFileURL(htmlURL, allowingReadAccessTo: htmlURL)
         view.addSubview(self.webView)

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2018-present Hituzi Ando. All rights reserved.
+// Copyright (c) 2020-present Hituzi Ando. All rights reserved.
 //
 // MIT License
 //
@@ -21,9 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#import "KMMKamome.h"
-#import "KMMCommand.h"
-#import "KMMCompletion.h"
-#import "KMMConsoleLogAdapter.h"
-#import "KMMException.h"
-#import "KMMLocalCompletion.h"
+#import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@class WKWebView;
+
+@protocol KMMConsoleLogging <NSObject>
+
+- (void)consoleLog:(id)logMessage;
+
+@end
+
+@interface KMMDefaultConsoleLogger : NSObject <KMMConsoleLogging>
+
+@end
+
+@interface KMMConsoleLogAdapter : NSObject
+/**
+ * A console logger.
+ */
+@property (nonatomic) id <KMMConsoleLogging> logger;
+
+/**
+ * Sets this adapter to specified webView.
+ *
+ * @param webView A webView.
+ */
+- (void)setToWebView:(WKWebView *)webView;
+
+@end
+
+NS_ASSUME_NONNULL_END
