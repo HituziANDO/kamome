@@ -1,4 +1,4 @@
-# kamome
+# Kamome
 
 Kamome is a library for iOS and Android apps using the WebView. This library bridges a gap between JavaScript in the WebView and the native code written by Swift, Objective-C, Java or Kotlin.
 
@@ -13,6 +13,8 @@ Kamome provides common JavaScript interface for iOS and Android.
 1. Send a message from the JavaScript code
 	
 	```javascript
+	// JavaScript
+	
 	// Send `echo` command.
 	Kamome.send('echo', { message: 'Hello' }).then(function (result) {
 	    // Receive a result from the native code if succeeded.
@@ -26,6 +28,8 @@ Kamome provides common JavaScript interface for iOS and Android.
 1. Receive a message on iOS
 	
 	```swift
+	// Swift
+	
 	private var webView: WKWebView!
 	private var kamome: KMMKamome!
 
@@ -57,6 +61,8 @@ Kamome provides common JavaScript interface for iOS and Android.
 1. Receive a message on Android
 	
 	```java
+	// Java
+	
 	private Kamome kamome;
 
 	@Override
@@ -91,6 +97,8 @@ Kamome provides common JavaScript interface for iOS and Android.
 1. Send a message from the native code on iOS
 	
 	```swift
+	// Swift
+	
 	// Send a data to JavaScript.
 	kamome.sendMessage(with: ["greeting": "Hello! by Swift"], name: "greeting") { (commandName, result, error) in
 	    // Received a result from the JS code.
@@ -102,6 +110,8 @@ Kamome provides common JavaScript interface for iOS and Android.
 1. Send a message from the native code on Android
 	
 	```java
+	// Java
+	
 	// Send a data to JavaScript.
 	HashMap<String, Object> data = new HashMap<>();
 	data.put("greeting", "Hello! by Java");
@@ -118,6 +128,8 @@ Kamome provides common JavaScript interface for iOS and Android.
 1. Receive a message on the JavaScript code
 	
 	```javascript
+	// JavaScript
+	
 	// Add a receiver that receives a message sent by the native client.
 	Kamome.addReceiver('greeting', function (data, resolve, reject) {
 	    // The data is the object sent by the native client.
@@ -206,6 +218,8 @@ dependencies {
 `Kamome.send` method in JavaScript expects a `resolve` or `reject` response will be returned in a duration. If the request is timed out, it's the callback calls `reject` with the `requestTimeout` error. You can change default request timeout. See following.
 
 ```javascript
+// JavaScript
+
 // Set default timeout in millisecond.
 Kamome.setDefaultRequestTimeout(15000);
 ```
@@ -215,6 +229,8 @@ If given time is less than or equal to 0, the request timeout function is disabl
 If you want to specify a request timeout individually, you set a timeout in millisecond at `Kamome.send` method's 4th argument.
 
 ```javascript
+// JavaScript
+
 // Set a timeout in millisecond at 4th argument.
 const promise = Kamome.send(commandName, data, null, 5000);
 ```
@@ -224,6 +240,8 @@ const promise = Kamome.send(commandName, data, null, 5000);
 Hook the command before calling it, and after processing it.
 
 ```javascript
+// JavaScript
+
 // Hook.
 Kamome.hook
     .before("getScore", function () {
@@ -250,6 +268,8 @@ Kamome.send("getScore").then(function (data) {
 When there is no Kamome's iOS/Android native client, that is, when you run with a browser alone, you can register the processing of each command.
 
 ```javascript
+// JavaScript
+
 Kamome.browser
     .addCommand("echo", function (data, resolve, reject) {
         // Received `echo` command.
