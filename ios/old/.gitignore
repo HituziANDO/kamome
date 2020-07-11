@@ -67,5 +67,5 @@ iOSInjectionProject/
 
 # App
 #
-Framework
-Sample/Framework/*.framework
+KamomeSDK/Framework
+Kamome/Framework/*.framework

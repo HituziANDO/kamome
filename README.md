@@ -1,6 +1,6 @@
 # Kamome
 
-Kamome is a library for iOS and Android apps using the WebView. This library bridges a gap between JavaScript in the WebView and the native code written by Swift, Objective-C, Java or Kotlin.
+Kamome is a library for iOS and Android apps using the WebView. This library bridges a gap between JavaScript in the WebView and the native code written by Swift, Java or Kotlin.
 
 <img src="./README/images/illustration.png" width="410">
 
@@ -30,19 +30,21 @@ Kamome provides common JavaScript interface for iOS and Android.
 	```swift
 	// Swift
 	
-	private var webView: WKWebView!
-	private var kamome: KMMKamome!
+	private lazy var webView: WKWebView = {
+	    let webView = WKWebView(frame: self.view.frame)
+	    return webView
+	}()
+	
+	private var kamome: Kamome!
 
 	override func viewDidLoad() {
 	    super.viewDidLoad()
 
 	    // Create the Kamome object with default webView.
-	    var webView: AnyObject!
-	    kamome = KMMKamome.create(webView: &webView, class: WKWebView.self, frame: view.frame)
-	    self.webView = webView as? WKWebView
+	    self.kamome = Kamome(webView: self.webView)
 
 	    // Register `echo` command.
-	    kamome.add(KMMCommand(name: "echo") { commandName, data, completion in
+	    kamome.add(Command(name: "echo") { commandName, data, completion in
 	              // Received `echo` command.
 	              // Then send resolved result to the JavaScript callback function.
 	              completion.resolve(with: ["message": data!["message"]!])
@@ -167,19 +169,21 @@ Kamome provides common JavaScript interface for iOS and Android.
 Kamome is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
 	
 ```ruby
-pod "KamomeSDK"
+pod "kamome"
 ```
 
 #### Manual Installation
 
-Drag & drop KamomeSDK.framework into your Xcode project
+1. Drag & drop kamome.framework into your Xcode project
+1. Click General tab in your target
+1. In Frameworks, Libraries, and Embedded Content, Select "Embed & Sign" for kamome.framework
 
 #### Import Framework
 
 Write the import statement in your source code
 
 ```swift
-import KamomeSDK
+import kamome
 ```
 
 ### 3. Android App

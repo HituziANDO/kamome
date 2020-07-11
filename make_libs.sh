@@ -35,7 +35,7 @@ cd ../
 
 # Make iOS
 
-cd ./ios/KamomeSDK
+cd ./ios
 ./make_framework.sh
-cp -rf ./Framework/*.framework ../../$LIBS_DIR/ios
-cd ../../
+cp -rf ./Framework/*.framework ../$LIBS_DIR/ios
+cd ../

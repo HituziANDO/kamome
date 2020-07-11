@@ -7,7 +7,7 @@
 
 import UIKit
 import WebKit
-import KamomeSDK
+import kamome
 
 class MyWebView: WKWebView {
     // Something
@@ -27,57 +27,48 @@ class ViewController: UIViewController {
         return sendButton
     }()
 
-    private var webView: MyWebView!
-    private var kamome: KMMKamome!
+    private lazy var webView: MyWebView = {
+        let webView = MyWebView(frame: self.view.frame)
+        return webView
+    }()
+
+    private var kamome: Kamome!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Create the Kamome object with default webView.
-        var webView: AnyObject!
-        kamome = KMMKamome.create(webView: &webView, class: MyWebView.self, frame: view.frame)
-        self.webView = webView as? MyWebView
+        self.kamome = Kamome(webView: self.webView)
 
-        // Create the Kamome object for a customized webView.
-//        kamome = KMMKamome()
-//
-//        let userContentController = WKUserContentController()
-//        userContentController.add(kamome!, name: KMMScriptMessageHandlerName)
-//        let configuration = WKWebViewConfiguration()
-//        configuration.userContentController = userContentController
-//        self.webView = WKWebView(frame: view.frame, configuration: configuration)
-//
-//        kamome.setWebView(self.webView)
-
-        kamome.add(KMMCommand(name: "echo") { commandName, data, completion in
+        kamome.add(Command(name: "echo") { commandName, data, completion in
                   // Received `echo` command.
                   // Then send resolved result to the JavaScript callback function.
                   completion.resolve(with: ["message": data!["message"]!])
               })
-              .add(KMMCommand(name: "echoError") { commandName, data, completion in
+              .add(Command(name: "echoError") { commandName, data, completion in
                   // Send rejected result if failed.
                   completion.reject(with: "Echo Error!")
               })
-              .add(KMMCommand(name: "tooLong") { commandName, data, completion in
+              .add(Command(name: "tooLong") { commandName, data, completion in
                   // Too long process...
                   Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { timer in
                       completion.resolve()
                   }
               })
-              .add(KMMCommand(name: "getUser") { commandName, data, completion in
+              .add(Command(name: "getUser") { commandName, data, completion in
                   completion.resolve(with: ["name": "Brad"])
               })
-              .add(KMMCommand(name: "getScore") { commandName, data, completion in
+              .add(Command(name: "getScore") { commandName, data, completion in
                   completion.resolve(with: ["score": 88, "rank": 2])
               })
-              .add(KMMCommand(name: "getAvg") { commandName, data, completion in
+              .add(Command(name: "getAvg") { commandName, data, completion in
                   completion.resolve(with: ["avg": 68])
               })
 
         kamome.howToHandleNonExistentCommand = .rejected
 
         // Option: Set console.log/.warn/.error adapter.
-        KMMConsoleLogAdapter().setTo(self.webView)
+        ConsoleLogAdapter().setTo(self.webView)
 
         let htmlURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "www")!
         self.webView.loadFileURL(htmlURL, allowingReadAccessTo: htmlURL)

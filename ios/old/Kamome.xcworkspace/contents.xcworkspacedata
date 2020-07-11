@@ -7,7 +7,4 @@
    <FileRef
       location = "group:Kamome/Kamome.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:KamomeSwift/KamomeSwift.xcodeproj">
-   </FileRef>
 </Workspace>
