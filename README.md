@@ -172,6 +172,14 @@ Kamome is available through [CocoaPods](http://cocoapods.org). To install it, si
 pod "kamome"
 ```
 
+#### Carthage
+
+Kamome is available through [Carthage](https://github.com/Carthage/Carthage). To install it, simply add the following line to your Cartfile:
+
+```
+github "HituziANDO/kamome"
+```
+
 #### Manual Installation
 
 1. Drag & drop kamome.framework into your Xcode project
