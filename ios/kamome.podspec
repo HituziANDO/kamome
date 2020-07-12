@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.author       = "Hituzi Ando"
   s.platform     = :ios, "10.0"
   s.source       = { :git => "https://github.com/HituziANDO/kamome.git", :tag => "#{s.version}" }
-  s.source_files = "SwiftyKamome/*.{swift,h}"
+  s.source_files = "ios/SwiftyKamome/*.{swift,h}"
   s.requires_arc = true
   s.swift_versions = '5.0'
 end
