@@ -7,7 +7,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import org.json.JSONObject;
 
@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
 
         webView.loadUrl("file:///android_asset/www/index.html");
 
-        Button sendButton = findViewById(R.id.sendButton);
+        ImageButton sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(new View.OnClickListener() {
 
             @Override

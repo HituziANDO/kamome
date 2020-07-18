@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		5E10E5F124BADFD500094FE9 /* kamome.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E10E5EF24BADFC200094FE9 /* kamome.framework */; };
 		5E10E5F224BADFD500094FE9 /* kamome.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5E10E5EF24BADFC200094FE9 /* kamome.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5E8A79D224C2EF76005C9A98 /* send_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E8A79D024C2EF76005C9A98 /* send_button@2x.png */; };
+		5E8A79D324C2EF76005C9A98 /* send_button@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E8A79D124C2EF76005C9A98 /* send_button@3x.png */; };
 		5EEBB9742206DA4E00C47AB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEBB9732206DA4E00C47AB1 /* AppDelegate.swift */; };
 		5EEBB9762206DA4E00C47AB1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEBB9752206DA4E00C47AB1 /* ViewController.swift */; };
 		5EEBB97B2206DA5000C47AB1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5EEBB97A2206DA5000C47AB1 /* Assets.xcassets */; };
@@ -32,6 +34,8 @@
 
 /* Begin PBXFileReference section */
 		5E10E5EF24BADFC200094FE9 /* kamome.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = kamome.framework; sourceTree = "<group>"; };
+		5E8A79D024C2EF76005C9A98 /* send_button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "send_button@2x.png"; sourceTree = "<group>"; };
+		5E8A79D124C2EF76005C9A98 /* send_button@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "send_button@3x.png"; sourceTree = "<group>"; };
 		5EEBB9702206DA4E00C47AB1 /* KamomeSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KamomeSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EEBB9732206DA4E00C47AB1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5EEBB9752206DA4E00C47AB1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -53,6 +57,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5E8A79CF24C2EF61005C9A98 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5E8A79D024C2EF76005C9A98 /* send_button@2x.png */,
+				5E8A79D124C2EF76005C9A98 /* send_button@3x.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		5EEBB9672206DA4E00C47AB1 = {
 			isa = PBXGroup;
 			children = (
@@ -77,6 +90,7 @@
 				5EEBB97A2206DA5000C47AB1 /* Assets.xcassets */,
 				5EEBB97F2206DA5000C47AB1 /* Info.plist */,
 				5EEBB97C2206DA5000C47AB1 /* LaunchScreen.storyboard */,
+				5E8A79CF24C2EF61005C9A98 /* Resources */,
 				5EEBB9752206DA4E00C47AB1 /* ViewController.swift */,
 				5EEBB9882206DB1000C47AB1 /* www */,
 			);
@@ -150,8 +164,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E8A79D224C2EF76005C9A98 /* send_button@2x.png in Resources */,
 				5EEBB9892206DB1000C47AB1 /* www in Resources */,
 				5EEBB97E2206DA5000C47AB1 /* LaunchScreen.storyboard in Resources */,
+				5E8A79D324C2EF76005C9A98 /* send_button@3x.png in Resources */,
 				5EEBB97B2206DA5000C47AB1 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

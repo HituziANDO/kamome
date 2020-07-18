@@ -10,25 +10,27 @@ import WebKit
 import kamome
 
 class MyWebView: WKWebView {
-    // Something
+
+    override var safeAreaInsets: UIEdgeInsets {
+        .zero
+    }
 }
 
 class ViewController: UIViewController {
 
     private lazy var sendButton: UIButton = {
-        let sendButton = UIButton(frame: CGRect(x: 0, y: 0, width: 200.0, height: 44.0))
-        sendButton.backgroundColor = .purple
-        sendButton.layer.cornerRadius = 22.0
-        sendButton.layer.shadowColor = UIColor.black.cgColor
-        sendButton.layer.shadowOpacity = 0.4
-        sendButton.layer.shadowOffset = CGSize(width: 0, height: 4.0)
-        sendButton.setTitle("Send Data to Web", for: .normal)
+        let sendButton = UIButton()
+        sendButton.translatesAutoresizingMaskIntoConstraints = false
+        sendButton.setImage(UIImage(named: "send_button"), for: .normal)
         sendButton.addTarget(self, action: #selector(sendButtonPressed(_:)), for: .touchUpInside)
         return sendButton
     }()
 
     private lazy var webView: MyWebView = {
-        let webView = MyWebView(frame: self.view.frame)
+        let webView = MyWebView()
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.scrollView.showsVerticalScrollIndicator = false
+        webView.scrollView.showsHorizontalScrollIndicator = false
         return webView
     }()
 
@@ -76,12 +78,17 @@ class ViewController: UIViewController {
         view.sendSubviewToBack(self.webView)
 
         self.view.addSubview(self.sendButton)
-    }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-
-        self.sendButton.center = CGPoint(x: self.view.center.x, y: self.view.frame.size.height - 70.0)
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            webView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+            webView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            webView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+            sendButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 88),
+            sendButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -8),
+            sendButton.widthAnchor.constraint(equalToConstant: 100),
+            sendButton.heightAnchor.constraint(equalToConstant: 60),
+        ])
     }
 
     @IBAction func sendButtonPressed(_ sender: Any) {

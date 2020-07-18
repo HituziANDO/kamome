@@ -14,12 +14,12 @@ mkdir $LIBS_DIR/ios
 
 # Make JavaScript
 
-cd ./js
+cd ./js/kamome
 
 npm run prod
-cp ./src/kamome.js ../$LIBS_DIR/js
-cp ./public/kamome.js ../$LIBS_DIR/js/kamome.min.js
-cd ../
+cp ./src/kamome.js ../../$LIBS_DIR/js
+cp ./public/kamome.js ../../$LIBS_DIR/js/kamome.min.js
+cd ../../
 
 # Make Android
 
