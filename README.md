@@ -1,6 +1,6 @@
 # Kamome
 
-Kamome is a library for iOS and Android apps using the WebView. This library bridges a gap between JavaScript in the WebView and the native code written by Swift, Java or Kotlin.
+Kamome is a library for iOS and Android apps using the WebView. This library bridges a gap between JavaScript in the WebView and the native code written in Swift, Java or Kotlin.
 
 <img src="./README/images/illustration.png" width="410">
 
