@@ -275,7 +275,7 @@ Kamome.send("getScore").then(function (data) {
 });
 ```
 
-## Browser Only
+## Browser Alone
 
 When there is no Kamome's iOS/Android native client, that is, when you run with a browser alone, you can register the processing of each command.
 
