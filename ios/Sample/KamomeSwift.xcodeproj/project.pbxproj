@@ -3,12 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5E10E5F124BADFD500094FE9 /* kamome.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E10E5EF24BADFC200094FE9 /* kamome.framework */; };
-		5E10E5F224BADFD500094FE9 /* kamome.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5E10E5EF24BADFC200094FE9 /* kamome.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5E069614259D9043007759BF /* kamome.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E069612259D9038007759BF /* kamome.xcframework */; };
+		5E069615259D9043007759BF /* kamome.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5E069612259D9038007759BF /* kamome.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5E8A79D224C2EF76005C9A98 /* send_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E8A79D024C2EF76005C9A98 /* send_button@2x.png */; };
 		5E8A79D324C2EF76005C9A98 /* send_button@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E8A79D124C2EF76005C9A98 /* send_button@3x.png */; };
 		5EEBB9742206DA4E00C47AB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EEBB9732206DA4E00C47AB1 /* AppDelegate.swift */; };
@@ -25,7 +25,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5E10E5F224BADFD500094FE9 /* kamome.framework in Embed Frameworks */,
+				5E069615259D9043007759BF /* kamome.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -33,7 +33,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5E10E5EF24BADFC200094FE9 /* kamome.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = kamome.framework; sourceTree = "<group>"; };
+		5E069612259D9038007759BF /* kamome.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = kamome.xcframework; sourceTree = "<group>"; };
 		5E8A79D024C2EF76005C9A98 /* send_button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "send_button@2x.png"; sourceTree = "<group>"; };
 		5E8A79D124C2EF76005C9A98 /* send_button@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "send_button@3x.png"; sourceTree = "<group>"; };
 		5EEBB9702206DA4E00C47AB1 /* KamomeSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KamomeSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -50,7 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E10E5F124BADFD500094FE9 /* kamome.framework in Frameworks */,
+				5E069614259D9043007759BF /* kamome.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,7 +100,7 @@
 		5EEBB9852206DA7E00C47AB1 /* Framework */ = {
 			isa = PBXGroup;
 			children = (
-				5E10E5EF24BADFC200094FE9 /* kamome.framework */,
+				5E069612259D9038007759BF /* kamome.xcframework */,
 			);
 			path = Framework;
 			sourceTree = "<group>";

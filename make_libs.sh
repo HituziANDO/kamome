@@ -37,5 +37,5 @@ cd ../
 
 cd ./ios
 ./make_framework.sh
-cp -rf ./Framework/*.framework ../$LIBS_DIR/ios
+cp -rf ./Output/Release-xcframework/*.xcframework ../$LIBS_DIR/ios
 cd ../
