@@ -182,9 +182,9 @@ github "HituziANDO/kamome"
 
 #### Manual Installation
 
-1. Drag & drop kamome.framework into your Xcode project
+1. Drag & drop kamome.xcframework into your Xcode project
 1. Click General tab in your target
-1. In Frameworks, Libraries, and Embedded Content, Select "Embed & Sign" for kamome.framework
+1. In Frameworks, Libraries, and Embedded Content, Select "Embed & Sign" for kamome.xcframework
 
 #### Import Framework
 
@@ -238,41 +238,13 @@ Kamome.setDefaultRequestTimeout(15000);
 
 If given time is less than or equal to 0, the request timeout function is disabled.
 
-If you want to specify a request timeout individually, you set a timeout in millisecond at `Kamome.send` method's 4th argument.
+If you want to specify a request timeout individually, you set a timeout in millisecond at `Kamome.send` method's 3rd argument.
 
 ```javascript
 // JavaScript
 
-// Set a timeout in millisecond at 4th argument.
-const promise = Kamome.send(commandName, data, null, 5000);
-```
-
-## Hook
-
-Hook the command before calling it, and after processing it.
-
-```javascript
-// JavaScript
-
-// Hook.
-Kamome.hook
-    .before("getScore", function () {
-        // Called before sending "getScore" command.
-        Kamome.send("getUser").then(function (data) {
-            console.log("Name: " + data.name);
-        });
-    })
-    .after("getScore", function () {
-        // Called after "getScore" command is processed.
-        Kamome.send("getAvg").then(function (data) {
-            console.log("Avg: " + data.avg);
-        });
-    });
-
-// Send "getScore" command.
-Kamome.send("getScore").then(function (data) {
-    console.log("Score: " + data.score + " Rank: " + data.rank);
-});
+// Set a timeout in millisecond at 3rd argument.
+const promise = Kamome.send(commandName, data, 5000);
 ```
 
 ## Browser Alone
