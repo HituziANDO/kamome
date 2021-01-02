@@ -6,16 +6,16 @@ import org.json.JSONObject;
 
 public final class Command {
 
-    public interface IHandler {
+    public interface Handler {
 
-        void execute(String commandName, @Nullable JSONObject data, ICompletion completion);
+        void execute(String commandName, @Nullable JSONObject data, Completable completion);
     }
 
     private String name;
     @Nullable
-    private IHandler handler;
+    private Handler handler;
 
-    public Command(String name, @Nullable IHandler handler) {
+    public Command(String name, @Nullable Handler handler) {
         this.name = name;
         this.handler = handler;
     }
@@ -24,7 +24,7 @@ public final class Command {
         return name;
     }
 
-    void execute(@Nullable JSONObject data, ICompletion completion) {
+    void execute(@Nullable JSONObject data, Completable completion) {
         if (handler != null) {
             handler.execute(name, data, completion);
         }

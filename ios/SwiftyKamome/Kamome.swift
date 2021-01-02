@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2020-present Hituzi Ando. All rights reserved.
+// Copyright (c) 2021 Hituzi Ando. All rights reserved.
 //
 // MIT License
 //
@@ -34,7 +34,7 @@ public enum KamomeError: Error {
 
 class Messenger {
 
-    private static let jsObj = "window.Kamome"
+    private static let jsObj = "window.KM"
 
     static func completeMessage(with webView: WKWebView, data: Any?, for requestID: String) throws {
         if let data = data {
@@ -261,7 +261,7 @@ open class Command {
     /// - Parameters:
     ///   - name: A command name.
     ///   - handler: A function that processes the command.
-    public init(name: String, handler: @escaping Handler) {
+    public init(_ name: String, handler: @escaping Handler) {
         self.name = name
         self.handler = handler
     }
@@ -284,7 +284,7 @@ public enum HowToHandleNonExistentCommand {
 /// An error occurs when the native client receives it from the JavaScript receiver, otherwise it will be null.
 public typealias SendMessageCallback = (_ commandName: String, _ result: Any?, _ errorMessage: String?) -> Void
 
-open class Kamome: NSObject {
+open class NativeClient: NSObject {
 
     public static let scriptMessageHandlerName = "kamomeSend"
 
@@ -296,18 +296,18 @@ open class Kamome: NSObject {
 
     /// - Parameters:
     ///   - webView: A webView for this framework.
-    public init(webView: WKWebView) {
+    public init(_ webView: WKWebView) {
         super.init()
         self.webView = webView
         self.webView.configuration.userContentController.add(self, name: Self.scriptMessageHandlerName)
     }
 
-    /// Adds a command called by JavaScript code.
+    /// Adds a command called by the JavaScript code.
     ///
     /// - Parameters:
     ///   - command: A command object.
     @discardableResult
-    public func add(_ command: Command) -> Kamome {
+    public func add(_ command: Command) -> NativeClient {
         commands[command.name] = command
         return self
     }
@@ -315,86 +315,86 @@ open class Kamome: NSObject {
     /// Removes a command of specified name.
     ///
     /// - Parameters:
-    ///   - name: A command name that you will remove.
-    public func removeCommand(name: String) {
-        if hasCommand(name: name) {
-            commands.removeValue(forKey: name)
+    ///   - commandName: A command name that you will remove.
+    public func remove(_ commandName: String) {
+        if hasCommand(commandName) {
+            commands.removeValue(forKey: commandName)
         }
     }
 
     /// Tells whether specified command is added.
-    public func hasCommand(name: String) -> Bool {
+    public func hasCommand(_ name: String) -> Bool {
         commands.contains { $0.key == name }
     }
 
     /// Sends a message to the JavaScript receiver.
     ///
     /// - Parameters:
-    ///   - name A command name.
+    ///   - commandName A command name.
     ///   - callback: A callback.
-    public func sendMessage(name: String, callback: SendMessageCallback? = nil) {
+    public func send(_ commandName: String, callback: SendMessageCallback? = nil) {
         if let callback = callback {
             let callbackID = add(sendMessageCallback: callback)
-            try? Messenger.sendMessage(with: webView, data: nil, callbackID: callbackID, for: name)
+            try? Messenger.sendMessage(with: webView, data: nil, callbackID: callbackID, for: commandName)
         }
         else {
-            try? Messenger.sendMessage(with: webView, data: nil, callbackID: nil, for: name)
+            try? Messenger.sendMessage(with: webView, data: nil, callbackID: nil, for: commandName)
         }
     }
 
-    /// Sends a message with data as Dictionary to the JavaScript receiver.
+    /// Sends a message with a data as Dictionary to the JavaScript receiver.
     ///
     /// - Parameters:
     ///   - data: A data as Dictionary.
-    ///   - name: A command name.
+    ///   - commandName: A command name.
     ///   - callback: A callback.
-    public func sendMessage(with data: [String: Any?], name: String, callback: SendMessageCallback? = nil) {
+    public func send(_ data: [String: Any?], commandName: String, callback: SendMessageCallback? = nil) {
         if let callback = callback {
             let callbackID = add(sendMessageCallback: callback)
-            try? Messenger.sendMessage(with: webView, data: data, callbackID: callbackID, for: name)
+            try? Messenger.sendMessage(with: webView, data: data, callbackID: callbackID, for: commandName)
         }
         else {
-            try? Messenger.sendMessage(with: webView, data: data, callbackID: nil, for: name)
+            try? Messenger.sendMessage(with: webView, data: data, callbackID: nil, for: commandName)
         }
     }
 
-    /// Sends a message with data as Array to the JavaScript receiver.
+    /// Sends a message with a data as Array to the JavaScript receiver.
     ///
     /// - Parameters:
     ///   - data: A data as Array.
-    ///   - name: A command name.
+    ///   - commandName: A command name.
     ///   - callback: A callback.
-    public func sendMessage(with data: [Any?], name: String, callback: SendMessageCallback? = nil) {
+    public func send(_ data: [Any?], commandName: String, callback: SendMessageCallback? = nil) {
         if let callback = callback {
             let callbackID = add(sendMessageCallback: callback)
-            try? Messenger.sendMessage(with: webView, data: data, callbackID: callbackID, for: name)
+            try? Messenger.sendMessage(with: webView, data: data, callbackID: callbackID, for: commandName)
         }
         else {
-            try? Messenger.sendMessage(with: webView, data: data, callbackID: nil, for: name)
+            try? Messenger.sendMessage(with: webView, data: data, callbackID: nil, for: commandName)
         }
     }
 
-    /// Executes a command to the native receiver.
+    /// Executes a command added to this client.
     ///
     /// - Parameters:
-    ///   - name: A command name.
+    ///   - commandName: A command name.
     ///   - callback: A callback.
-    public func executeCommand(name: String, callback: LocalCompletion.Callback?) {
-        executeCommand(name: name, data: nil, callback: callback)
+    public func execute(_ commandName: String, callback: LocalCompletion.Callback?) {
+        execute(commandName, data: nil, callback: callback)
     }
 
-    /// Executes a command with data to the native receiver.
+    /// Executes a command added to this client with a data.
     ///
     /// - Parameters:
-    ///   - name: A command name.
+    ///   - commandName: A command name.
     ///   - data: A data as Dictionary.
     ///   - callback: A callback.
-    public func executeCommand(name: String, data: TransferData?, callback: LocalCompletion.Callback?) {
-        try! handleCommand(name: name, data: data, completion: LocalCompletion(callback: callback))
+    public func execute(_ commandName: String, data: TransferData?, callback: LocalCompletion.Callback?) {
+        try! handle(commandName, data: data, completion: LocalCompletion(callback: callback))
     }
 }
 
-extension Kamome: WKScriptMessageHandler {
+extension NativeClient: WKScriptMessageHandler {
 
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard message.name == Self.scriptMessageHandlerName else { return }
@@ -404,15 +404,15 @@ extension Kamome: WKScriptMessageHandler {
 
         let params = obj["data"] as? TransferData
         let completion = Completion(webView: webView, requestID: obj["id"] as! String)
-        try! handleCommand(name: obj["name"] as! String, data: params, completion: completion)
+        try! handle(obj["name"] as! String, data: params, completion: completion)
     }
 }
 
-private extension Kamome {
+private extension NativeClient {
 
-    func handleCommand(name: String, data: TransferData?, completion: Completable) throws {
-        if hasCommand(name: name) {
-            let command = commands[name]
+    func handle(_ commandName: String, data: TransferData?, completion: Completable) throws {
+        if hasCommand(commandName) {
+            let command = commands[commandName]
             command?.execute(data: data, completion: completion)
         }
         else {
@@ -420,7 +420,7 @@ private extension Kamome {
                 case .rejected:
                     completion.reject(with: "CommandNotAdded")
                 case .exception:
-                    throw KamomeError.commandNotAdded("\(name) command not added.")
+                    throw KamomeError.commandNotAdded("\(commandName) command not added.")
                 default:
                     completion.resolve()
             }
@@ -431,7 +431,7 @@ private extension Kamome {
         let callbackID = UUID().uuidString
 
         // Add a temporary command receiving a result from the JavaScript handler.
-        add(Command(name: callbackID) { name, data, completion in
+        add(Command(callbackID) { name, data, completion in
             if let data = data {
                 if let success = data["success"] as? Bool, success {
                     sendMessageCallback(name, data["result"]!, nil)
@@ -454,7 +454,7 @@ private extension Kamome {
             completion.resolve()
 
             // Remove the temporary command.
-            self.removeCommand(name: callbackID)
+            self.remove(callbackID)
         })
 
         return callbackID

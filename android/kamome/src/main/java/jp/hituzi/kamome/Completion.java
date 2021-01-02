@@ -11,7 +11,7 @@ import java.util.Map;
 
 import jp.hituzi.kamome.internal.Messenger;
 
-public final class Completion implements ICompletion {
+public final class Completion implements Completable {
 
     private final WebView webView;
     private final String requestId;

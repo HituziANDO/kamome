@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import java.util.Collection;
 import java.util.Map;
 
-public interface ICompletion {
+public interface Completable {
 
     boolean isCompleted();
 

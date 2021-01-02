@@ -1,7 +1,6 @@
 package jp.hituzi.kamome;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.support.annotation.Nullable;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -15,11 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import jp.hituzi.kamome.exception.ApiVersionException;
 import jp.hituzi.kamome.exception.CommandNotAddedException;
 import jp.hituzi.kamome.internal.Messenger;
 
-public final class Kamome {
+public final class NativeClient {
 
     public enum HowToHandleNonExistentCommand {
         /**
@@ -36,7 +34,7 @@ public final class Kamome {
         EXCEPTION
     }
 
-    public interface ISendMessageCallback {
+    public interface SendMessageCallback {
 
         /**
          * Receives a result from the JavaScript receiver when it processed a task of a command.
@@ -56,30 +54,20 @@ public final class Kamome {
     private final WebView webView;
     private final Map<String, Command> commands = new HashMap<>();
 
-    @Deprecated
     @SuppressLint("SetJavaScriptEnabled")
-    public static Kamome createInstanceForWebView(WebView webView) throws ApiVersionException {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            throw new ApiVersionException();
-        }
-
-        return new Kamome(webView);
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    public Kamome(WebView webView) {
+    public NativeClient(WebView webView) {
         this.webView = webView;
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(this, "kamomeAndroid");
     }
 
     /**
-     * Adds a command called by JavaScript code.
+     * Adds a command called by the JavaScript code.
      *
      * @param command A command.
      * @return Self.
      */
-    public Kamome add(Command command) {
+    public NativeClient add(Command command) {
         commands.put(command.getName(), command);
         return this;
     }
@@ -87,106 +75,118 @@ public final class Kamome {
     /**
      * Removes a command of specified name.
      *
-     * @param name A command name that you will remove.
+     * @param commandName A command name that you will remove.
      */
-    public void removeCommand(String name) {
-        commands.remove(name);
+    public void remove(String commandName) {
+        if (hasCommand(commandName)) {
+            commands.remove(commandName);
+        }
+    }
+
+    /**
+     * Tells whether specified command is added.
+     *
+     * @param name A command name.
+     * @return true if the command of specified name is added, otherwise false.
+     */
+    public boolean hasCommand(String name) {
+        return commands.containsKey(name);
     }
 
     /**
      * Sends a message to the JavaScript receiver.
      *
-     * @param name     A command name.
-     * @param callback A callback.
+     * @param commandName A command name.
+     * @param callback    A callback.
      */
-    public void sendMessage(String name, @Nullable ISendMessageCallback callback) {
-        sendMessage((JSONObject) null, name, callback);
+    public void send(String commandName, @Nullable SendMessageCallback callback) {
+        send((JSONObject) null, commandName, callback);
     }
 
     /**
-     * Sends a message with data as Map to the JavaScript receiver.
+     * Sends a message with a data as Map to the JavaScript receiver.
      *
-     * @param data     A data as Map.
-     * @param name     A command name.
-     * @param callback A callback.
+     * @param data        A data as Map.
+     * @param commandName A command name.
+     * @param callback    A callback.
      */
-    public void sendMessage(@Nullable Map data, String name, @Nullable ISendMessageCallback callback) {
-        sendMessage(data != null ? new JSONObject(data) : null, name, callback);
+    public void send(@Nullable Map data, String commandName, @Nullable SendMessageCallback callback) {
+        send(data != null ? new JSONObject(data) : null, commandName, callback);
     }
 
     /**
-     * Sends a message with data as JSONObject to the JavaScript receiver.
+     * Sends a message with a data as JSONObject to the JavaScript receiver.
      *
-     * @param data     A data as JSONObject.
-     * @param name     A command name.
-     * @param callback A callback.
+     * @param data        A data as JSONObject.
+     * @param commandName A command name.
+     * @param callback    A callback.
      */
-    public void sendMessage(@Nullable JSONObject data, String name, @Nullable ISendMessageCallback callback) {
+    public void send(@Nullable JSONObject data, String commandName, @Nullable SendMessageCallback callback) {
         if (callback != null) {
             String callbackId = addSendMessageCallback(callback);
-            Messenger.sendMessage(webView, name, data, callbackId);
+            Messenger.sendMessage(webView, commandName, data, callbackId);
         } else {
-            Messenger.sendMessage(webView, name, data, null);
+            Messenger.sendMessage(webView, commandName, data, null);
         }
     }
 
     /**
-     * Sends a message with data as Collection to the JavaScript receiver.
+     * Sends a message with a data as Collection to the JavaScript receiver.
      *
-     * @param data     A data as Collection.
-     * @param name     A command name.
-     * @param callback A callback.
+     * @param data        A data as Collection.
+     * @param commandName A command name.
+     * @param callback    A callback.
      */
-    public void sendMessage(@Nullable Collection data, String name, @Nullable ISendMessageCallback callback) {
-        sendMessage(data != null ? new JSONArray(data) : null, name, callback);
+    public void send(@Nullable Collection data, String commandName, @Nullable SendMessageCallback callback) {
+        send(data != null ? new JSONArray(data) : null, commandName, callback);
     }
 
     /**
-     * Sends a message with data as JSONArray to the JavaScript receiver.
+     * Sends a message with a data as JSONArray to the JavaScript receiver.
      *
-     * @param data     A data as JSONArray.
-     * @param name     A command name.
-     * @param callback A callback.
+     * @param data        A data as JSONArray.
+     * @param commandName A command name.
+     * @param callback    A callback.
      */
-    public void sendMessage(@Nullable JSONArray data, String name, @Nullable ISendMessageCallback callback) {
+    public void send(@Nullable JSONArray data, String commandName, @Nullable SendMessageCallback callback) {
         if (callback != null) {
             String callbackId = addSendMessageCallback(callback);
-            Messenger.sendMessage(webView, name, data, callbackId);
+            Messenger.sendMessage(webView, commandName, data, callbackId);
         } else {
-            Messenger.sendMessage(webView, name, data, null);
+            Messenger.sendMessage(webView, commandName, data, null);
         }
     }
 
     /**
-     * Executes a command to the native receiver.
+     * Executes a command added to this client.
      *
-     * @param name     A command name.
-     * @param callback A callback.
+     * @param commandName A command name.
+     * @param callback    A callback.
      */
-    public void executeCommand(String name, @Nullable LocalCompletion.ICallback callback) {
-        executeCommand(name, (JSONObject) null, callback);
+    public void execute(String commandName, @Nullable LocalCompletion.Callback callback) {
+        execute(commandName, (JSONObject) null, callback);
     }
 
     /**
-     * Executes a command with data to the native receiver.
+     * Executes a command added to this client with a data.
      *
-     * @param name     A command name.
-     * @param data     A data as Map.
-     * @param callback A callback.
+     * @param commandName A command name.
+     * @param data        A data as Map.
+     * @param callback    A callback.
      */
-    public void executeCommand(String name, @Nullable Map data, @Nullable LocalCompletion.ICallback callback) {
-        handleCommand(name, data != null ? new JSONObject(data) : null, new LocalCompletion(callback));
+    public void execute(String commandName, @Nullable Map data, @Nullable LocalCompletion.Callback callback) {
+        handle(commandName, data != null ? new JSONObject(data) : null, new LocalCompletion(callback));
     }
 
     /**
-     * Executes a command with data to the native receiver.
+     * Executes a command added to this client with a data.
      *
-     * @param name     A command name.
-     * @param data     A data as JSONObject.
-     * @param callback A callback.
+     * @param commandName A command name.
+     * @param data        A data as JSONObject.
+     * @param callback    A callback.
      */
-    public void executeCommand(String name, @Nullable JSONObject data, @Nullable LocalCompletion.ICallback callback) {
-        handleCommand(name, data, new LocalCompletion(callback));
+    public void execute(String commandName, @Nullable JSONObject data, @Nullable LocalCompletion.Callback callback) {
+        handle(commandName, data, new LocalCompletion(callback));
     }
 
     /**
@@ -201,14 +201,14 @@ public final class Kamome {
             String requestId = object.getString("id");
             String name = object.getString("name");
             JSONObject data = object.isNull("data") ? null : object.getJSONObject("data");
-            handleCommand(name, data, new Completion(webView, requestId));
+            handle(name, data, new Completion(webView, requestId));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void handleCommand(String name, @Nullable JSONObject data, ICompletion completion) {
-        Command command = commands.get(name);
+    private void handle(String commandName, @Nullable JSONObject data, Completable completion) {
+        Command command = commands.get(commandName);
 
         if (command != null) {
             command.execute(data, completion);
@@ -218,21 +218,21 @@ public final class Kamome {
                     completion.reject("CommandNotAdded");
                     break;
                 case EXCEPTION:
-                    throw new CommandNotAddedException(name);
+                    throw new CommandNotAddedException(commandName);
                 default:
                     completion.resolve();
             }
         }
     }
 
-    private String addSendMessageCallback(final ISendMessageCallback callback) {
+    private String addSendMessageCallback(final SendMessageCallback callback) {
         final String callbackId = UUID.randomUUID().toString();
 
         // Add a temporary command receiving a result from the JavaScript handler.
-        add(new Command(callbackId, new Command.IHandler() {
+        add(new Command(callbackId, new Command.Handler() {
 
             @Override
-            public void execute(String commandName, @Nullable JSONObject data, ICompletion completion) {
+            public void execute(String commandName, @Nullable JSONObject data, Completable completion) {
                 assert data != null;
                 boolean success = data.optBoolean("success");
 
@@ -247,7 +247,7 @@ public final class Kamome {
                 completion.resolve();
 
                 // Remove the temporary command.
-                removeCommand(callbackId);
+                remove(callbackId);
             }
         }));
 
