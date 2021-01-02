@@ -34,21 +34,21 @@ class ViewController: UIViewController {
         return webView
     }()
 
-    private var client: NativeClient!
+    private var client: Client!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Creates the NativeClient object with the webView.
-        client = NativeClient(webView)
+        // Creates the Client object with the webView.
+        client = Client(webView)
             .add(Command("echo") { commandName, data, completion in
                 // Received `echo` command.
                 // Then sends resolved result to the JavaScript callback function.
-                completion.resolve(with: ["message": data!["message"]!])
+                completion.resolve(["message": data!["message"]!])
             })
             .add(Command("echoError") { commandName, data, completion in
                 // Sends rejected result if failed.
-                completion.reject(with: "Echo Error!")
+                completion.reject("Echo Error!")
             })
             .add(Command("tooLong") { commandName, data, completion in
                 // Too long process...

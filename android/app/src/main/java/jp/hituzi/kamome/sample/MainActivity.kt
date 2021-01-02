@@ -7,8 +7,8 @@ import android.util.Log
 import android.webkit.WebView
 import android.widget.ImageButton
 import jp.hituzi.kamome.Command
-import jp.hituzi.kamome.NativeClient
-import jp.hituzi.kamome.NativeClient.SendMessageCallback
+import jp.hituzi.kamome.Client
+import jp.hituzi.kamome.Client.SendMessageCallback
 import java.util.*
 
 class MainActivity : Activity() {
@@ -17,7 +17,7 @@ class MainActivity : Activity() {
         private const val TAG = "KamomeSample"
     }
 
-    private var client: NativeClient? = null
+    private var client: Client? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +28,7 @@ class MainActivity : Activity() {
         val webView = findViewById<WebView>(R.id.webView)
 
         // Creates the NativeClient object with the webView.
-        client = NativeClient(webView)
+        client = Client(webView)
             .add(Command("echo") { commandName, data, completion ->
                 // Received `echo` command.
                 // Then sends resolved result to the JavaScript callback function.
@@ -45,7 +45,7 @@ class MainActivity : Activity() {
                 Handler().postDelayed({ completion.resolve() }, (30 * 1000).toLong())
             })
 
-        client?.howToHandleNonExistentCommand = NativeClient.HowToHandleNonExistentCommand.REJECTED
+        client?.howToHandleNonExistentCommand = Client.HowToHandleNonExistentCommand.REJECTED
 
         webView.loadUrl("file:///android_asset/www/index.html")
 

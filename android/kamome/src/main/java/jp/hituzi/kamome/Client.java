@@ -17,7 +17,7 @@ import java.util.UUID;
 import jp.hituzi.kamome.exception.CommandNotAddedException;
 import jp.hituzi.kamome.internal.Messenger;
 
-public final class NativeClient {
+public final class Client {
 
     public enum HowToHandleNonExistentCommand {
         /**
@@ -55,7 +55,7 @@ public final class NativeClient {
     private final Map<String, Command> commands = new HashMap<>();
 
     @SuppressLint("SetJavaScriptEnabled")
-    public NativeClient(WebView webView) {
+    public Client(WebView webView) {
         this.webView = webView;
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(this, "kamomeAndroid");
@@ -67,7 +67,7 @@ public final class NativeClient {
      * @param command A command.
      * @return Self.
      */
-    public NativeClient add(Command command) {
+    public Client add(Command command) {
         commands.put(command.getName(), command);
         return this;
     }

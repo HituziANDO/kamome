@@ -105,13 +105,13 @@ public protocol Completable {
     /// Sends resolved result to a JavaScript callback function.
     func resolve()
     /// Sends resolved result with a dictionary data to a JavaScript callback function.
-    func resolve(with data: [String: Any?])
+    func resolve(_ data: [String: Any?])
     /// Sends resolved result with an array data to a JavaScript callback function.
-    func resolve(with data: [Any?])
+    func resolve(_ data: [Any?])
     /// Sends rejected result to a JavaScript callback function.
     func reject()
     /// Sends rejected result with an error message to a JavaScript callback function.
-    func reject(with errorMessage: String?)
+    func reject(_ errorMessage: String?)
 }
 
 open class Completion: Completable {
@@ -140,7 +140,7 @@ open class Completion: Completable {
         try? Messenger.completeMessage(with: webView, data: nil, for: requestID)
     }
 
-    public func resolve(with data: [String: Any?]) {
+    public func resolve(_ data: [String: Any?]) {
         if completed {
             return
         }
@@ -150,7 +150,7 @@ open class Completion: Completable {
         try? Messenger.completeMessage(with: webView, data: data, for: requestID)
     }
 
-    public func resolve(with data: [Any?]) {
+    public func resolve(_ data: [Any?]) {
         if completed {
             return
         }
@@ -161,10 +161,10 @@ open class Completion: Completable {
     }
 
     public func reject() {
-        reject(with: nil)
+        reject(nil)
     }
 
-    public func reject(with errorMessage: String?) {
+    public func reject(_ errorMessage: String?) {
         if completed {
             return
         }
@@ -206,7 +206,7 @@ open class LocalCompletion: Completable {
         }
     }
 
-    public func resolve(with data: [String: Any?]) {
+    public func resolve(_ data: [String: Any?]) {
         if completed {
             return
         }
@@ -218,7 +218,7 @@ open class LocalCompletion: Completable {
         }
     }
 
-    public func resolve(with data: [Any?]) {
+    public func resolve(_ data: [Any?]) {
         if completed {
             return
         }
@@ -231,10 +231,10 @@ open class LocalCompletion: Completable {
     }
 
     public func reject() {
-        reject(with: nil)
+        reject(nil)
     }
 
-    public func reject(with errorMessage: String?) {
+    public func reject(_ errorMessage: String?) {
         if completed {
             return
         }
@@ -284,7 +284,7 @@ public enum HowToHandleNonExistentCommand {
 /// An error occurs when the native client receives it from the JavaScript receiver, otherwise it will be null.
 public typealias SendMessageCallback = (_ commandName: String, _ result: Any?, _ errorMessage: String?) -> Void
 
-open class NativeClient: NSObject {
+open class Client: NSObject {
 
     public static let scriptMessageHandlerName = "kamomeSend"
 
@@ -307,7 +307,7 @@ open class NativeClient: NSObject {
     /// - Parameters:
     ///   - command: A command object.
     @discardableResult
-    public func add(_ command: Command) -> NativeClient {
+    public func add(_ command: Command) -> Client {
         commands[command.name] = command
         return self
     }
@@ -394,7 +394,7 @@ open class NativeClient: NSObject {
     }
 }
 
-extension NativeClient: WKScriptMessageHandler {
+extension Client: WKScriptMessageHandler {
 
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard message.name == Self.scriptMessageHandlerName else { return }
@@ -408,7 +408,7 @@ extension NativeClient: WKScriptMessageHandler {
     }
 }
 
-private extension NativeClient {
+private extension Client {
 
     func handle(_ commandName: String, data: TransferData?, completion: Completable) throws {
         if hasCommand(commandName) {
@@ -418,7 +418,7 @@ private extension NativeClient {
         else {
             switch howToHandleNonExistentCommand {
                 case .rejected:
-                    completion.reject(with: "CommandNotAdded")
+                    completion.reject("CommandNotAdded")
                 case .exception:
                     throw KamomeError.commandNotAdded("\(commandName) command not added.")
                 default:
