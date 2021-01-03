@@ -1,10 +1,10 @@
 /**
- * kamome.js v3.15
+ * kamome.js v4.0.0
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
  *
- * Copyright (c) 2020 Hituzi Ando
+ * Copyright (c) 2021 Hituzi Ando
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-window.Kamome = (function (Undefined) {
+window.KM = (function () {
 
     const Error = {
         requestTimeout: 'RequestTimeout',
@@ -117,9 +117,8 @@ window.Kamome = (function (Undefined) {
         };
     })();
 
-    const _receiverDict = {};
-    const _requests = [];
-    let _isRequesting = false;
+    const _receivers = {};
+    const _requests = {};
     let _requestTimeout = 10000;    // Default value is 10 seconds
 
     /**
@@ -155,7 +154,7 @@ window.Kamome = (function (Undefined) {
      * @return {*}
      */
     const addReceiver = function (name, receiver) {
-        _receiverDict[name] = receiver;
+        _receivers[name] = receiver;
         return this;
     };
 
@@ -166,8 +165,8 @@ window.Kamome = (function (Undefined) {
      * @return {*}
      */
     const removeReceiver = function (name) {
-        if (name in _receiverDict) {
-            delete _receiverDict[name];
+        if (name in _receivers) {
+            delete _receivers[name];
         }
 
         return this;
@@ -182,77 +181,41 @@ window.Kamome = (function (Undefined) {
      * @return {Promise} Returns a promise
      */
     const send = (name, data, timeout) => {
-        if (timeout === null || timeout === Undefined) {
-            timeout = _requestTimeout;
-        }
+        timeout = timeout || _requestTimeout;
 
         return new Promise((resolve, reject) => {
-            _requests.push({
-                id: _uuid(),
+            const id = _uuid();
+            const req = {
+                id: id,
                 name: name,
                 data: data,
                 timeout: timeout,
                 resolve: resolve,
                 reject: reject
-            });
-            _send();
+            };
+            _requests[id] = req;
+
+            const json = JSON.stringify({name: req.name, data: req.data, id: req.id});
+
+            if (iOS.hasClient()) {
+                iOS._send(json);
+            } else if (android.hasClient()) {
+                android._send(json);
+            } else if (browser._hasCommand(req.name)) {
+                browser._execCommand(req);
+            }
+
+            if (req.timeout > 0) {
+                setTimeout(() => {
+                    const timedOutReq = _requests[req.id];
+
+                    if (timedOutReq) {
+                        timedOutReq.reject(Error.requestTimeout + ':' + timedOutReq.name);
+                        delete _requests[timedOutReq.id];
+                    }
+                }, req.timeout);
+            }
         });
-    };
-
-    /**
-     * Cancels current request immediately if requesting to native. Then the request calls reject handler.
-     *
-     * @param {string|null} reason A reason why a request is cancel
-     */
-    const cancelCurrentRequest = reason => {
-        if (_requests.length === 0) {
-            return;
-        }
-
-        _isRequesting = false;
-
-        const msg = reason ? ':' + reason : '';
-        _shiftRequest(req => req.reject(Error.canceled + ':' + req.name + msg));
-    };
-
-    /**
-     * @private
-     */
-    const _send = () => {
-        if (_requests.length === 0 || _isRequesting) {
-            return;
-        }
-
-        _isRequesting = true;
-
-        const req = _requests[0];
-        const json = JSON.stringify({name: req.name, data: req.data, id: req.id});
-
-        if (iOS.hasClient()) {
-            iOS._send(json);
-        } else if (android.hasClient()) {
-            android._send(json);
-        } else if (browser._hasCommand(req.name)) {
-            browser._execCommand(req);
-        }
-
-        if (req.timeout > 0) {
-            setTimeout(() => {
-                _isRequesting = false;
-
-                if (_requests.length > 0 && _requests[0].id === req.id) {
-                    _shiftRequest(timedOutReq => timedOutReq.reject(Error.requestTimeout + ':' + timedOutReq.name));
-                }
-            }, req.timeout);
-        }
-    };
-
-    /**
-     * @private
-     */
-    const _shiftRequest = didShift => {
-        didShift(_requests.shift());
-        _send();
     };
 
     /**
@@ -269,11 +232,12 @@ window.Kamome = (function (Undefined) {
      * Called from the native client when sent message is processed successfully.
      */
     const onComplete = (json, requestId) => {
-        _isRequesting = false;
+        const req = _requests[requestId];
 
-        if (_requests.length > 0 && _requests[0].id === requestId) {
+        if (req) {
             const data = json ? JSON.parse(json) : null;
-            _shiftRequest(req => req.resolve(data));
+            req.resolve(data);
+            delete _requests[requestId];
         }
 
         return null;
@@ -283,11 +247,12 @@ window.Kamome = (function (Undefined) {
      * Called from the native client when sent message is processed incorrectly.
      */
     const onError = (errorMessage, requestId) => {
-        _isRequesting = false;
+        const req = _requests[requestId];
 
-        if (_requests.length > 0 && _requests[0].id === requestId) {
+        if (req) {
             const msg = errorMessage ? ':' + errorMessage : '';
-            _shiftRequest(req => req.reject(Error.rejected + ':' + req.name + msg));
+            req.reject(Error.rejected + ':' + req.name + msg);
+            delete _requests[requestId];
         }
 
         return null;
@@ -297,9 +262,9 @@ window.Kamome = (function (Undefined) {
      * Receives a message from the native client.
      */
     const onReceive = (name, json, callbackId) => {
-        if (name in _receiverDict) {
+        if (name in _receivers) {
             new Promise((resolve, reject) => {
-                const handle = _receiverDict[name];
+                const handle = _receivers[name];
                 handle(json ? JSON.parse(json) : null, resolve, reject);
             })
                 .then(result => send(callbackId, {result: result, success: true}))
@@ -319,10 +284,12 @@ window.Kamome = (function (Undefined) {
         addReceiver: addReceiver,
         removeReceiver: removeReceiver,
         send: send,
-        cancelCurrentRequest: cancelCurrentRequest,
         onComplete: onComplete,
         onError: onError,
         onReceive: onReceive,
     };
 })();
+// For supporting v3 native client.
+window.Kamome = window.KM;
 export const Kamome = window.Kamome;
+export const KM = window.KM;

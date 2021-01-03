@@ -17,7 +17,7 @@ mkdir $LIBS_DIR/ios
 cd ./js/kamome
 
 npm run prod
-cp ./src/kamome.js ../../$LIBS_DIR/js
+cp ./src/lib/kamome.js ../../$LIBS_DIR/js
 cp ./public/kamome.js ../../$LIBS_DIR/js/kamome.min.js
 cd ../../
 

@@ -8,139 +8,134 @@ Kamome provides common JavaScript interface for iOS and Android.
 
 ## Quick Usage
 
-### Send a message from the JS code to the native code
+### Sends a message from the JS code to the native code
 
-1. Send a message from the JavaScript code
+1. Sends a message from the JavaScript code
 	
 	```javascript
 	// JavaScript
-	
-	// Send `echo` command.
-	Kamome.send('echo', { message: 'Hello' }).then(function (result) {
-	    // Receive a result from the native code if succeeded.
-	    console.log(data.message);
-	}).catch(function (error) {
-	    // Receive an error from the native code if failed.
+
+	// Uses async/await.
+	try {
+	    // Sends `echo` command.
+	    const result = await KM.send('echo', { message: 'Hello' });
+	    // Receives a result from the native code if succeeded.
+	    console.log(result.message);
+	} catch(error) {
+	    // Receives an error from the native code if failed.
 	    console.log(error);
-	});
+	}
 	```
 
-1. Receive a message on iOS
+1. Receives a message on iOS
 	
 	```swift
 	// Swift
-	
+
 	private lazy var webView: WKWebView = {
 	    let webView = WKWebView(frame: self.view.frame)
 	    return webView
 	}()
-	
-	private var kamome: Kamome!
+
+	private var client: Client!
 
 	override func viewDidLoad() {
 	    super.viewDidLoad()
 
-	    // Create the Kamome object with default webView.
-	    self.kamome = Kamome(webView: self.webView)
+	    // Creates the Client object with the webView.
+	    client = Client(webView)
 
-	    // Register `echo` command.
-	    kamome.add(Command(name: "echo") { commandName, data, completion in
-	              // Received `echo` command.
-	              // Then send resolved result to the JavaScript callback function.
-	              completion.resolve(with: ["message": data!["message"]!])
-	              // Or, send rejected result if failed.
-	              //completion.reject(with: "Echo Error!")
-	          })
+	    // Registers `echo` command.
+	    client.add(Command("echo") { commandName, data, completion in
+	        // Received `echo` command.
+	        // Then sends resolved result to the JavaScript callback function.
+	        completion.resolve(["message": data!["message"]!])
+	        // Or, sends rejected result if failed.
+	        //completion.reject("Echo Error!")
+	    })
 
 	    let htmlURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "www")!
-	    self.webView.loadFileURL(htmlURL, allowingReadAccessTo: htmlURL)
-	    view.addSubview(self.webView)
+	    webView.loadFileURL(htmlURL, allowingReadAccessTo: htmlURL)
+	    view.addSubview(webView)
 	}
 	```
 
-	**[NOTE]** This framework supports WKWebView only. UIWebView not supported.
+	**[NOTE]** This framework supports WKWebView only. UIWebView is not supported.
 	
-1. Receive a message on Android
+1. Receives a message on Android
 	
-	```java
-	// Java
-	
-	private Kamome kamome;
+	```kotlin
+	// Kotlin
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.activity_main);
+	private var client: Client? = null
 
-	    WebView webView = findViewById(R.id.webView);
+	override fun onCreate(savedInstanceState: Bundle?) {
+       super.onCreate(savedInstanceState)
+       setContentView(R.layout.activity_main)
 
-	    // Create the Kamome object with the webView.
-	    kamome = new Kamome(webView)
-	        .add(new Command("echo", new Command.IHandler() {  // Register `echo` command.
+       val webView = findViewById<WebView>(R.id.webView)
 
-	            @Override
-	            public void execute(String commandName, JSONObject data, ICompletion completion) {
-	                // Received `echo` command.
-	                // Then send resolved result to the JavaScript callback function.
-	                HashMap<String, Object> map = new HashMap<>();
-	                map.put("message", data.optString("message"));
-	                completion.resolve(map);
-	                // Or, send rejected result if failed.
-	                //completion.reject("Echo Error!");
-	            }
-	        }));
+       // Creates the Client object with the webView.
+       client = Client(webView)
 
-	    webView.loadUrl("file:///android_asset/www/index.html");
-	}
+       // Registers `echo` command.
+       client.add(Command("echo") { commandName, data, completion ->
+           // Received `echo` command.
+           // Then sends resolved result to the JavaScript callback function.
+           val map = HashMap<String?, Any?>()
+           map["message"] = data!!.optString("message")
+           completion.resolve(map)
+           // Or, sends rejected result if failed.
+           //completion.reject("Echo Error!")
+       })
+
+       webView.loadUrl("file:///android_asset/www/index.html")
+   }
 	```
 
-### Send a message from the native code to the JS code
+### Sends a message from the native code to the JS code
 
-1. Send a message from the native code on iOS
+1. Sends a message from the native code on iOS
 	
 	```swift
 	// Swift
 	
-	// Send a data to JavaScript.
-	kamome.sendMessage(with: ["greeting": "Hello! by Swift"], name: "greeting") { (commandName, result, error) in
+	// Send a data to the JS code.
+	client.send(["greeting": "Hello! by Swift"], commandName: "greeting") { (commandName, result, error) in
 	    // Received a result from the JS code.
 	    guard let result = result else { return }
 	    print("result: \(result)")
 	}
 	```
 
-1. Send a message from the native code on Android
+1. Sends a message from the native code on Android
 	
-	```java
-	// Java
+	```kotlin
+	// Kotlin
 	
-	// Send a data to JavaScript.
-	HashMap<String, Object> data = new HashMap<>();
-	data.put("greeting", "Hello! by Java");
-	kamome.sendMessage(data, "greeting", new Kamome.ISendMessageCallback() {
-
-	    @Override
-	    public void onReceiveResult(String commandName, Object result, Error error) {
-	        // Received a result from the JS code.
-	        Log.d(TAG, "result: " + result);
-	    }
-	});
+	// Sends a data to the JS code.
+	val data = HashMap<String?, Any?>()
+   data["greeting"] = "Hello! by Kotlin"
+   client?.send(data, "greeting", SendMessageCallback { commandName, result, error ->
+       // Received a result from the JS code.
+       Log.d(TAG, "result: $result")
+   })
 	```
 
-1. Receive a message on the JavaScript code
+1. Receives a message on the JavaScript code
 	
 	```javascript
 	// JavaScript
 	
-	// Add a receiver that receives a message sent by the native client.
-	Kamome.addReceiver('greeting', function (data, resolve, reject) {
+	// Adds a receiver that receives a message sent by the native client.
+	KM.addReceiver('greeting', (data, resolve, reject) => {
 	    // The data is the object sent by the native client.
 	    console.log(data.greeting);
 
-	    // Run asynchronous something to do...
-	    setTimeout(function () {
+	    // Runs asynchronous something to do...
+	    setTimeout(() => {
 
-	        // Return a result as any object or null to the native client.
+	        // Returns a result as any object or null to the native client.
 	        resolve('OK!');
 	        // If the task is failed, call `reject()` function.
 	        //reject('Error message');
@@ -151,6 +146,22 @@ Kamome provides common JavaScript interface for iOS and Android.
 ## Include Library in Your Project
 
 ### 1. JavaScript
+
+#### npm
+
+1. npm install
+	
+	```
+	npm install kamome
+	```
+
+1. Write following import statement in JavaScript
+	
+	```javascript
+	import {KM} from "kamome"
+	```
+	
+#### Manual Installation
 
 1. Download latest [Kamome SDK](https://github.com/HituziANDO/kamome/releases)
 
@@ -214,7 +225,7 @@ Add the following code in build.gradle(app level).
 
 ```groovy
 dependencies {		
-    implementation 'jp.hituzi:kamome:3.0.0'
+    implementation 'jp.hituzi:kamome:4.0.0'
 }
 ```
 
@@ -233,18 +244,28 @@ dependencies {
 // JavaScript
 
 // Set default timeout in millisecond.
-Kamome.setDefaultRequestTimeout(15000);
+KM.setDefaultRequestTimeout(15000);
 ```
 
 If given time is less than or equal to 0, the request timeout function is disabled.
 
-If you want to specify a request timeout individually, you set a timeout in millisecond at `Kamome.send` method's 3rd argument.
+If you want to specify a request timeout individually, you set a timeout in millisecond at `KM.send` method's 3rd argument.
 
 ```javascript
 // JavaScript
 
 // Set a timeout in millisecond at 3rd argument.
-const promise = Kamome.send(commandName, data, 5000);
+const promise = KM.send(commandName, data, 5000);
+```
+
+## Option: console.log for iOS
+
+The `ConsoleLogAdapter` class enables to output logs by `console.log`, `console.warn`, and `console.error` in JavaScript to Xcode console.
+
+```swift
+// Swift
+
+ConsoleLogAdapter().setTo(webView)
 ```
 
 ## Browser Alone
@@ -254,12 +275,12 @@ When there is no Kamome's iOS/Android native client, that is, when you run with 
 ```javascript
 // JavaScript
 
-Kamome.browser
+KM.browser
     .addCommand("echo", function (data, resolve, reject) {
         // Received `echo` command.
-        // Then send resolved result to the JavaScript callback function.
+        // Then sends resolved result to the JavaScript callback function.
         resolve({ message: data["message"] });
-        // Or, send rejected result if failed.
+        // Or, sends rejected result if failed.
         //reject("Echo Error!");
     });
 ```

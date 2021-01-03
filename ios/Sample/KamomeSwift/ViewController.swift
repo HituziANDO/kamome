@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  KamomeSwift
 //
-//  Copyright (c) 2020 Hituzi Ando. All rights reserved.
+//  Copyright (c) 2021 Hituzi Ando. All rights reserved.
 //
 
 import UIKit
@@ -34,66 +34,56 @@ class ViewController: UIViewController {
         return webView
     }()
 
-    private var kamome: Kamome!
+    private var client: Client!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Create the Kamome object with default webView.
-        self.kamome = Kamome(webView: self.webView)
+        // Creates the Client object with the webView.
+        client = Client(webView)
+            .add(Command("echo") { commandName, data, completion in
+                // Received `echo` command.
+                // Then sends resolved result to the JavaScript callback function.
+                completion.resolve(["message": data!["message"]!])
+            })
+            .add(Command("echoError") { commandName, data, completion in
+                // Sends rejected result if failed.
+                completion.reject("Echo Error!")
+            })
+            .add(Command("tooLong") { commandName, data, completion in
+                // Too long process...
+                Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { timer in
+                    completion.resolve()
+                }
+            })
 
-        kamome.add(Command(name: "echo") { commandName, data, completion in
-                  // Received `echo` command.
-                  // Then send resolved result to the JavaScript callback function.
-                  completion.resolve(with: ["message": data!["message"]!])
-              })
-              .add(Command(name: "echoError") { commandName, data, completion in
-                  // Send rejected result if failed.
-                  completion.reject(with: "Echo Error!")
-              })
-              .add(Command(name: "tooLong") { commandName, data, completion in
-                  // Too long process...
-                  Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { timer in
-                      completion.resolve()
-                  }
-              })
-              .add(Command(name: "getUser") { commandName, data, completion in
-                  completion.resolve(with: ["name": "Brad"])
-              })
-              .add(Command(name: "getScore") { commandName, data, completion in
-                  completion.resolve(with: ["score": 88, "rank": 2])
-              })
-              .add(Command(name: "getAvg") { commandName, data, completion in
-                  completion.resolve(with: ["avg": 68])
-              })
+        client.howToHandleNonExistentCommand = .rejected
 
-        kamome.howToHandleNonExistentCommand = .rejected
-
-        // Option: Set console.log/.warn/.error adapter.
-        ConsoleLogAdapter().setTo(self.webView)
+        // Option: Sets console.log/.warn/.error adapter.
+        ConsoleLogAdapter().setTo(webView)
 
         let htmlURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "www")!
-        self.webView.loadFileURL(htmlURL, allowingReadAccessTo: htmlURL)
-        view.addSubview(self.webView)
-        view.sendSubviewToBack(self.webView)
+        webView.loadFileURL(htmlURL, allowingReadAccessTo: htmlURL)
+        view.addSubview(webView)
+        view.sendSubviewToBack(webView)
 
-        self.view.addSubview(self.sendButton)
+        view.addSubview(sendButton)
 
         NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            webView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
-            webView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            webView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
-            sendButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 88),
-            sendButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -8),
-            sendButton.widthAnchor.constraint(equalToConstant: 100),
-            sendButton.heightAnchor.constraint(equalToConstant: 60),
-        ])
+                                        webView.topAnchor.constraint(equalTo: view.topAnchor),
+                                        webView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                                        webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                                        webView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                                        sendButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 88),
+                                        sendButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
+                                        sendButton.widthAnchor.constraint(equalToConstant: 100),
+                                        sendButton.heightAnchor.constraint(equalToConstant: 60),
+                                    ])
     }
 
     @IBAction func sendButtonPressed(_ sender: Any) {
-        // Send a data to JavaScript.
-        kamome.sendMessage(with: ["greeting": "Hello! by Swift"], name: "greeting") { (commandName, result, error) in
+        // Sends a data to the JS code.
+        client.send(["greeting": "Hello! by Swift"], commandName: "greeting") { (commandName, result, error) in
             // Received a result from the JS code.
             guard let result = result else { return }
             print("result: \(result)")

@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import {Kamome} from "@/kamome"
+import {KM} from "@/kamome"
 
 export default {
   name: 'App',
@@ -58,35 +58,34 @@ export default {
       {key: 1, title: 'Send Data to Native'},
       {key: 2, title: 'Error from Native'},
       {key: 3, title: 'Timeout Sample'},
-      {key: 4, title: 'Cancel Request'},
-      {key: 5, title: 'Non-existent Command'},
-      {key: 6, title: 'Hook Sample'},
+      {key: 4, title: 'Non-existent Command'},
     ],
     count: 0,
     messages: [],
   }),
   methods: {
-    onClickSheetItem(key) {
+    async onClickSheetItem(key) {
       if (key === 1) {
-        Kamome.send('echo', {message: 'Hello World! (' + (++this.count) + ')'}).then(data => {
-          this.messages.push(data.message)
-        }).catch(error => {
-          this.messages.push(error)
-        })
+        const data = await KM.send('echo', {message: 'Hello World! (' + (++this.count) + ')'})
+        this.messages.push(data.message)
       } else if (key === 2) {
-        Kamome.send('echoError').then(data => {
-          this.messages.push(data.messages)
-        }).catch(error => {
+        try {
+          await KM.send('echoError')
+        } catch (error) {
           this.messages.push(error)
-        })
+        }
       } else if (key === 3) {
-        Kamome.send('tooLong').catch(error => this.messages.push(error))
+        try {
+          await KM.send('tooLong')
+        } catch (error) {
+          this.messages.push(error)
+        }
       } else if (key === 4) {
-        Kamome.cancelCurrentRequest()
-      } else if (key === 5) {
-        Kamome.send('deleteUser').catch(error => this.messages.push(error))
-      } else if (key === 6) {
-        Kamome.send('getScore').then(data => this.messages.push(`Score: ${data.score} Rank: ${data.rank}`))
+        try {
+          await KM.send('NO_EXISTENT_CMD')
+        } catch (error) {
+          this.messages.push(error)
+        }
       }
     },
     onCloseMenu() {
@@ -98,10 +97,10 @@ export default {
   },
   created() {
     // Set default timeout in millisecond.
-    Kamome.setDefaultRequestTimeout(3000)
+    KM.setDefaultRequestTimeout(3000)
 
     // Add a receiver that receives a message sent by the native client.
-    Kamome.addReceiver('greeting', (data, resolve) => {
+    KM.addReceiver('greeting', (data, resolve) => {
       // The data is the object sent by the native client.
       this.messages.push(data.greeting)
 
@@ -116,7 +115,7 @@ export default {
 
     // When there is no Kamome's iOS/Android native client, that is, when you run with a browser alone,
     // you can register the processing of each command.
-    Kamome.browser
+    KM.browser
         .addCommand("echo", (data, resolve) => {
           // Success
           resolve({message: data["message"]})
@@ -130,15 +129,6 @@ export default {
           setTimeout(() => {
             resolve()
           }, 30000)
-        })
-        .addCommand("getUser", (data, resolve) => {
-          resolve({name: "Brad"})
-        })
-        .addCommand("getScore", (data, resolve) => {
-          resolve({score: 90, rank: 2})
-        })
-        .addCommand("getAvg", (data, resolve) => {
-          resolve({avg: 68})
         })
   }
 }
