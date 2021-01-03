@@ -15,6 +15,8 @@ Kamome provides common JavaScript interface for iOS and Android.
 	```javascript
 	// JavaScript
 
+	import {KM} from "kamome"
+
 	// Uses async/await.
 	try {
 	    // Sends `echo` command.
@@ -171,7 +173,7 @@ Kamome provides common JavaScript interface for iOS and Android.
 	<script src="/path/to/kamome[.min].js"></script>
 	```
 	
-	Or, you copy all code in [kamome.js](https://github.com/HituziANDO/kamome/blob/master/js/src/kamome.js) file to your JavaScript.
+	Or, you copy all code in [kamome.js](https://github.com/HituziANDO/kamome/blob/master/js/kamome/src/lib/kamome.js) file to your JavaScript.
 	
 ### 2. iOS App
 
