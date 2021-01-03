@@ -14,12 +14,12 @@ mkdir $LIBS_DIR/ios
 
 # Make JavaScript
 
-cd ./js
+cd ./js/kamome
 
 npm run prod
-cp ./src/kamome.js ../$LIBS_DIR/js
-cp ./public/kamome.js ../$LIBS_DIR/js/kamome.min.js
-cd ../
+cp ./src/lib/kamome.js ../../$LIBS_DIR/js
+cp ./public/kamome.js ../../$LIBS_DIR/js/kamome.min.js
+cd ../../
 
 # Make Android
 
@@ -35,7 +35,7 @@ cd ../
 
 # Make iOS
 
-cd ./ios/KamomeSDK
+cd ./ios
 ./make_framework.sh
-cp -rf ./Framework/*.framework ../../$LIBS_DIR/ios
-cd ../../
+cp -rf ./Output/Release-xcframework/*.xcframework ../$LIBS_DIR/ios
+cd ../

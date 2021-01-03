@@ -9,34 +9,36 @@ import android.webkit.WebView;
 
 public final class Messenger {
 
+    private static final String jsObj = "window.KM";
+
     public static void completeMessage(final WebView webView, @Nullable final Object data, String requestId) {
         if (data != null) {
-            runJavaScript(String.format("window.Kamome.onComplete('%s', '%s')", data.toString(), requestId), webView);
+            runJavaScript(String.format("%s.onComplete('%s', '%s')", jsObj, data.toString(), requestId), webView);
         } else {
-            runJavaScript(String.format("window.Kamome.onComplete(null, '%s')", requestId), webView);
+            runJavaScript(String.format("%s.onComplete(null, '%s')", jsObj, requestId), webView);
         }
     }
 
     public static void failMessage(final WebView webView, @Nullable final String error, String requestId) {
         if (error != null) {
-            runJavaScript(String.format("window.Kamome.onError('%s', '%s')", error, requestId), webView);
+            runJavaScript(String.format("%s.onError('%s', '%s')", jsObj, error, requestId), webView);
         } else {
-            runJavaScript(String.format("window.Kamome.onError(null, '%s')", requestId), webView);
+            runJavaScript(String.format("%s.onError(null, '%s')", jsObj, requestId), webView);
         }
     }
 
     public static void sendMessage(final WebView webView, final String name, @Nullable final Object data, @Nullable String callbackId) {
         if (data != null) {
             if (callbackId != null) {
-                runJavaScript(String.format("window.Kamome.onReceive('%s', '%s', '%s')", name, data.toString(), callbackId), webView);
+                runJavaScript(String.format("%s.onReceive('%s', '%s', '%s')", jsObj, name, data.toString(), callbackId), webView);
             } else {
-                runJavaScript(String.format("window.Kamome.onReceive('%s', '%s', null)", name, data.toString()), webView);
+                runJavaScript(String.format("%s.onReceive('%s', '%s', null)", jsObj, name, data.toString()), webView);
             }
         } else {
             if (callbackId != null) {
-                runJavaScript(String.format("window.Kamome.onReceive('%s', null, '%s')", name, callbackId), webView);
+                runJavaScript(String.format("%s.onReceive('%s', null, '%s')", jsObj, name, callbackId), webView);
             } else {
-                runJavaScript(String.format("window.Kamome.onReceive('%s', null, null)", name), webView);
+                runJavaScript(String.format("%s.onReceive('%s', null, null)", jsObj, name), webView);
             }
         }
     }

@@ -8,9 +8,9 @@ import org.json.JSONObject;
 import java.util.Collection;
 import java.util.Map;
 
-public final class LocalCompletion implements ICompletion {
+public final class LocalCompletion implements Completable {
 
-    public interface ICallback {
+    public interface Callback {
 
         /**
          * Calls when a command is processed successfully.
@@ -27,10 +27,10 @@ public final class LocalCompletion implements ICompletion {
         void onRejected(String errorMessage);
     }
 
-    private final ICallback callback;
+    private final Callback callback;
     private boolean completed;
 
-    LocalCompletion(ICallback callback) {
+    LocalCompletion(Callback callback) {
         this.callback = callback;
     }
 
