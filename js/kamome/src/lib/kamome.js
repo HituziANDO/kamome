@@ -1,5 +1,5 @@
 /**
- * kamome.js v4.0.0
+ * kamome.js v4.0.1
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -122,7 +122,7 @@ window.KM = (function () {
     let _requestTimeout = 10000;    // Default value is 10 seconds
 
     /**
-     * `Kamome.send` method expects a 'resolve'/'reject' response will be returned in a duration.
+     * `KM.send` method expects a 'resolve'/'reject' response will be returned in a duration.
      * If the request is timed out, it's callback calls `reject` with requestTimeout error.
      * You can change default request timeout.
      * Sets a timeout for a request. If given `time` <= 0, the request timeout function is disabled.

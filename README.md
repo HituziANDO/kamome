@@ -240,7 +240,7 @@ dependencies {
 
 ### Timeout to request from the JS code to the native code
 
-`Kamome.send` method in JavaScript expects a `resolve` or `reject` response will be returned in a duration. If the request is timed out, it's the callback calls `reject` with the `requestTimeout` error. You can change default request timeout. See following.
+`KM.send` method in JavaScript expects a `resolve` or `reject` response will be returned in a duration. If the request is timed out, it's the callback calls `reject` with the `requestTimeout` error. You can change default request timeout. See following.
 
 ```javascript
 // JavaScript
