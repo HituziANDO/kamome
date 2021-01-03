@@ -27,7 +27,7 @@ class MainActivity : Activity() {
 
         val webView = findViewById<WebView>(R.id.webView)
 
-        // Creates the NativeClient object with the webView.
+        // Creates the Client object with the webView.
         client = Client(webView)
             .add(Command("echo") { commandName, data, completion ->
                 // Received `echo` command.
