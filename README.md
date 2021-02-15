@@ -175,6 +175,11 @@ Kamome provides common JavaScript interface for iOS and Android.
 	
 	Or, you copy all code in [kamome.js](https://github.com/HituziANDO/kamome/blob/master/js/kamome/src/lib/kamome.js) file to your JavaScript.
 	
+
+### for TypeScript
+
+Download [kamome.d.ts](https://github.com/HituziANDO/kamome/tree/master/js/kamome.d.ts) file and import it in your project's directory such as `@types`.
+
 ### 2. iOS App
 
 #### CocoaPods
