@@ -1,6 +1,0 @@
-framework module KamomeSDK {
-  umbrella header "KamomeSDK.h"
-
-  export *
-  module * { export * }
-}
