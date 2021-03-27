@@ -2,3 +2,5 @@ libs
 output
 Carthage
 MEMO.md
+.build
+.swiftpm

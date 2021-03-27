@@ -198,6 +198,19 @@ Kamome is available through [Carthage](https://github.com/Carthage/Carthage). To
 github "HituziANDO/kamome"
 ```
 
+#### Swift Package Manager
+
+Kamome is available through Swift Package Manager. To install it using Xcode, see following.
+
+1. Click "File" menu.
+1. Select "Swift Packages".
+1. Click "Add Package Dependency...".
+1. Specify the git URL for kamome.
+	
+```
+https://github.com/HituziANDO/kamome.git
+```
+
 #### Manual Installation
 
 1. Drag & drop kamome.xcframework into your Xcode project
@@ -232,7 +245,7 @@ Add the following code in build.gradle(app level).
 
 ```groovy
 dependencies {		
-    implementation 'jp.hituzi:kamome:4.0.0'
+    implementation 'jp.hituzi:kamome:4.0.1'
 }
 ```
 
