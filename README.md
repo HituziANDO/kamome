@@ -15,6 +15,8 @@ Kamome provides common JavaScript interface for iOS and Android.
 	```javascript
 	// JavaScript
 
+	import {KM} from "kamome"
+
 	// Uses async/await.
 	try {
 	    // Sends `echo` command.
@@ -171,8 +173,13 @@ Kamome provides common JavaScript interface for iOS and Android.
 	<script src="/path/to/kamome[.min].js"></script>
 	```
 	
-	Or, you copy all code in [kamome.js](https://github.com/HituziANDO/kamome/blob/master/js/src/kamome.js) file to your JavaScript.
+	Or, you copy all code in [kamome.js](https://github.com/HituziANDO/kamome/blob/master/js/kamome/src/lib/kamome.js) file to your JavaScript.
 	
+
+### for TypeScript
+
+Download [kamome.d.ts](https://github.com/HituziANDO/kamome/tree/master/js/kamome.d.ts) file and import it in your project's directory such as `@types`.
+
 ### 2. iOS App
 
 #### CocoaPods
@@ -189,6 +196,19 @@ Kamome is available through [Carthage](https://github.com/Carthage/Carthage). To
 
 ```
 github "HituziANDO/kamome"
+```
+
+#### Swift Package Manager
+
+Kamome is available through Swift Package Manager. To install it using Xcode, see following.
+
+1. Click "File" menu.
+1. Select "Swift Packages".
+1. Click "Add Package Dependency...".
+1. Specify the git URL for kamome.
+	
+```
+https://github.com/HituziANDO/kamome.git
 ```
 
 #### Manual Installation
@@ -225,7 +245,7 @@ Add the following code in build.gradle(app level).
 
 ```groovy
 dependencies {		
-    implementation 'jp.hituzi:kamome:4.0.0'
+    implementation 'jp.hituzi:kamome:4.0.1'
 }
 ```
 
@@ -238,7 +258,7 @@ dependencies {
 
 ### Timeout to request from the JS code to the native code
 
-`Kamome.send` method in JavaScript expects a `resolve` or `reject` response will be returned in a duration. If the request is timed out, it's the callback calls `reject` with the `requestTimeout` error. You can change default request timeout. See following.
+`KM.send` method in JavaScript expects a `resolve` or `reject` response will be returned in a duration. If the request is timed out, it's the callback calls `reject` with the `requestTimeout` error. You can change default request timeout. See following.
 
 ```javascript
 // JavaScript
