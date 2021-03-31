@@ -291,6 +291,7 @@ open class Client: NSObject {
     /// How to handle non-existent command.
     public var howToHandleNonExistentCommand: HowToHandleNonExistentCommand = .resolved
 
+    // FIXME: WKWebView?にする
     private weak var webView: WKWebView!
     private var commands: [String: Command] = [:]
 
