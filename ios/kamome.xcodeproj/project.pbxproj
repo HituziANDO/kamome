@@ -266,7 +266,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 4.0.1;
+				MARKETING_VERSION = "4.0.2 beta";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = kamome;
@@ -294,7 +294,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 4.0.1;
+				MARKETING_VERSION = "4.0.2 beta";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = kamome;
 				SDKROOT = macosx;
@@ -441,7 +441,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.0.1;
+				MARKETING_VERSION = "4.0.2 beta";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -468,7 +468,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.0.1;
+				MARKETING_VERSION = "4.0.2 beta";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

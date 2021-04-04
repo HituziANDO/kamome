@@ -291,8 +291,7 @@ open class Client: NSObject {
     /// How to handle non-existent command.
     public var howToHandleNonExistentCommand: HowToHandleNonExistentCommand = .resolved
 
-    // FIXME: WKWebView?にする
-    private weak var webView: WKWebView!
+    private weak var webView: WKWebView?
     private var commands: [String: Command] = [:]
 
     /// - Parameters:
@@ -300,7 +299,7 @@ open class Client: NSObject {
     public init(_ webView: WKWebView) {
         super.init()
         self.webView = webView
-        self.webView.configuration.userContentController.add(self, name: Self.scriptMessageHandlerName)
+        self.webView!.configuration.userContentController.add(self, name: Self.scriptMessageHandlerName)
     }
 
     /// Adds a command called by the JavaScript code.
@@ -334,6 +333,8 @@ open class Client: NSObject {
     ///   - commandName A command name.
     ///   - callback: A callback.
     public func send(_ commandName: String, callback: SendMessageCallback? = nil) {
+        guard let webView = webView else { return }
+
         if let callback = callback {
             let callbackID = add(sendMessageCallback: callback)
             try? Messenger.sendMessage(with: webView, data: nil, callbackID: callbackID, for: commandName)
@@ -350,6 +351,8 @@ open class Client: NSObject {
     ///   - commandName: A command name.
     ///   - callback: A callback.
     public func send(_ data: [String: Any?], commandName: String, callback: SendMessageCallback? = nil) {
+        guard let webView = webView else { return }
+
         if let callback = callback {
             let callbackID = add(sendMessageCallback: callback)
             try? Messenger.sendMessage(with: webView, data: data, callbackID: callbackID, for: commandName)
@@ -366,6 +369,8 @@ open class Client: NSObject {
     ///   - commandName: A command name.
     ///   - callback: A callback.
     public func send(_ data: [Any?], commandName: String, callback: SendMessageCallback? = nil) {
+        guard let webView = webView else { return }
+
         if let callback = callback {
             let callbackID = add(sendMessageCallback: callback)
             try? Messenger.sendMessage(with: webView, data: data, callbackID: callbackID, for: commandName)
@@ -398,6 +403,7 @@ open class Client: NSObject {
 extension Client: WKScriptMessageHandler {
 
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard let webView = webView else { return }
         guard message.name == Self.scriptMessageHandlerName else { return }
         guard let body = message.body as? String,
               let data = body.data(using: .utf8),
