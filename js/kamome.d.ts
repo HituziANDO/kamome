@@ -1,10 +1,14 @@
 declare module "kamome" {
-    export type CommandHandler = (data: any | null, resolve: Function, reject: Function) => void;
+    export type CommandHandler = (
+        data: any | null,
+        resolve: (data: any | null) => void,
+        reject: (errorMessage: string) => void,
+    ) => void
 
     export interface Error {
-        requestTimeout: string;
-        rejected: string;
-        canceled: string;
+        requestTimeout: string
+        rejected: string
+        canceled: string
     }
 
     export interface Client {
@@ -13,7 +17,7 @@ declare module "kamome" {
          *
          * @return true if the app has the Kamome client. Otherwise false.
          */
-        hasClient(): boolean;
+        hasClient(): boolean
     }
 
     export interface Browser {
@@ -27,7 +31,7 @@ declare module "kamome" {
          *      // If succeeded
          *      // resolve(response);   // response is any object or null
          *      // Else
-         *      // reject('Error Message');
+         *      // reject("Error Message");
          *  }
          *  ```
          *
@@ -35,14 +39,14 @@ declare module "kamome" {
          * @param handler A handler.
          * @return Self.
          */
-        addCommand(name: string, handler: CommandHandler): Browser;
+        addCommand(name: string, handler: CommandHandler): Browser
     }
 
     export interface Kamome {
-        Error: Error;
-        android: Client;
-        iOS: Client;
-        browser: Browser;
+        Error: Error
+        android: Client
+        iOS: Client
+        browser: Browser
 
         /**
          * `KM.send` method expects a 'resolve'/'reject' response will be returned in a duration.
@@ -53,7 +57,7 @@ declare module "kamome" {
          * @param time A time in millisecond.
          * @return Self.
          */
-        setDefaultRequestTimeout(time: number): Kamome;
+        setDefaultRequestTimeout(time: number): Kamome
 
         /**
          * Registers a receiver for given command. The receiver function receives a JSON message from the native.
@@ -65,7 +69,7 @@ declare module "kamome" {
          *     // If succeeded
          *     // resolve(response);   // response is any object or null
          *     // Else
-         *     // reject('Error Message');
+         *     // reject("Error Message");
          * }
          * ```
          *
@@ -73,7 +77,7 @@ declare module "kamome" {
          * @param receiver A receiver.
          * @return Self.
          */
-        addReceiver(name: string, receiver: CommandHandler): Kamome;
+        addReceiver(name: string, receiver: CommandHandler): Kamome
 
         /**
          * Removes a receiver for given command if it is registered.
@@ -81,7 +85,7 @@ declare module "kamome" {
          * @param name A command name.
          * @return Self.
          */
-        removeReceiver(name: string): Kamome;
+        removeReceiver(name: string): Kamome
 
         /**
          * Sends a JSON message to the native.
@@ -91,8 +95,8 @@ declare module "kamome" {
          * @param timeout An individual timeout for this request.
          * @return Returns a promise.
          */
-        send(name: string, data: any | null = null, timeout: number | null = null): Promise;
+        send(name: string, data: any | null = null, timeout: number | null = null): Promise
     }
 
-    export var KM: Kamome;
+    export const KM: Kamome
 }
