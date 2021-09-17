@@ -1,8 +1,8 @@
 declare module "kamome" {
     export type CommandHandler = (
         data: any | null,
-        resolve: (data: any | null) => void,
-        reject: (errorMessage: string) => void,
+        resolve: (data?: any | null) => void,
+        reject: (errorMessage?: string) => void,
     ) => void
 
     export interface Error {
