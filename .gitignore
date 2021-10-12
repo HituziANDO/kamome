@@ -4,3 +4,4 @@ Carthage
 MEMO.md
 .build
 .swiftpm
+*.sketch
