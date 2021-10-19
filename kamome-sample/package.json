@@ -6,12 +6,13 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "ios": "rm -r ../../ios/Sample/KamomeSwift/www/* && cp -r ./dist/* ../../ios/Sample/KamomeSwift/www/",
-    "android": "rm -r ../../android/app/src/main/assets/www/* && cp -r ./dist/* ../../android/app/src/main/assets/www/",
+    "ios": "rm -r ../ios/Sample/KamomeSwift/www/* && cp -r ./dist/* ../ios/Sample/KamomeSwift/www/",
+    "android": "rm -r ../android/app/src/main/assets/www/* && cp -r ./dist/* ../android/app/src/main/assets/www/",
     "release": "npm run build && npm run ios && npm run android"
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "kamome": "^4.0.1",
     "vue": "^2.6.11",
     "vuetify": "^2.3.4"
   },

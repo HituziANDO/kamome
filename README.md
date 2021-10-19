@@ -175,10 +175,9 @@ Kamome provides common JavaScript interface for iOS and Android.
 	
 	Or, you copy all code in [kamome.js](https://github.com/HituziANDO/kamome/blob/master/js/kamome/src/lib/kamome.js) file to your JavaScript.
 	
-
-### for TypeScript
-
-Download [kamome.d.ts](https://github.com/HituziANDO/kamome/tree/master/js/kamome.d.ts) file and import it in your project's directory such as `@types`.
+1. (Optional) TypeScript
+	
+	If you install kamome.js manually and use TypeScript, you download [kamome.d.ts](https://github.com/HituziANDO/kamome/tree/master/js/kamome/src/kamome.d.ts) file and import it in your project's directory such as `@types`.
 
 ### 2. iOS App
 
@@ -278,7 +277,7 @@ If you want to specify a request timeout individually, you set a timeout in mill
 const promise = KM.send(commandName, data, 5000);
 ```
 
-## Option: console.log for iOS
+## Optional: console.log for iOS
 
 The `ConsoleLogAdapter` class enables to output logs by `console.log`, `console.warn`, and `console.error` in JavaScript to Xcode console.
 

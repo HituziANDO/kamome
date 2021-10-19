@@ -1,6 +1,6 @@
 <template>
   <v-app id="app">
-    <v-app-bar app color="deep-purple accent-4" dark height="80">
+    <v-app-bar app color="deep-purple accent-4" dark height="90">
       <v-toolbar-title>Kamome Sample App</v-toolbar-title>
     </v-app-bar>
 
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import {KM} from "@/kamome"
+import { KM } from "kamome"
 
 export default {
   name: 'App',
@@ -55,10 +55,10 @@ export default {
   data: () => ({
     sheet: false,
     tiles: [
-      {key: 1, title: 'Send Data to Native'},
-      {key: 2, title: 'Error from Native'},
-      {key: 3, title: 'Timeout Sample'},
-      {key: 4, title: 'Non-existent Command'},
+      { key: 1, title: 'Send Data to Native' },
+      { key: 2, title: 'Error from Native' },
+      { key: 3, title: 'Timeout Sample' },
+      { key: 4, title: 'Non-existent Command' },
     ],
     count: 0,
     messages: [],
@@ -66,7 +66,7 @@ export default {
   methods: {
     async onClickSheetItem(key) {
       if (key === 1) {
-        const data = await KM.send('echo', {message: 'Hello World! (' + (++this.count) + ')'})
+        const data = await KM.send('echo', { message: 'Hello World! (' + (++this.count) + ')' })
         this.messages.push(data.message)
       } else if (key === 2) {
         try {
@@ -118,7 +118,7 @@ export default {
     KM.browser
         .addCommand("echo", (data, resolve) => {
           // Success
-          resolve({message: data["message"]})
+          resolve({ message: data["message"] })
         })
         .addCommand("echoError", (data, resolve, reject) => {
           // Failure
