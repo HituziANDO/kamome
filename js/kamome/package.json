@@ -7,9 +7,6 @@
     "prod": "NODE_ENV=production  webpack --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "browser-sync": "^2.26.7",
-    "browser-sync-webpack-plugin": "^2.2.2",
-    "laravel-mix": "^5.0.1",
-    "vue-template-compiler": "^2.6.11"
+    "laravel-mix": "^6.0.34"
   }
 }
