@@ -156,6 +156,7 @@
 		5ED97FE324B8BB1900B84867 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1300;
 				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = "Hituzi Ando";
 				TargetAttributes = {
@@ -185,8 +186,8 @@
 			projectRoot = "";
 			targets = (
 				5ED97FEB24B8BB1900B84867 /* kamome */,
-				5ED97FF924B8BCFF00B84867 /* kamomeUniversal */,
 				5E8D4A1E261324C800BC8771 /* kamome macOS */,
+				5ED97FF924B8BCFF00B84867 /* kamomeUniversal */,
 			);
 		};
 /* End PBXProject section */
@@ -266,7 +267,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = "4.0.2 beta";
+				MARKETING_VERSION = 4.0.2;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = kamome;
@@ -294,7 +295,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = "4.0.2 beta";
+				MARKETING_VERSION = 4.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = kamome;
 				SDKROOT = macosx;
@@ -441,7 +442,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "4.0.2 beta";
+				MARKETING_VERSION = 4.0.2;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -468,7 +469,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "4.0.2 beta";
+				MARKETING_VERSION = 4.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
