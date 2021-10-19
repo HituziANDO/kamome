@@ -91,11 +91,11 @@ declare module "kamome" {
          * Sends a JSON message to the native.
          *
          * @param name A command name.
-         * @param data.
-         * @param timeout An individual timeout for this request.
-         * @return Returns a promise.
+         * @param data
+         * @param timeout Timeout for this request. If this argument is omitted or null, default timeout is used.
+         * @return
          */
-        send(name: string, data: any | null = null, timeout: number | null = null): Promise
+        send(name: string, data: any, timeout: number | null): Promise<any>
     }
 
     export const KM: Kamome

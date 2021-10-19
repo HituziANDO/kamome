@@ -1,5 +1,5 @@
 /**
- * kamome.js v4.0.1
+ * kamome.js v4.0.2
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -175,10 +175,10 @@ window.KM = (function () {
     /**
      * Sends a JSON message to the native.
      *
-     * @param {string} name A command name
+     * @param {string} name A command name.
      * @param {Object} data
-     * @param {number|null} timeout An individual timeout for this request
-     * @return {Promise} Returns a promise
+     * @param {number|null} timeout Timeout for this request. If this argument is omitted or null, default timeout is used.
+     * @return {Promise}
      */
     const send = (name, data, timeout) => {
         timeout = timeout || _requestTimeout;
@@ -195,7 +195,7 @@ window.KM = (function () {
             };
             _requests[id] = req;
 
-            const json = JSON.stringify({name: req.name, data: req.data, id: req.id});
+            const json = JSON.stringify({ name: req.name, data: req.data, id: req.id });
 
             if (iOS.hasClient()) {
                 iOS._send(json);
@@ -267,9 +267,9 @@ window.KM = (function () {
                 const handle = _receivers[name];
                 handle(json ? JSON.parse(json) : null, resolve, reject);
             })
-                .then(result => send(callbackId, {result: result, success: true}))
+                .then(result => send(callbackId, { result: result, success: true }))
                 // Send an error message as string type.
-                .catch(error => send(callbackId, {error: error, success: false}));
+                .catch(error => send(callbackId, { error: error, success: false }));
         }
 
         return null;
