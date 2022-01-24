@@ -1,5 +1,5 @@
 /**
- * kamome.js v4.0.2
+ * kamome.js v4.0.3-beta
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -267,9 +267,9 @@ window.KM = (function () {
                 const handle = _receivers[name];
                 handle(json ? JSON.parse(json) : null, resolve, reject);
             })
-                .then(result => send(callbackId, { result: result, success: true }))
+                .then(result => send(callbackId, { result: result || null, success: true }))
                 // Send an error message as string type.
-                .catch(error => send(callbackId, { error: error, success: false }));
+                .catch(error => send(callbackId, { error: error || null, success: false }));
         }
 
         return null;
