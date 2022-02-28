@@ -46,6 +46,7 @@ declare module "kamome" {
         Error: Error
         android: Client
         iOS: Client
+        flutter: Client
         browser: Browser
 
         /**
