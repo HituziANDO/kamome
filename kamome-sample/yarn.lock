@@ -4796,10 +4796,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-kamome@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/kamome/-/kamome-4.0.1.tgz#c95b5c20eae3da2ed3287a659adc35a54251218d"
-  integrity sha512-NqWR23hPVaZqXLvX8ZoTmDXg17Z7aXWTii8FykQuDLwMXB93mwop9Y9VsIo5PmYUqyPbieDlq3Dvv9DcmlQphw==
+kamome@^4.0.5:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/kamome/-/kamome-4.0.5.tgz#da1b3824c8fdd849ba49da6dddadae598d23bf82"
+  integrity sha512-u3PisI8bnQCDVdJuCZA9Zstzx+GNYbMKKnsfr0IZdXga1Y4EvIeOzkoFNeM4uS2Pnv58x/AUel8sScnePldpGQ==
 
 killable@^1.0.1:
   version "1.0.1"
