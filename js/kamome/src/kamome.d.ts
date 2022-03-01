@@ -15,7 +15,7 @@ declare module "kamome" {
         /**
          * Tells whether your app has the Kamome client.
          *
-         * @return true if the app has the Kamome client. Otherwise false.
+         * @return true if the app has the Kamome client. Otherwise, false.
          */
         hasClient(): boolean
     }
@@ -46,6 +46,7 @@ declare module "kamome" {
         Error: Error
         android: Client
         iOS: Client
+        flutter: Client
         browser: Browser
 
         /**
@@ -95,7 +96,7 @@ declare module "kamome" {
          * @param timeout Timeout for this request. If this argument is omitted or null, default timeout is used.
          * @return
          */
-        send(name: string, data: any, timeout: number | null): Promise<any>
+        send(name: string, data?: any, timeout?: number | null): Promise<any>
     }
 
     export const KM: Kamome

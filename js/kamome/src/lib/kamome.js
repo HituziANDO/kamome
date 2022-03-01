@@ -1,10 +1,10 @@
 /**
- * kamome.js v4.0.2
+ * kamome.js v4.0.5
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
  *
- * Copyright (c) 2021 Hituzi Ando
+ * Copyright (c) 2022 Hituzi Ando
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,10 @@ window.KM = (function () {
          */
         const hasClient = () => (navigator.userAgent.toLowerCase().indexOf('android') > 0) && 'kamomeAndroid' in window;
 
+        /**
+         * @param {string} json
+         * @private
+         */
         const _send = json => setTimeout(() => window.kamomeAndroid.kamomeSend(json), 0);
 
         return {
@@ -57,7 +61,39 @@ window.KM = (function () {
          */
         const hasClient = () => 'webkit' in window && !!window.webkit.messageHandlers.kamomeSend;
 
+        /**
+         * @param {string} json
+         * @private
+         */
         const _send = json => setTimeout(() => window.webkit.messageHandlers.kamomeSend.postMessage(json), 0);
+
+        return {
+            hasClient: hasClient,
+            _send: _send,
+        };
+    })();
+
+    const flutter = (function () {
+        /**
+         * Tells whether your app has the Kamome Flutter client.
+         * Supports [webview_flutter](https://pub.dev/packages/webview_flutter) plugin and
+         * [flutter_inappwebview](https://pub.dev/packages/flutter_inappwebview) plugin.
+         *
+         * @return {boolean}
+         */
+        const hasClient = () => 'kamomeFlutter' in window || 'flutter_inappwebview' in window;
+
+        /**
+         * @param {string} json
+         * @private
+         */
+        const _send = json => {
+            if ('kamomeFlutter' in window) {
+                setTimeout(() => window.kamomeFlutter.postMessage(json), 0);
+            } else if ('flutter_inappwebview' in window) {
+                setTimeout(() => window.flutter_inappwebview.callHandler('kamomeFlutter', json), 0);
+            }
+        };
 
         return {
             hasClient: hasClient,
@@ -201,6 +237,8 @@ window.KM = (function () {
                 iOS._send(json);
             } else if (android.hasClient()) {
                 android._send(json);
+            } else if (flutter.hasClient()) {
+                flutter._send(json);
             } else if (browser._hasCommand(req.name)) {
                 browser._execCommand(req);
             }
@@ -267,9 +305,9 @@ window.KM = (function () {
                 const handle = _receivers[name];
                 handle(json ? JSON.parse(json) : null, resolve, reject);
             })
-                .then(result => send(callbackId, { result: result, success: true }))
+                .then(result => send(callbackId, { result: result || null, success: true }))
                 // Send an error message as string type.
-                .catch(error => send(callbackId, { error: error, success: false }));
+                .catch(error => send(callbackId, { error: error || null, success: false }));
         }
 
         return null;
@@ -279,6 +317,7 @@ window.KM = (function () {
         Error: Error,
         android: android,
         iOS: iOS,
+        flutter: flutter,
         browser: browser,
         setDefaultRequestTimeout: setDefaultRequestTimeout,
         addReceiver: addReceiver,

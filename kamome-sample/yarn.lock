@@ -3681,9 +3681,9 @@ flush-write-stream@^1.0.0:
     readable-stream "^2.3.6"
 
 follow-redirects@^1.0.0:
-  version "1.12.1"
-  resolved "https://registry.npm.taobao.org/follow-redirects/download/follow-redirects-1.12.1.tgz?cache=0&sync_timestamp=1592518389768&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ffollow-redirects%2Fdownload%2Ffollow-redirects-1.12.1.tgz#de54a6205311b93d60398ebc01cf7015682312b6"
-  integrity sha1-3lSmIFMRuT1gOY68Ac9wFWgjErY=
+  version "1.14.8"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.8.tgz#016996fb9a11a100566398b1c6839337d7bfa8fc"
+  integrity sha512-1x0S9UVJHsQprFcEC/qnNzBLcIxsjAV905f/UkQxbclCsoTWlacCNOpQa/anodLl2uaEKFhfWOvM2Qg77+15zA==
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -4796,10 +4796,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-kamome@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/kamome/-/kamome-4.0.1.tgz#c95b5c20eae3da2ed3287a659adc35a54251218d"
-  integrity sha512-NqWR23hPVaZqXLvX8ZoTmDXg17Z7aXWTii8FykQuDLwMXB93mwop9Y9VsIo5PmYUqyPbieDlq3Dvv9DcmlQphw==
+kamome@^4.0.5:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/kamome/-/kamome-4.0.5.tgz#da1b3824c8fdd849ba49da6dddadae598d23bf82"
+  integrity sha512-u3PisI8bnQCDVdJuCZA9Zstzx+GNYbMKKnsfr0IZdXga1Y4EvIeOzkoFNeM4uS2Pnv58x/AUel8sScnePldpGQ==
 
 killable@^1.0.1:
   version "1.0.1"
@@ -7784,9 +7784,9 @@ url-loader@^2.2.0:
     schema-utils "^2.5.0"
 
 url-parse@^1.4.3:
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.3.tgz#71c1303d38fb6639ade183c2992c8cc0686df862"
-  integrity sha512-IIORyIQD9rvj0A4CLWsHkBBJuNqWpFQe224b6j9t/ABmquIS0qDU2pY6kl6AuOrL5OkCXHMCFNe1jBcuAggjvQ==
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.10.tgz#9d3c2f736c1d75dd3bd2be507dcc111f1e2ea9c1"
+  integrity sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==
   dependencies:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
