@@ -1,5 +1,5 @@
 /**
- * kamome.js v4.0.4
+ * kamome.js v4.0.5
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -76,17 +76,24 @@ window.KM = (function () {
     const flutter = (function () {
         /**
          * Tells whether your app has the Kamome Flutter client.
-         * (Requires [webview_flutter](https://pub.dev/packages/webview_flutter) plugin.)
+         * Supports [webview_flutter](https://pub.dev/packages/webview_flutter) plugin and
+         * [flutter_inappwebview](https://pub.dev/packages/flutter_inappwebview) plugin.
          *
          * @return {boolean}
          */
-        const hasClient = () => 'kamomeFlutter' in window;
+        const hasClient = () => 'kamomeFlutter' in window || 'flutter_inappwebview' in window;
 
         /**
          * @param {string} json
          * @private
          */
-        const _send = json => setTimeout(() => window.kamomeFlutter.postMessage(json), 0);
+        const _send = json => {
+            if ('kamomeFlutter' in window) {
+                setTimeout(() => window.kamomeFlutter.postMessage(json), 0);
+            } else if ('flutter_inappwebview' in window) {
+                setTimeout(() => window.flutter_inappwebview.callHandler('kamomeFlutter', json), 0);
+            }
+        };
 
         return {
             hasClient: hasClient,
