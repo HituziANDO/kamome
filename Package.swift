@@ -21,8 +21,8 @@ let package = Package(
         .target(
             name: "kamome",
             dependencies: [],
-            path: "ios/SwiftyKamome",
-            exclude:["Info.plist", "SwiftyKamome.h"]),
+            path: "ios/src",
+            exclude:["Info.plist", "kamome.h"]),
         .testTarget(
             name: "kamomeTests",
             dependencies: ["kamome"],

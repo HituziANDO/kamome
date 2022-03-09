@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "kamome"
-  s.version      = "4.0.5"
+  s.version      = "5.0.0"
   s.summary      = "Kamome bridges a gap between JavaScript in the WKWebView and the native code written by Swift."
   s.description  = <<-DESC
   Kamome is a library for iOS and Android apps using the WebView. This library bridges a gap between JavaScript in the WebView and the native code written by Swift, Java or Kotlin.
@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.author       = "Hituzi Ando"
   s.platform     = :ios, "10.0"
   s.source       = { :git => "https://github.com/HituziANDO/kamome.git", :tag => "#{s.version}" }
-  s.source_files = "ios/SwiftyKamome/*.{swift,h}"
+  s.source_files = "ios/src/*.{swift,h}"
   s.requires_arc = true
   s.swift_versions = '5.0'
 end

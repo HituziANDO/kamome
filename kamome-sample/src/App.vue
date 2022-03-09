@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { KM } from "kamome"
+import { KM } from "./kamome";
 
 export default {
   name: 'App',
@@ -66,7 +66,9 @@ export default {
   methods: {
     async onClickSheetItem(key) {
       if (key === 1) {
-        const data = await KM.send('echo', { message: 'Hello World! (' + (++this.count) + ')' })
+        const data = await KM.send('echo', {
+          message: 'Hello World! [\'"+-._~\\@#$%^&*=,/?;:|{}] (' + (++this.count) + ')'
+        })
         this.messages.push(data.message)
       } else if (key === 2) {
         try {
@@ -122,7 +124,7 @@ export default {
         })
         .addCommand("echoError", (data, resolve, reject) => {
           // Failure
-          reject("Echo Error!")
+          reject("Echo Error! ['\"+-._~\\@#$%^&*=,/?;:|{}]")
         })
         .addCommand("tooLong", (data, resolve) => {
           // Too long process...
