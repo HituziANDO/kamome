@@ -244,7 +244,7 @@ Add the following code in build.gradle(app level).
 
 ```groovy
 dependencies {		
-    implementation 'jp.hituzi:kamome:4.0.2'
+    implementation 'jp.hituzi:kamome:4.0.5'
 }
 ```
 
