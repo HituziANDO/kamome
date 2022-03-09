@@ -8,7 +8,6 @@ import android.webkit.WebView
 import android.widget.ImageButton
 import jp.hituzi.kamome.Command
 import jp.hituzi.kamome.Client
-import jp.hituzi.kamome.Client.SendMessageCallback
 import java.util.*
 
 class MainActivity : Activity() {
@@ -38,7 +37,7 @@ class MainActivity : Activity() {
             })
             .add(Command("echoError") { commandName, data, completion ->
                 // Sends rejected result if failed.
-                completion.reject("Echo Error!")
+                completion.reject("Echo Error! ['\"+-._~\\@#$%^&*=,/?;:|{}]")
             })
             .add(Command("tooLong") { commandName, data, completion ->
                 // Too long process...
@@ -53,11 +52,11 @@ class MainActivity : Activity() {
         sendButton.setOnClickListener {
             // Sends a data to the JS code.
             val data = HashMap<String?, Any?>()
-            data["greeting"] = "Hello! by Kotlin"
-            client?.send(data, "greeting", SendMessageCallback { commandName, result, error ->
+            data["greeting"] = "Hello! by Kotlin ['\"+-._~\\@#$%^&*=,/?;:|{}]"
+            client?.send(data, "greeting") { commandName, result, error ->
                 // Received a result from the JS code.
                 Log.d(TAG, "result: $result")
-            })
+            }
         }
     }
 }

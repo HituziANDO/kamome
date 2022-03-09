@@ -7,13 +7,16 @@ import android.support.annotation.Nullable;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public final class Messenger {
 
     private static final String jsObj = "window.KM";
 
     public static void completeMessage(final WebView webView, @Nullable final Object data, String requestId) {
         if (data != null) {
-            runJavaScript(String.format("%s.onComplete('%s', '%s')", jsObj, data.toString(), requestId), webView);
+            runJavaScript(String.format("%s.onComplete(%s, '%s')", jsObj, data.toString(), requestId), webView);
         } else {
             runJavaScript(String.format("%s.onComplete(null, '%s')", jsObj, requestId), webView);
         }
@@ -21,7 +24,16 @@ public final class Messenger {
 
     public static void failMessage(final WebView webView, @Nullable final String error, String requestId) {
         if (error != null) {
-            runJavaScript(String.format("%s.onError('%s', '%s')", jsObj, error, requestId), webView);
+            String errMsg;
+            try {
+                errMsg = URLEncoder.encode(error, "utf-8");
+                // The URLEncoder converts spaces to '+' and
+                // the `decodeURIComponent` function on JS decodes '%20' to spaces.
+                errMsg = errMsg.replaceAll("\\+", "%20");
+            } catch (UnsupportedEncodingException e) {
+                errMsg = error;
+            }
+            runJavaScript(String.format("%s.onError('%s', '%s')", jsObj, errMsg, requestId), webView);
         } else {
             runJavaScript(String.format("%s.onError(null, '%s')", jsObj, requestId), webView);
         }
@@ -30,9 +42,9 @@ public final class Messenger {
     public static void sendMessage(final WebView webView, final String name, @Nullable final Object data, @Nullable String callbackId) {
         if (data != null) {
             if (callbackId != null) {
-                runJavaScript(String.format("%s.onReceive('%s', '%s', '%s')", jsObj, name, data.toString(), callbackId), webView);
+                runJavaScript(String.format("%s.onReceive('%s', %s, '%s')", jsObj, name, data.toString(), callbackId), webView);
             } else {
-                runJavaScript(String.format("%s.onReceive('%s', '%s', null)", jsObj, name, data.toString()), webView);
+                runJavaScript(String.format("%s.onReceive('%s', %s, null)", jsObj, name, data.toString()), webView);
             }
         } else {
             if (callbackId != null) {

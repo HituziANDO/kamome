@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2020-present Hituzi Ando. All rights reserved.
+// Copyright (c) 2022 Hituzi Ando. All rights reserved.
 //
 // MIT License
 //
@@ -23,12 +23,12 @@
 
 #import <Foundation/Foundation.h>
 
-//! Project version number for SwiftyKamome.
-FOUNDATION_EXPORT double SwiftyKamomeVersionNumber;
+//! Project version number for kamome.
+FOUNDATION_EXPORT double kamomeVersionNumber;
 
-//! Project version string for SwiftyKamome.
-FOUNDATION_EXPORT const unsigned char SwiftyKamomeVersionString[];
+//! Project version string for kamome.
+FOUNDATION_EXPORT const unsigned char kamomeVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <SwiftyKamome/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <kamome/PublicHeader.h>
 
 
