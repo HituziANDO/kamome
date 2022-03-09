@@ -118,10 +118,10 @@ Kamome provides common JavaScript interface for iOS and Android.
 	// Sends a data to the JS code.
 	val data = HashMap<String?, Any?>()
    data["greeting"] = "Hello! by Kotlin"
-   client?.send(data, "greeting", SendMessageCallback { commandName, result, error ->
+   client?.send(data, "greeting") { commandName, result, error ->
        // Received a result from the JS code.
        Log.d(TAG, "result: $result")
-   })
+   }
 	```
 
 1. Receives a message on the JavaScript code

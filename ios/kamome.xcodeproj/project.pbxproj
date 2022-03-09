@@ -23,7 +23,7 @@
 /* Begin PBXBuildFile section */
 		5E8D4A23261324C800BC8771 /* kamome_macOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E8D4A21261324C800BC8771 /* kamome_macOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5E8D4A2A2613254A00BC8771 /* Kamome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED97FF724B8BC6600B84867 /* Kamome.swift */; };
-		5ED97FF124B8BB1900B84867 /* SwiftyKamome.h in Headers */ = {isa = PBXBuildFile; fileRef = 5ED97FEF24B8BB1900B84867 /* SwiftyKamome.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5ED97FF124B8BB1900B84867 /* kamome.h in Headers */ = {isa = PBXBuildFile; fileRef = 5ED97FEF24B8BB1900B84867 /* kamome.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5ED97FF824B8BC6600B84867 /* Kamome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED97FF724B8BC6600B84867 /* Kamome.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,7 +32,7 @@
 		5E8D4A21261324C800BC8771 /* kamome_macOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kamome_macOS.h; sourceTree = "<group>"; };
 		5E8D4A22261324C800BC8771 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5ED97FEC24B8BB1900B84867 /* kamome.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = kamome.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5ED97FEF24B8BB1900B84867 /* SwiftyKamome.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftyKamome.h; sourceTree = "<group>"; };
+		5ED97FEF24B8BB1900B84867 /* kamome.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kamome.h; sourceTree = "<group>"; };
 		5ED97FF024B8BB1900B84867 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5ED97FF724B8BC6600B84867 /* Kamome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kamome.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -67,7 +67,7 @@
 		5ED97FE224B8BB1900B84867 = {
 			isa = PBXGroup;
 			children = (
-				5ED97FEE24B8BB1900B84867 /* SwiftyKamome */,
+				5ED97FEE24B8BB1900B84867 /* src */,
 				5E8D4A20261324C800BC8771 /* kamome macOS */,
 				5ED97FED24B8BB1900B84867 /* Products */,
 			);
@@ -82,14 +82,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5ED97FEE24B8BB1900B84867 /* SwiftyKamome */ = {
+		5ED97FEE24B8BB1900B84867 /* src */ = {
 			isa = PBXGroup;
 			children = (
 				5ED97FF024B8BB1900B84867 /* Info.plist */,
+				5ED97FEF24B8BB1900B84867 /* kamome.h */,
 				5ED97FF724B8BC6600B84867 /* Kamome.swift */,
-				5ED97FEF24B8BB1900B84867 /* SwiftyKamome.h */,
 			);
-			path = SwiftyKamome;
+			path = src;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -107,7 +107,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5ED97FF124B8BB1900B84867 /* SwiftyKamome.h in Headers */,
+				5ED97FF124B8BB1900B84867 /* kamome.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +255,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 5.0.0;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -267,7 +268,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 4.0.5;
+				MARKETING_VERSION = 5.0.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = kamome;
@@ -283,6 +284,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 5.0.0;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -295,7 +297,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 4.0.5;
+				MARKETING_VERSION = 5.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = kamome;
 				SDKROOT = macosx;
@@ -431,18 +433,19 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5.0.0;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = SwiftyKamome/Info.plist;
+				INFOPLIST_FILE = src/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.0.5;
+				MARKETING_VERSION = 5.0.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -458,18 +461,19 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 5.0.0;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = SwiftyKamome/Info.plist;
+				INFOPLIST_FILE = src/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.0.5;
+				MARKETING_VERSION = 5.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

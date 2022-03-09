@@ -48,7 +48,7 @@ class ViewController: UIViewController {
             })
             .add(Command("echoError") { commandName, data, completion in
                 // Sends rejected result if failed.
-                completion.reject("Echo Error!")
+                completion.reject("Echo Error! ['\"+-._~\\@#$%^&*=,/?;:|{}]")
             })
             .add(Command("tooLong") { commandName, data, completion in
                 // Too long process...
@@ -83,7 +83,7 @@ class ViewController: UIViewController {
 
     @IBAction func sendButtonPressed(_ sender: Any) {
         // Sends a data to the JS code.
-        client.send(["greeting": "Hello! by Swift"], commandName: "greeting") { (commandName, result, error) in
+        client.send(["greeting": "Hello! by Swift ['\"+-._~\\@#$%^&*=,/?;:|{}]"], commandName: "greeting") { (commandName, result, error) in
             // Received a result from the JS code.
             guard let result = result else { return }
             print("result: \(result)")

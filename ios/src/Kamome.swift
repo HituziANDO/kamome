@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 Hituzi Ando. All rights reserved.
+// Copyright (c) 2022 Hituzi Ando. All rights reserved.
 //
 // MIT License
 //
@@ -43,7 +43,7 @@ class Messenger {
             }
 
             let params = String(data: try JSONSerialization.data(withJSONObject: data), encoding: .utf8)!
-            run(javaScript: "\(jsObj).onComplete('\(params)', '\(requestID)')", with: webView)
+            run(javaScript: "\(jsObj).onComplete(\(params), '\(requestID)')", with: webView)
         }
         else {
             run(javaScript: "\(jsObj).onComplete(null, '\(requestID)')", with: webView)
@@ -52,7 +52,9 @@ class Messenger {
 
     static func failMessage(with webView: WKWebView, error: String?, for requestID: String) {
         if let error = error {
-            run(javaScript: "\(jsObj).onError('\(error)', '\(requestID)')", with: webView)
+            let allowed = NSCharacterSet.alphanumerics.union(.init(charactersIn: "-._~"))
+            let errMsg = error.addingPercentEncoding(withAllowedCharacters: allowed) ?? error
+            run(javaScript: "\(jsObj).onError('\(errMsg)', '\(requestID)')", with: webView)
         }
         else {
             run(javaScript: "\(jsObj).onError(null, '\(requestID)')", with: webView)
@@ -69,10 +71,10 @@ class Messenger {
             let params = String(data: try JSONSerialization.data(withJSONObject: data), encoding: .utf8)!
 
             if let callbackID = callbackID {
-                run(javaScript: "\(jsObj).onReceive('\(name)', '\(params)', '\(callbackID)')", with: webView)
+                run(javaScript: "\(jsObj).onReceive('\(name)', \(params), '\(callbackID)')", with: webView)
             }
             else {
-                run(javaScript: "\(jsObj).onReceive('\(name)', '\(params)', null)", with: webView)
+                run(javaScript: "\(jsObj).onReceive('\(name)', \(params), null)", with: webView)
             }
         }
         else {
