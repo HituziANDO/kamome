@@ -6,6 +6,8 @@ Kamome is a library for iOS and Android apps using the WebView. This library bri
 
 Kamome provides common JavaScript interface for iOS and Android.
 
+If you build Flutter apps with the WebView, see [kamome_flutter](https://github.com/HituziANDO/kamome_flutter) for the Flutter plugin.
+
 ## Quick Usage
 
 ### Sends a message from the JS code to the native code
@@ -15,7 +17,7 @@ Kamome provides common JavaScript interface for iOS and Android.
 	```javascript
 	// JavaScript
 
-	import {KM} from "kamome"
+	import { KM } from "kamome"
 
 	// Uses async/await.
 	try {
@@ -160,7 +162,7 @@ Kamome provides common JavaScript interface for iOS and Android.
 1. Write following import statement in JavaScript
 	
 	```javascript
-	import {KM} from "kamome"
+	import { KM } from "kamome"
 	```
 	
 #### Manual Installation
