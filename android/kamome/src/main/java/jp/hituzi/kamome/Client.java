@@ -88,7 +88,13 @@ public final class Client {
             @Override
             public void execute(String commandName, @Nullable JSONObject data, Completable completion) {
                 ready = true;
-                completion.resolve();
+
+                try {
+                    completion.resolve(new JSONObject()
+                        .put("versionCode", BuildConfig.VERSION_CODE));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         })).add(new Command(COMMAND_ACK, new Command.Handler() {
 

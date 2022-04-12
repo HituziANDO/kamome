@@ -133,6 +133,8 @@ export default {
           }, 30000)
         })
 
+    console.log("KM.VERSION_CODE=" + KM.VERSION_CODE)
+
     console.assert(KM.isReady(), "The Kamome JS library is not ready.")
 
     // Set a ready event listener.

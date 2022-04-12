@@ -25,6 +25,10 @@
  * SOFTWARE.
  */
 window.KM = (function () {
+    /**
+     * The version code of the Kamome JavaScript library.
+     */
+    const VERSION_CODE = 50100
 
     const Error = {
         requestTimeout: 'RequestTimeout',
@@ -147,7 +151,7 @@ window.KM = (function () {
         }, 0);
 
         // Add preset commands.
-        addCommand('_kamomeSYN', (_, resolve) => resolve());
+        addCommand('_kamomeSYN', (_, resolve) => resolve({ versionCode: VERSION_CODE }));
         addCommand('_kamomeACK', (_, resolve) => resolve());
 
         return {
@@ -378,7 +382,11 @@ window.KM = (function () {
 
     const _ready = () => {
         send(_COMMAND_SYN, null, null)
-            .then(() => {
+            .then(data => {
+                if (VERSION_CODE !== data.versionCode) {
+                    console.warn('[kamome.js] The Kamome native library version does not match. Please update it to latest version.');
+                }
+
                 _isReady = true;
 
                 setTimeout(() => {
@@ -391,7 +399,7 @@ window.KM = (function () {
                     .catch(() => console.warn('[kamome.js] Failed to send ACK.'));
             })
             .catch(() => {
-                console.warn('[kamome.js] Failed to send SYN. Please update kamome native library to latest version.');
+                console.warn('[kamome.js] Failed to send SYN. Please update the Kamome native library to latest version.');
                 // Set true for backward compatibility. (< 5.1.0)
                 _isReady = true;
             });
@@ -405,6 +413,7 @@ window.KM = (function () {
     }
 
     return {
+        VERSION_CODE: VERSION_CODE,
         Error: Error,
         android: android,
         iOS: iOS,

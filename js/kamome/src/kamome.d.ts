@@ -44,6 +44,10 @@ declare module "kamome" {
     }
 
     export interface Kamome {
+        /**
+         * The version code of the Kamome JavaScript library.
+         */
+        VERSION_CODE: number
         Error: Error
         android: Client
         iOS: Client

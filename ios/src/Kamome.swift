@@ -24,6 +24,9 @@
 import Foundation
 import WebKit
 
+/// The version code of the Kamome framework.
+public let kamomeVersionCode = 50100
+
 /// The data type transferred from the JavaScript to the native.
 public typealias TransferData = [String: Any?]
 
@@ -333,7 +336,7 @@ open class Client: NSObject {
         // Add preset commands.
         self.add(Command(Self.commandSYN) { [weak self] _, _, completion in
                 self?.isReady = true
-                completion.resolve()
+                completion.resolve(["versionCode": kamomeVersionCode])
             })
             .add(Command(Self.commandACK) { [weak self] _, _, completion in
                 DispatchQueue.main.async {
