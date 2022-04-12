@@ -46,6 +46,22 @@ class MainActivity : Activity() {
 
         client?.howToHandleNonExistentCommand = Client.HowToHandleNonExistentCommand.REJECTED
 
+        // Set a ready event listener.
+        // The listener is called when the Kamome JavaScript library goes ready state.
+        client?.readyEventListener = Client.ReadyEventListener {
+            Log.d(TAG, "client.isReady is ${client!!.isReady} after loading the web page")
+        }
+        Log.d(TAG, "client.isReady is ${client!!.isReady} before loading the web page")
+
+        // If the client sends a message before the webView has loaded the web page,
+        // it waits for the JS library is ready.
+        // When the library is ready, the client retries to send.
+        val data = HashMap<String?, Any?>()
+        data["greeting"] = "Hi!"
+        client?.send(data, "greeting") { _, result, _ ->
+            Log.d(TAG, "result: $result")
+        }
+
         webView.loadUrl("file:///android_asset/www/index.html")
 
         val sendButton = findViewById<ImageButton>(R.id.sendButton)

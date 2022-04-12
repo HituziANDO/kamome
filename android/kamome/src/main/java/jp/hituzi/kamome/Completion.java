@@ -9,8 +9,6 @@ import org.json.JSONObject;
 import java.util.Collection;
 import java.util.Map;
 
-import jp.hituzi.kamome.internal.Messenger;
-
 public final class Completion implements Completable {
 
     private final WebView webView;

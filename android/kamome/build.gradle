@@ -9,6 +9,8 @@ android {
         versionCode 1
         versionName "${LIB_VERSION}"
 
+        buildConfigField "int", "VERSION_CODE", "${LIB_VERSION_CODE}"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }

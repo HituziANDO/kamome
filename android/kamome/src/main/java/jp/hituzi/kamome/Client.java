@@ -1,7 +1,10 @@
 package jp.hituzi.kamome;
 
 import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
@@ -9,13 +12,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import jp.hituzi.kamome.exception.CommandNotAddedException;
-import jp.hituzi.kamome.internal.Messenger;
 
 public final class Client {
 
@@ -34,6 +38,11 @@ public final class Client {
         EXCEPTION
     }
 
+    public interface ReadyEventListener {
+
+        void onReady();
+    }
+
     public interface SendMessageCallback {
 
         /**
@@ -46,19 +55,71 @@ public final class Client {
         void onReceiveResult(String commandName, @Nullable Object result, @Nullable Error error);
     }
 
+    private static final String TAG = "Kamome";
+    private static final String COMMAND_SYN = "_kamomeSYN";
+    private static final String COMMAND_ACK = "_kamomeACK";
+
     /**
      * How to handle non-existent command.
      */
     public HowToHandleNonExistentCommand howToHandleNonExistentCommand = HowToHandleNonExistentCommand.RESOLVED;
+    /**
+     * A ready event listener.
+     * The listener is called when the Kamome JavaScript library goes ready state.
+     */
+    @Nullable
+    public ReadyEventListener readyEventListener;
 
     private final WebView webView;
     private final Map<String, Command> commands = new HashMap<>();
+    private final List<Request> requests = new ArrayList<>();
+    private final WaitForReady waitForReady = new WaitForReady();
+    private boolean ready = false;
 
     @SuppressLint("SetJavaScriptEnabled")
     public Client(WebView webView) {
         this.webView = webView;
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(this, "kamomeAndroid");
+
+        // Add preset commands.
+        add(new Command(COMMAND_SYN, new Command.Handler() {
+
+            @Override
+            public void execute(String commandName, @Nullable JSONObject data, Completable completion) {
+                ready = true;
+
+                try {
+                    completion.resolve(new JSONObject()
+                        .put("versionCode", BuildConfig.VERSION_CODE));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        })).add(new Command(COMMAND_ACK, new Command.Handler() {
+
+            @Override
+            public void execute(String commandName, @Nullable JSONObject data, Completable completion) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (readyEventListener != null) {
+                            readyEventListener.onReady();
+                        }
+                    }
+                });
+
+                completion.resolve();
+            }
+        }));
+    }
+
+    /**
+     * Tells whether the Kamome JavaScript library is ready.
+     */
+    public boolean isReady() {
+        return ready;
     }
 
     /**
@@ -122,12 +183,10 @@ public final class Client {
      * @param callback    A callback.
      */
     public void send(@Nullable JSONObject data, String commandName, @Nullable SendMessageCallback callback) {
-        if (callback != null) {
-            String callbackId = addSendMessageCallback(callback);
-            Messenger.sendMessage(webView, commandName, data, callbackId);
-        } else {
-            Messenger.sendMessage(webView, commandName, data, null);
-        }
+        String callbackId = addSendMessageCallback(callback);
+        requests.add(new Request(commandName, callbackId, data));
+
+        waitForReadyAndSendRequests();
     }
 
     /**
@@ -149,12 +208,10 @@ public final class Client {
      * @param callback    A callback.
      */
     public void send(@Nullable JSONArray data, String commandName, @Nullable SendMessageCallback callback) {
-        if (callback != null) {
-            String callbackId = addSendMessageCallback(callback);
-            Messenger.sendMessage(webView, commandName, data, callbackId);
-        } else {
-            Messenger.sendMessage(webView, commandName, data, null);
-        }
+        String callbackId = addSendMessageCallback(callback);
+        requests.add(new Request(commandName, callbackId, data));
+
+        waitForReadyAndSendRequests();
     }
 
     /**
@@ -225,7 +282,12 @@ public final class Client {
         }
     }
 
-    private String addSendMessageCallback(final SendMessageCallback callback) {
+    @Nullable
+    private String addSendMessageCallback(@Nullable final SendMessageCallback callback) {
+        if (callback == null) {
+            return null;
+        }
+
         final String callbackId = UUID.randomUUID().toString();
 
         // Add a temporary command receiving a result from the JavaScript handler.
@@ -252,5 +314,33 @@ public final class Client {
         }));
 
         return callbackId;
+    }
+
+    /**
+     * Waits for ready. If ready, sends requests to the JS library.
+     */
+    private void waitForReadyAndSendRequests() {
+        if (!ready) {
+            boolean isWaiting = waitForReady.wait(new WaitForReady.Executable() {
+
+                @Override
+                public void onExecute() {
+                    waitForReadyAndSendRequests();
+                }
+            });
+
+            if (!isWaiting) {
+                Log.d(TAG, "Waiting for ready has timed out.");
+            }
+
+            return;
+        }
+
+        for (Request request : requests) {
+            Messenger.sendRequest(webView, request);
+        }
+
+        // Reset
+        requests.clear();
     }
 }
