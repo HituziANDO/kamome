@@ -1,5 +1,5 @@
 /**
- * kamome.js v5.0.0
+ * kamome.js v5.1.0
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -146,6 +146,10 @@ window.KM = (function () {
             _handlerDict[req.name](req.data, resolve, reject);
         }, 0);
 
+        // Add preset commands.
+        addCommand('_kamomeSYN', (_, resolve) => resolve());
+        addCommand('_kamomeACK', (_, resolve) => resolve());
+
         return {
             addCommand: addCommand,
             _hasCommand: _hasCommand,
@@ -153,9 +157,32 @@ window.KM = (function () {
         };
     })();
 
+    const _COMMAND_SYN = '_kamomeSYN';
+    const _COMMAND_ACK = '_kamomeACK';
+
     const _receivers = {};
     const _requests = {};
     let _requestTimeout = 10000;    // Default value is 10 seconds
+    let _isReady = false;
+    /**
+     * Tells whether the native client is ready.
+     */
+    const isReady = () => _isReady;
+    /**
+     * @type {Function|null}
+     * @private
+     */
+    let _onReady = null;
+    /**
+     * Sets a ready event listener.
+     * The listener is called when Kamome iOS, Android, or Flutter client goes ready state.
+     *
+     * @param {Function|null} listener
+     */
+    const setReadyListener = function (listener) {
+        _onReady = listener;
+        return this;
+    };
 
     /**
      * `KM.send` method expects a 'resolve'/'reject' response will be returned in a duration.
@@ -164,7 +191,6 @@ window.KM = (function () {
      * Sets a timeout for a request. If given `time` <= 0, the request timeout function is disabled.
      *
      * @param {number} time A time in millisecond
-     * @return {*}
      */
     const setDefaultRequestTimeout = function (time) {
         _requestTimeout = time;
@@ -186,8 +212,6 @@ window.KM = (function () {
      *      // reject('Error Message');
      *  }
      *  ```
-     *
-     * @return {*}
      */
     const addReceiver = function (name, receiver) {
         _receivers[name] = receiver;
@@ -198,7 +222,6 @@ window.KM = (function () {
      * Removes a receiver for given command if it is registered.
      *
      * @param {string} name A command name
-     * @return {*}
      */
     const removeReceiver = function (name) {
         if (name in _receivers) {
@@ -206,6 +229,50 @@ window.KM = (function () {
         }
 
         return this;
+    };
+
+    const _sendRequest = (req) => {
+        const json = JSON.stringify({ name: req.name, data: req.data, id: req.id });
+
+        if (iOS.hasClient()) {
+            iOS._send(json);
+        } else if (android.hasClient()) {
+            android._send(json);
+        } else if (flutter.hasClient()) {
+            flutter._send(json);
+        } else if (browser._hasCommand(req.name)) {
+            browser._execCommand(req);
+        }
+
+        if (req.timeout > 0) {
+            // Set the request timeout.
+            setTimeout(() => {
+                const timedOutReq = _requests[req.id];
+
+                if (timedOutReq) {
+                    timedOutReq.reject(Error.requestTimeout + ':' + timedOutReq.name);
+                    delete _requests[timedOutReq.id];
+                }
+            }, req.timeout);
+        }
+    };
+
+    let _retryCount = 0;
+    const _waitForReadyAndSendRequests = () => {
+        if (!_isReady) {
+            if (_retryCount < 50) {
+                _retryCount++;
+                setTimeout(_waitForReadyAndSendRequests, 200);
+            } else {
+                console.error('[kamome.js] Waiting for ready has timed out.')
+            }
+            return;
+        }
+
+        for (const id in _requests) {
+            const req = _requests[id];
+            _sendRequest(req);
+        }
     };
 
     /**
@@ -231,27 +298,11 @@ window.KM = (function () {
             };
             _requests[id] = req;
 
-            const json = JSON.stringify({ name: req.name, data: req.data, id: req.id });
-
-            if (iOS.hasClient()) {
-                iOS._send(json);
-            } else if (android.hasClient()) {
-                android._send(json);
-            } else if (flutter.hasClient()) {
-                flutter._send(json);
-            } else if (browser._hasCommand(req.name)) {
-                browser._execCommand(req);
-            }
-
-            if (req.timeout > 0) {
-                setTimeout(() => {
-                    const timedOutReq = _requests[req.id];
-
-                    if (timedOutReq) {
-                        timedOutReq.reject(Error.requestTimeout + ':' + timedOutReq.name);
-                        delete _requests[timedOutReq.id];
-                    }
-                }, req.timeout);
+            if (name === _COMMAND_SYN || name === _COMMAND_ACK) {
+                // Send initialization commands to ready.
+                _sendRequest(req);
+            } else {
+                _waitForReadyAndSendRequests();
             }
         });
     };
@@ -317,13 +368,41 @@ window.KM = (function () {
                 const handle = _receivers[name];
                 handle(json, resolve, reject);
             })
-                .then(result => send(callbackId, { result: result || null, success: true }))
+                .then(result => send(callbackId, { result: result || null, success: true }, null))
                 // Send an error message as string type.
-                .catch(error => send(callbackId, { error: error || null, success: false }));
+                .catch(error => send(callbackId, { error: error || null, success: false }, null));
         }
 
         return null;
     };
+
+    const _ready = () => {
+        send(_COMMAND_SYN, null, null)
+            .then(() => {
+                _isReady = true;
+
+                setTimeout(() => {
+                    if (_onReady) {
+                        _onReady();
+                    }
+                }, 0);
+
+                send(_COMMAND_ACK, null, null)
+                    .catch(() => console.warn('[kamome.js] Failed to send ACK.'));
+            })
+            .catch(() => {
+                console.warn('[kamome.js] Failed to send SYN. Please update kamome native library to latest version.');
+                // Set true for backward compatibility. (< 5.1.0)
+                _isReady = true;
+            });
+    };
+
+    // Add the ready event listener.
+    if ('flutter_inappwebview' in window) {
+        window.addEventListener('flutterInAppWebViewPlatformReady', _ready);
+    } else {
+        window.addEventListener('DOMContentLoaded', _ready);
+    }
 
     return {
         Error: Error,
@@ -338,6 +417,8 @@ window.KM = (function () {
         onComplete: onComplete,
         onError: onError,
         onReceive: onReceive,
+        isReady: isReady,
+        setReadyListener: setReadyListener,
     };
 })();
 export const KM = window.KM;
