@@ -133,11 +133,13 @@ export default {
           }, 30000)
         })
 
+    console.assert(KM.isReady(), "The Kamome JS library is not ready.")
+
     // Set a ready event listener.
     // The listener is called when Kamome iOS, Android, or Flutter client goes ready state.
-    KM.setReadyListener(() => {
+    KM.setReadyEventListener(() => {
       // KM.isReady() returns true.
-      console.log("KM.isReady=" + KM.isReady())
+      console.log("KM.isReady() is " + KM.isReady())
     })
   }
 }

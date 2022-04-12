@@ -179,7 +179,7 @@ window.KM = (function () {
      *
      * @param {Function|null} listener
      */
-    const setReadyListener = function (listener) {
+    const setReadyEventListener = function (listener) {
         _onReady = listener;
         return this;
     };
@@ -418,7 +418,7 @@ window.KM = (function () {
         onError: onError,
         onReceive: onReceive,
         isReady: isReady,
-        setReadyListener: setReadyListener,
+        setReadyEventListener: setReadyEventListener,
     };
 })();
 export const KM = window.KM;

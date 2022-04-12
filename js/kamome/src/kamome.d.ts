@@ -62,7 +62,7 @@ declare module "kamome" {
          * @param listener A listener.
          * @return Self.
          */
-        setReadyListener(listener: ReadyListener): Kamome
+        setReadyEventListener(listener: ReadyListener): Kamome
 
         /**
          * `KM.send` method expects a 'resolve'/'reject' response will be returned in a duration.
