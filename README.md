@@ -281,7 +281,7 @@ const promise = KM.send(commandName, data, 5000);
 
 ## Optional: console.log for WKWebView on iOS/macOS
 
-The `ConsoleLogAdapter` class enables to output logs by `console.log`, `console.warn`, and `console.error` in JavaScript to Xcode console.
+The `ConsoleLogAdapter` class enables to output logs by `console.log`, `console.warn`, `console.error`, and `console.assert` in JavaScript to Xcode console.
 
 ```swift
 // Swift

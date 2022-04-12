@@ -559,6 +559,16 @@ open class ConsoleLogAdapter: NSObject {
         webView.configuration.userContentController.addUserScript(WKUserScript(source: jsError,
                                                                                injectionTime: .atDocumentStart,
                                                                                forMainFrameOnly: true))
+        let jsAssert = """
+                       window.console.assert = function(cond, msg) {
+                         if (!cond) {
+                           window.webkit.messageHandlers.\(Self.scriptMessageHandlerName).postMessage(msg);
+                         }
+                       };
+                       """
+        webView.configuration.userContentController.addUserScript(WKUserScript(source: jsAssert,
+                                                                               injectionTime: .atDocumentStart,
+                                                                               forMainFrameOnly: true))
     }
 }
 

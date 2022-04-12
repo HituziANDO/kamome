@@ -74,7 +74,7 @@ class ViewController: UIViewController {
             print("result: \(result)")
         }
 
-        // Option: Sets console.log/.warn/.error adapter.
+        // Option: Sets console.log/.warn/.error/.assert adapter.
         ConsoleLogAdapter().setTo(webView)
 
         let htmlURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "www")!
