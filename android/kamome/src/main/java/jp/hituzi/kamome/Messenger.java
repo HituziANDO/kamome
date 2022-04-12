@@ -1,4 +1,4 @@
-package jp.hituzi.kamome.internal;
+package jp.hituzi.kamome;
 
 import android.os.Build;
 import android.os.Handler;
@@ -10,7 +10,7 @@ import android.webkit.WebView;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public final class Messenger {
+final class Messenger {
 
     private static final String jsObj = "window.KM";
 
@@ -39,18 +39,22 @@ public final class Messenger {
         }
     }
 
-    public static void sendMessage(final WebView webView, final String name, @Nullable final Object data, @Nullable String callbackId) {
-        if (data != null) {
-            if (callbackId != null) {
-                runJavaScript(String.format("%s.onReceive('%s', %s, '%s')", jsObj, name, data.toString(), callbackId), webView);
+    public static void sendRequest(final WebView webView, Request request) {
+        if (request.data != null) {
+            if (request.callbackId != null) {
+                runJavaScript(String.format("%s.onReceive('%s', %s, '%s')",
+                    jsObj, request.name, request.data.toString(), request.callbackId), webView);
             } else {
-                runJavaScript(String.format("%s.onReceive('%s', %s, null)", jsObj, name, data.toString()), webView);
+                runJavaScript(String.format("%s.onReceive('%s', %s, null)",
+                    jsObj, request.name, request.data.toString()), webView);
             }
         } else {
-            if (callbackId != null) {
-                runJavaScript(String.format("%s.onReceive('%s', null, '%s')", jsObj, name, callbackId), webView);
+            if (request.callbackId != null) {
+                runJavaScript(String.format("%s.onReceive('%s', null, '%s')",
+                    jsObj, request.name, request.callbackId), webView);
             } else {
-                runJavaScript(String.format("%s.onReceive('%s', null, null)", jsObj, name), webView);
+                runJavaScript(String.format("%s.onReceive('%s', null, null)",
+                    jsObj, request.name), webView);
             }
         }
     }

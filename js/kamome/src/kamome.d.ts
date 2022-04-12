@@ -1,4 +1,5 @@
 declare module "kamome" {
+    export type ReadyListener = () => void
     export type CommandHandler = (
         data: any | null,
         resolve: (data?: any | null) => void,
@@ -43,11 +44,29 @@ declare module "kamome" {
     }
 
     export interface Kamome {
+        /**
+         * The version code of the Kamome JavaScript library.
+         */
+        VERSION_CODE: number
         Error: Error
         android: Client
         iOS: Client
         flutter: Client
         browser: Browser
+
+        /**
+         * Tells whether the native client is ready.
+         */
+        isReady(): boolean
+
+        /**
+         * Sets a ready event listener.
+         * The listener is called when Kamome iOS, Android, or Flutter client goes ready state.
+         *
+         * @param listener A listener.
+         * @return Self.
+         */
+        setReadyEventListener(listener: ReadyListener): Kamome
 
         /**
          * `KM.send` method expects a 'resolve'/'reject' response will be returned in a duration.

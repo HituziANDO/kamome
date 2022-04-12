@@ -24,12 +24,34 @@
 import Foundation
 import WebKit
 
+/// The version code of the Kamome framework.
+public let kamomeVersionCode = 50100
+
 /// The data type transferred from the JavaScript to the native.
 public typealias TransferData = [String: Any?]
 
 public enum KamomeError: Error {
     case invalidJSONObject
     case commandNotAdded(String)
+}
+
+class WaitForReady {
+    private var retryCount = 0
+
+    func wait(_ execute: @escaping () -> Void) -> Bool {
+        guard retryCount < 50 else { return false }
+        retryCount += 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            execute()
+        }
+        return true
+    }
+}
+
+struct Request {
+    let name: String
+    let callbackID: String?
+    let data: Any?
 }
 
 class Messenger {
@@ -61,28 +83,27 @@ class Messenger {
         }
     }
 
-    // TODO: kamome.jsがロード完了していないときの処理
-    static func sendMessage(with webView: WKWebView, data: Any?, callbackID: String?, for name: String) throws {
-        if let data = data {
+    static func sendRequest(_ request: Request, with webView: WKWebView) throws {
+        if let data = request.data {
             if !JSONSerialization.isValidJSONObject(data) {
                 throw KamomeError.invalidJSONObject
             }
 
             let params = String(data: try JSONSerialization.data(withJSONObject: data), encoding: .utf8)!
 
-            if let callbackID = callbackID {
-                run(javaScript: "\(jsObj).onReceive('\(name)', \(params), '\(callbackID)')", with: webView)
+            if let callbackID = request.callbackID {
+                run(javaScript: "\(jsObj).onReceive('\(request.name)', \(params), '\(callbackID)')", with: webView)
             }
             else {
-                run(javaScript: "\(jsObj).onReceive('\(name)', \(params), null)", with: webView)
+                run(javaScript: "\(jsObj).onReceive('\(request.name)', \(params), null)", with: webView)
             }
         }
         else {
-            if let callbackID = callbackID {
-                run(javaScript: "\(jsObj).onReceive('\(name)', null, '\(callbackID)')", with: webView)
+            if let callbackID = request.callbackID {
+                run(javaScript: "\(jsObj).onReceive('\(request.name)', null, '\(callbackID)')", with: webView)
             }
             else {
-                run(javaScript: "\(jsObj).onReceive('\(name)', null, null)", with: webView)
+                run(javaScript: "\(jsObj).onReceive('\(request.name)', null, null)", with: webView)
             }
         }
     }
@@ -289,12 +310,21 @@ public typealias SendMessageCallback = (_ commandName: String, _ result: Any?, _
 open class Client: NSObject {
 
     public static let scriptMessageHandlerName = "kamomeSend"
+    private static let commandSYN = "_kamomeSYN"
+    private static let commandACK = "_kamomeACK"
 
     /// How to handle non-existent command.
     public var howToHandleNonExistentCommand: HowToHandleNonExistentCommand = .resolved
+    /// A ready event handler.
+    /// The handler is called when the Kamome JavaScript library goes ready state.
+    public var readyEventHandler: (() -> Void)?
+    /// Tells whether the Kamome JavaScript library is ready.
+    public private(set) var isReady = false
 
-    private weak var webView: WKWebView?
+    fileprivate weak var webView: WKWebView?
     private var commands: [String: Command] = [:]
+    private var requests = [Request]()
+    private let waitForReady = WaitForReady()
 
     /// - Parameters:
     ///   - webView: A webView for this framework.
@@ -302,6 +332,18 @@ open class Client: NSObject {
         super.init()
         self.webView = webView
         self.webView!.configuration.userContentController.add(self, name: Self.scriptMessageHandlerName)
+
+        // Add preset commands.
+        self.add(Command(Self.commandSYN) { [weak self] _, _, completion in
+                self?.isReady = true
+                completion.resolve(["versionCode": kamomeVersionCode])
+            })
+            .add(Command(Self.commandACK) { [weak self] _, _, completion in
+                DispatchQueue.main.async {
+                    self?.readyEventHandler?()
+                }
+                completion.resolve()
+            })
     }
 
     /// Adds a command called by the JavaScript code.
@@ -335,15 +377,10 @@ open class Client: NSObject {
     ///   - commandName A command name.
     ///   - callback: A callback.
     public func send(_ commandName: String, callback: SendMessageCallback? = nil) {
-        guard let webView = webView else { return }
+        let callbackID = add(sendMessageCallback: callback)
+        requests.append(Request(name: commandName, callbackID: callbackID, data: nil))
 
-        if let callback = callback {
-            let callbackID = add(sendMessageCallback: callback)
-            try? Messenger.sendMessage(with: webView, data: nil, callbackID: callbackID, for: commandName)
-        }
-        else {
-            try? Messenger.sendMessage(with: webView, data: nil, callbackID: nil, for: commandName)
-        }
+        waitForReadyAndSendRequests()
     }
 
     /// Sends a message with a data as Dictionary to the JavaScript receiver.
@@ -353,15 +390,10 @@ open class Client: NSObject {
     ///   - commandName: A command name.
     ///   - callback: A callback.
     public func send(_ data: [String: Any?], commandName: String, callback: SendMessageCallback? = nil) {
-        guard let webView = webView else { return }
+        let callbackID = add(sendMessageCallback: callback)
+        requests.append(Request(name: commandName, callbackID: callbackID, data: data))
 
-        if let callback = callback {
-            let callbackID = add(sendMessageCallback: callback)
-            try? Messenger.sendMessage(with: webView, data: data, callbackID: callbackID, for: commandName)
-        }
-        else {
-            try? Messenger.sendMessage(with: webView, data: data, callbackID: nil, for: commandName)
-        }
+        waitForReadyAndSendRequests()
     }
 
     /// Sends a message with a data as Array to the JavaScript receiver.
@@ -371,15 +403,10 @@ open class Client: NSObject {
     ///   - commandName: A command name.
     ///   - callback: A callback.
     public func send(_ data: [Any?], commandName: String, callback: SendMessageCallback? = nil) {
-        guard let webView = webView else { return }
+        let callbackID = add(sendMessageCallback: callback)
+        requests.append(Request(name: commandName, callbackID: callbackID, data: data))
 
-        if let callback = callback {
-            let callbackID = add(sendMessageCallback: callback)
-            try? Messenger.sendMessage(with: webView, data: data, callbackID: callbackID, for: commandName)
-        }
-        else {
-            try? Messenger.sendMessage(with: webView, data: data, callbackID: nil, for: commandName)
-        }
+        waitForReadyAndSendRequests()
     }
 
     /// Executes a command added to this client.
@@ -436,14 +463,16 @@ private extension Client {
         }
     }
 
-    func add(sendMessageCallback: @escaping SendMessageCallback) -> String {
+    func add(sendMessageCallback: SendMessageCallback?) -> String? {
+        guard let callback = sendMessageCallback else { return nil }
+
         let callbackID = UUID().uuidString
 
         // Add a temporary command receiving a result from the JavaScript handler.
         add(Command(callbackID) { name, data, completion in
             if let data = data {
                 if let success = data["success"] as? Bool, success {
-                    sendMessageCallback(name, data["result"]!, nil)
+                    callback(name, data["result"]!, nil)
                 }
                 else {
                     let reason: String
@@ -453,11 +482,11 @@ private extension Client {
                     else {
                         reason = "UnknownError"
                     }
-                    sendMessageCallback(name, nil, reason)
+                    callback(name, nil, reason)
                 }
             }
             else {
-                sendMessageCallback(name, nil, "UnknownError")
+                callback(name, nil, "UnknownError")
             }
 
             completion.resolve()
@@ -467,6 +496,25 @@ private extension Client {
         })
 
         return callbackID
+    }
+
+    /// Waits for ready. If ready, sends requests to the JS library.
+    func waitForReadyAndSendRequests() {
+        guard let webView = webView else { return }
+
+        if !isReady {
+            if !waitForReady.wait({ [weak self] in
+                self?.waitForReadyAndSendRequests()
+            }) {
+                print("[Kamome] Waiting for ready has timed out.")
+            }
+            return
+        }
+
+        requests.forEach { try? Messenger.sendRequest($0, with: webView) }
+
+        // Reset
+        requests.removeAll()
     }
 }
 
@@ -509,6 +557,16 @@ open class ConsoleLogAdapter: NSObject {
 
         let jsError = "window.console.error = function(msg) { window.webkit.messageHandlers.\(Self.scriptMessageHandlerName).postMessage(msg); };"
         webView.configuration.userContentController.addUserScript(WKUserScript(source: jsError,
+                                                                               injectionTime: .atDocumentStart,
+                                                                               forMainFrameOnly: true))
+        let jsAssert = """
+                       window.console.assert = function(cond, msg) {
+                         if (!cond) {
+                           window.webkit.messageHandlers.\(Self.scriptMessageHandlerName).postMessage(msg);
+                         }
+                       };
+                       """
+        webView.configuration.userContentController.addUserScript(WKUserScript(source: jsAssert,
                                                                                injectionTime: .atDocumentStart,
                                                                                forMainFrameOnly: true))
     }

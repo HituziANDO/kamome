@@ -41,25 +41,40 @@ class ViewController: UIViewController {
 
         // Creates the Client object with the webView.
         client = Client(webView)
-            .add(Command("echo") { commandName, data, completion in
-                // Received `echo` command.
-                // Then sends resolved result to the JavaScript callback function.
-                completion.resolve(["message": data!["message"]!])
-            })
-            .add(Command("echoError") { commandName, data, completion in
-                // Sends rejected result if failed.
-                completion.reject("Echo Error! ['\"+-._~\\@#$%^&*=,/?;:|{}]")
-            })
-            .add(Command("tooLong") { commandName, data, completion in
-                // Too long process...
-                Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { timer in
-                    completion.resolve()
-                }
-            })
+                .add(Command("echo") { commandName, data, completion in
+                    // Received `echo` command.
+                    // Then sends resolved result to the JavaScript callback function.
+                    completion.resolve(["message": data!["message"]!])
+                })
+                .add(Command("echoError") { commandName, data, completion in
+                    // Sends rejected result if failed.
+                    completion.reject("Echo Error! ['\"+-._~\\@#$%^&*=,/?;:|{}]")
+                })
+                .add(Command("tooLong") { commandName, data, completion in
+                    // Too long process...
+                    Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { timer in
+                        completion.resolve()
+                    }
+                })
 
         client.howToHandleNonExistentCommand = .rejected
 
-        // Option: Sets console.log/.warn/.error adapter.
+        // Set a ready event handler.
+        // The handler is called when the Kamome JavaScript library goes ready state.
+        client.readyEventHandler = {
+            print("client.isReady is \(self.client.isReady) after loading the web page")
+        }
+        print("client.isReady is \(client.isReady) before loading the web page")
+
+        // If the client sends a message before the webView has loaded the web page,
+        // it waits for the JS library is ready.
+        // When the library is ready, the client retries to send.
+        client.send(["greeting": "Hi!"], commandName: "greeting") { _, result, _ in
+            guard let result = result else { return }
+            print("result: \(result)")
+        }
+
+        // Option: Sets console.log/.warn/.error/.assert adapter.
         ConsoleLogAdapter().setTo(webView)
 
         let htmlURL = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "www")!

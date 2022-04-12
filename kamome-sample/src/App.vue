@@ -115,7 +115,7 @@ export default {
       }, 1000)
     })
 
-    // When there is no Kamome's iOS/Android native client, that is, when you run with a browser alone,
+    // When there is no Kamome iOS, Android, or Flutter client, that is, when you run with a browser alone,
     // you can register the processing of each command.
     KM.browser
         .addCommand("echo", (data, resolve) => {
@@ -132,6 +132,17 @@ export default {
             resolve()
           }, 30000)
         })
+
+    console.log("KM.VERSION_CODE=" + KM.VERSION_CODE)
+
+    console.assert(KM.isReady(), "The Kamome JS library is not ready.")
+
+    // Set a ready event listener.
+    // The listener is called when Kamome iOS, Android, or Flutter client goes ready state.
+    KM.setReadyEventListener(() => {
+      // KM.isReady() returns true.
+      console.log("KM.isReady() is " + KM.isReady())
+    })
   }
 }
 </script>
