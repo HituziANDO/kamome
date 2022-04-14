@@ -1,5 +1,5 @@
 /**
- * kamome.js v5.1.0
+ * kamome.js v5.1.0+1
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -284,7 +284,7 @@ window.KM = (function () {
      *
      * @param {string} name A command name.
      * @param {Object} data
-     * @param {number|null} timeout Timeout for this request. If this argument is omitted or null, default timeout is used.
+     * @param {number|null} timeout Timeout in milliseconds for this request. If this argument is omitted or null, default timeout is used.
      * @return {Promise}
      */
     const send = (name, data, timeout) => {
@@ -381,7 +381,7 @@ window.KM = (function () {
     };
 
     const _ready = () => {
-        send(_COMMAND_SYN, null, null)
+        send(_COMMAND_SYN, null, 5000)
             .then(data => {
                 if (VERSION_CODE !== data.versionCode) {
                     console.warn('[kamome.js] The Kamome native library version does not match. Please update it to latest version.');
@@ -395,7 +395,7 @@ window.KM = (function () {
                     }
                 }, 0);
 
-                send(_COMMAND_ACK, null, null)
+                send(_COMMAND_ACK, null, 5000)
                     .catch(() => console.warn('[kamome.js] Failed to send ACK.'));
             })
             .catch(() => {
