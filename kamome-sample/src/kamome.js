@@ -1,5 +1,5 @@
 /**
- * kamome.js v5.1.0+2
+ * kamome.js v5.1.0+3
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -153,6 +153,41 @@ window.KM = (function () {
         const hasCommand = name => (name in _handlerDict);
 
         /**
+         * Sends a message to the receiver added by KM.addReceiver method.
+         *
+         * @param name {string} A command name.
+         * @param data {any} A JSON data.
+         * @return {Promise<any>}
+         */
+        const send = (name, data) => {
+            return new Promise((resolve, reject) => {
+                const callbackId = "_km_" + name + "_" + _uuid();
+
+                // Add a temporary command.
+                addCommand(callbackId, (result, cmdResolve) => {
+                    if (result) {
+                        if (result["success"]) {
+                            resolve(result["result"]);
+                        } else {
+                            const reason = result["error"] || "UnknownError";
+                            reject(reason);
+                        }
+                    } else {
+                        reject("UnknownError");
+                    }
+
+                    cmdResolve();
+
+                    // Remove the temporary command.
+                    removeCommand(callbackId);
+                });
+
+                // Sends a message to the receiver added by KM.addReceiver method.
+                onReceive(name, data, callbackId);
+            })
+        }
+
+        /**
          * Executes a command with specified request.
          *
          * @param req {{id:string, name:string, data:Object}} A request object.
@@ -171,6 +206,7 @@ window.KM = (function () {
             addCommand: addCommand,
             removeCommand: removeCommand,
             hasCommand: hasCommand,
+            send: send,
             _execCommand: _execCommand,
         };
     })();
@@ -214,6 +250,13 @@ window.KM = (function () {
         _requestTimeout = time;
         return this;
     };
+
+    /**
+     * If this method returns true, KM has no native clients such as an iOS client.
+     *
+     * @return {boolean} true if KM has no native clients, otherwise false.
+     */
+    const hasNoClients = () => !iOS.hasClient() && !android.hasClient() && !flutter.hasClient();
 
     /**
      * Registers a receiver for given command. The receiver function receives a JSON message from the native.
@@ -434,6 +477,7 @@ window.KM = (function () {
         flutter: flutter,
         browser: browser,
         setDefaultRequestTimeout: setDefaultRequestTimeout,
+        hasNoClients: hasNoClients,
         addReceiver: addReceiver,
         removeReceiver: removeReceiver,
         send: send,
