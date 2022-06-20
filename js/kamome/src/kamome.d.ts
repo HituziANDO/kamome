@@ -41,6 +41,21 @@ declare module "kamome" {
          * @return Self.
          */
         addCommand(name: string, handler: CommandHandler): Browser
+
+        /**
+         * Removes a command of specified name.
+         *
+         * @param name A command name that you will remove.
+         * @return Self.
+         */
+        removeCommand(name: string): Browser
+
+        /**
+         * Tells whether specified command is registered.
+         *
+         * @param name A command name.
+         */
+        hasCommand(name: string): boolean
     }
 
     export interface Kamome {
