@@ -199,14 +199,16 @@ Kamome is available through [Carthage](https://github.com/Carthage/Carthage). To
 github "HituziANDO/kamome"
 ```
 
+You run the following command in the Terminal.
+
+```
+carthage update --use-xcframeworks
+```
+
 #### Swift Package Manager
 
-Kamome is available through Swift Package Manager. To install it using Xcode, see following.
-
-1. Click "File" menu.
-1. Select "Swift Packages".
-1. Click "Add Package Dependency...".
-1. Specify the git URL for kamome.
+Kamome is available through Swift Package Manager. To install it using Xcode, specify the git URL for Kamome.
+	
 	
 ```
 https://github.com/HituziANDO/kamome.git
