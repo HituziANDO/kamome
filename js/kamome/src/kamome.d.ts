@@ -112,7 +112,7 @@ declare module "kamome" {
          *
          * @param name A command name.
          * @param data
-         * @param timeout Timeout for this request. If this argument is omitted or null, default timeout is used.
+         * @param timeout Timeout in milliseconds for this request. If this argument is omitted or null, default timeout is used.
          * @return
          */
         send(name: string, data?: any, timeout?: number | null): Promise<any>
