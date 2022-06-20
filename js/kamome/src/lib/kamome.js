@@ -1,5 +1,5 @@
 /**
- * kamome.js v5.1.0+1
+ * kamome.js v5.1.0+2
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -132,12 +132,25 @@ window.KM = (function () {
         };
 
         /**
+         * Removes a command of specified name.
+         *
+         * @param name A command name that you will remove.
+         * @return {*}
+         */
+        const removeCommand = function (name) {
+            if (hasCommand(name)) {
+                delete _handlerDict[name];
+            }
+            return this;
+        };
+
+        /**
          * Tells whether specified command is registered.
          *
          * @param name {string} A command name.
          * @return {boolean}
          */
-        const _hasCommand = name => (name in _handlerDict);
+        const hasCommand = name => (name in _handlerDict);
 
         /**
          * Executes a command with specified request.
@@ -156,7 +169,8 @@ window.KM = (function () {
 
         return {
             addCommand: addCommand,
-            _hasCommand: _hasCommand,
+            removeCommand: removeCommand,
+            hasCommand: hasCommand,
             _execCommand: _execCommand,
         };
     })();
@@ -244,7 +258,7 @@ window.KM = (function () {
             android._send(json);
         } else if (flutter.hasClient()) {
             flutter._send(json);
-        } else if (browser._hasCommand(req.name)) {
+        } else if (browser.hasCommand(req.name)) {
             browser._execCommand(req);
         }
 

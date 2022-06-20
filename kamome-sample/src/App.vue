@@ -132,6 +132,11 @@ export default {
             resolve()
           }, 30000)
         })
+        .addCommand("testCommand", () => {
+        })
+        .removeCommand("testCommand")
+
+    console.assert(KM.browser.hasCommand("testCommand"), "KM.browser removed testCommand.")
 
     console.log("KM.VERSION_CODE=" + KM.VERSION_CODE)
 
