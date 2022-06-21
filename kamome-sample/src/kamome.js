@@ -1,5 +1,5 @@
 /**
- * kamome.js v5.1.0+1
+ * kamome.js v5.2.0
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -28,7 +28,7 @@ window.KM = (function () {
     /**
      * The version code of the Kamome JavaScript library.
      */
-    const VERSION_CODE = 50100
+    const VERSION_CODE = 50200
 
     const Error = {
         requestTimeout: 'RequestTimeout',
@@ -132,12 +132,60 @@ window.KM = (function () {
         };
 
         /**
+         * Removes a command of specified name.
+         *
+         * @param name A command name that you will remove.
+         * @return {*}
+         */
+        const removeCommand = function (name) {
+            if (hasCommand(name)) {
+                delete _handlerDict[name];
+            }
+            return this;
+        };
+
+        /**
          * Tells whether specified command is registered.
          *
          * @param name {string} A command name.
          * @return {boolean}
          */
-        const _hasCommand = name => (name in _handlerDict);
+        const hasCommand = name => (name in _handlerDict);
+
+        /**
+         * Sends a message to the receiver added by KM.addReceiver method.
+         *
+         * @param name {string} A command name.
+         * @param data {any} A JSON data.
+         * @return {Promise<any>}
+         */
+        const send = (name, data) => {
+            return new Promise((resolve, reject) => {
+                const callbackId = "_km_" + name + "_" + _uuid();
+
+                // Add a temporary command.
+                addCommand(callbackId, (result, cmdResolve) => {
+                    if (result) {
+                        if (result["success"]) {
+                            resolve(result["result"]);
+                        } else {
+                            const reason = result["error"] || "UnknownError";
+                            reject(reason);
+                        }
+                    } else {
+                        reject("UnknownError");
+                    }
+
+                    cmdResolve();
+
+                    // Remove the temporary command.
+                    removeCommand(callbackId);
+                });
+
+                // Sends a message to the receiver added by KM.addReceiver method.
+                onReceive(name, data, callbackId);
+            })
+        }
 
         /**
          * Executes a command with specified request.
@@ -156,7 +204,9 @@ window.KM = (function () {
 
         return {
             addCommand: addCommand,
-            _hasCommand: _hasCommand,
+            removeCommand: removeCommand,
+            hasCommand: hasCommand,
+            send: send,
             _execCommand: _execCommand,
         };
     })();
@@ -202,6 +252,13 @@ window.KM = (function () {
     };
 
     /**
+     * If this method returns true, KM has no native clients such as an iOS client.
+     *
+     * @return {boolean} true if KM has no native clients, otherwise false.
+     */
+    const hasNoClients = () => !iOS.hasClient() && !android.hasClient() && !flutter.hasClient();
+
+    /**
      * Registers a receiver for given command. The receiver function receives a JSON message from the native.
      *
      * @param {string} name A command name
@@ -244,7 +301,7 @@ window.KM = (function () {
             android._send(json);
         } else if (flutter.hasClient()) {
             flutter._send(json);
-        } else if (browser._hasCommand(req.name)) {
+        } else if (browser.hasCommand(req.name)) {
             browser._execCommand(req);
         }
 
@@ -420,6 +477,7 @@ window.KM = (function () {
         flutter: flutter,
         browser: browser,
         setDefaultRequestTimeout: setDefaultRequestTimeout,
+        hasNoClients: hasNoClients,
         addReceiver: addReceiver,
         removeReceiver: removeReceiver,
         send: send,

@@ -132,6 +132,11 @@ export default {
             resolve()
           }, 30000)
         })
+        .addCommand("testCommand", () => {
+        })
+        .removeCommand("testCommand")
+
+    console.assert(KM.browser.hasCommand("testCommand"), "KM.browser removed testCommand.")
 
     console.log("KM.VERSION_CODE=" + KM.VERSION_CODE)
 
@@ -142,6 +147,14 @@ export default {
     KM.setReadyEventListener(() => {
       // KM.isReady() returns true.
       console.log("KM.isReady() is " + KM.isReady())
+
+      // If KM has no native clients...
+      if (KM.hasNoClients()) {
+        // Sends a message to the receiver added by KM.addReceiver method.
+        KM.browser.send("greeting", { "greeting": "Hi!" })
+            .then(result => console.log(result))
+            .catch(console.error)
+      }
     })
   }
 }

@@ -41,6 +41,31 @@ declare module "kamome" {
          * @return Self.
          */
         addCommand(name: string, handler: CommandHandler): Browser
+
+        /**
+         * Removes a command of specified name.
+         *
+         * @param name A command name that you will remove.
+         * @return Self.
+         */
+        removeCommand(name: string): Browser
+
+        /**
+         * Tells whether specified command is registered.
+         *
+         * @param name A command name.
+         */
+        hasCommand(name: string): boolean
+
+
+        /**
+         * Sends a message to the receiver added by KM.addReceiver method.
+         *
+         * @param name A command name.
+         * @param data A JSON data.
+         * @return {Promise<any>}
+         */
+        send(name: string, data?: any | null): Promise<any>
     }
 
     export interface Kamome {
@@ -78,6 +103,13 @@ declare module "kamome" {
          * @return Self.
          */
         setDefaultRequestTimeout(time: number): Kamome
+
+        /**
+         * If this method returns true, KM has no native clients such as an iOS client.
+         *
+         * @return {boolean} true if KM has no native clients, otherwise false.
+         */
+        hasNoClients(): boolean
 
         /**
          * Registers a receiver for given command. The receiver function receives a JSON message from the native.
