@@ -248,7 +248,7 @@ Add the following code in build.gradle(app level).
 
 ```groovy
 dependencies {		
-    implementation 'jp.hituzi:kamome:5.1.0'
+    implementation 'jp.hituzi:kamome:5.2.0'
 }
 ```
 
@@ -289,6 +289,33 @@ The `ConsoleLogAdapter` class enables to output logs by `console.log`, `console.
 // Swift
 
 ConsoleLogAdapter().setTo(webView)
+```
+
+### Use Custom Logger
+
+The ConsoleLogAdapter uses `print` method to output a log by default. If you use your custom logger, you implement `ConsoleLoggable` protocol. See following code.
+
+```swift
+// Swift
+
+class ViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let consoleLogAdapter = ConsoleLogAdapter()
+        // Set the custom logger.
+        consoleLogAdapter.logger = self
+        consoleLogAdapter.setTo(webView)
+    }
+}
+
+// Implement ConsoleLoggable protocol.
+extension ViewController: ConsoleLoggable {
+    public func consoleLog(_ logMessage: Any) {
+        // TODO: Output a `logMessage` with the custom logger.
+    }
+}
 ```
 
 ## Browser Alone
