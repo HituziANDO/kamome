@@ -50,7 +50,7 @@ class WaitForReady {
 
 struct Request {
     let name: String
-    let callbackID: String?
+    let callbackID: String
     let data: Any?
 }
 
@@ -90,21 +90,12 @@ class Messenger {
             }
 
             let params = String(data: try JSONSerialization.data(withJSONObject: data), encoding: .utf8)!
-
-            if let callbackID = request.callbackID {
-                run(javaScript: "\(jsObj).onReceive('\(request.name)', \(params), '\(callbackID)')", with: webView)
-            }
-            else {
-                run(javaScript: "\(jsObj).onReceive('\(request.name)', \(params), null)", with: webView)
-            }
+            run(javaScript: "\(jsObj).onReceive('\(request.name)', \(params), '\(request.callbackID)')",
+                with: webView)
         }
         else {
-            if let callbackID = request.callbackID {
-                run(javaScript: "\(jsObj).onReceive('\(request.name)', null, '\(callbackID)')", with: webView)
-            }
-            else {
-                run(javaScript: "\(jsObj).onReceive('\(request.name)', null, null)", with: webView)
-            }
+            run(javaScript: "\(jsObj).onReceive('\(request.name)', null, '\(request.callbackID)')",
+                with: webView)
         }
     }
 }
@@ -377,7 +368,7 @@ open class Client: NSObject {
     ///   - commandName A command name.
     ///   - callback: A callback.
     public func send(_ commandName: String, callback: SendMessageCallback? = nil) {
-        let callbackID = add(sendMessageCallback: callback)
+        let callbackID = addSendMessageCallback(callback, commandName: commandName)
         requests.append(Request(name: commandName, callbackID: callbackID, data: nil))
 
         waitForReadyAndSendRequests()
@@ -390,7 +381,7 @@ open class Client: NSObject {
     ///   - commandName: A command name.
     ///   - callback: A callback.
     public func send(_ data: [String: Any?], commandName: String, callback: SendMessageCallback? = nil) {
-        let callbackID = add(sendMessageCallback: callback)
+        let callbackID = addSendMessageCallback(callback, commandName: commandName)
         requests.append(Request(name: commandName, callbackID: callbackID, data: data))
 
         waitForReadyAndSendRequests()
@@ -403,7 +394,7 @@ open class Client: NSObject {
     ///   - commandName: A command name.
     ///   - callback: A callback.
     public func send(_ data: [Any?], commandName: String, callback: SendMessageCallback? = nil) {
-        let callbackID = add(sendMessageCallback: callback)
+        let callbackID = addSendMessageCallback(callback, commandName: commandName)
         requests.append(Request(name: commandName, callbackID: callbackID, data: data))
 
         waitForReadyAndSendRequests()
@@ -436,7 +427,8 @@ extension Client: WKScriptMessageHandler {
         guard message.name == Self.scriptMessageHandlerName else { return }
         guard let body = message.body as? String,
               let data = body.data(using: .utf8),
-              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return }
+              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else { return }
 
         let params = obj["data"] as? TransferData
         let completion = Completion(webView: webView, requestID: obj["id"] as! String)
@@ -463,16 +455,14 @@ private extension Client {
         }
     }
 
-    func add(sendMessageCallback: SendMessageCallback?) -> String? {
-        guard let callback = sendMessageCallback else { return nil }
-
-        let callbackID = UUID().uuidString
+    func addSendMessageCallback(_ callback: SendMessageCallback?, commandName: String) -> String {
+        let callbackID = "_km_\(commandName)_\(UUID().uuidString)"
 
         // Add a temporary command receiving a result from the JavaScript handler.
         add(Command(callbackID) { name, data, completion in
             if let data = data {
                 if let success = data["success"] as? Bool, success {
-                    callback(name, data["result"]!, nil)
+                    callback?(name, data["result"]!, nil)
                 }
                 else {
                     let reason: String
@@ -482,11 +472,11 @@ private extension Client {
                     else {
                         reason = "UnknownError"
                     }
-                    callback(name, nil, reason)
+                    callback?(name, nil, reason)
                 }
             }
             else {
-                callback(name, nil, "UnknownError")
+                callback?(name, nil, "UnknownError")
             }
 
             completion.resolve()
