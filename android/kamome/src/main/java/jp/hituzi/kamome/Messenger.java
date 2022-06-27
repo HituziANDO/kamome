@@ -41,21 +41,11 @@ final class Messenger {
 
     public static void sendRequest(final WebView webView, Request request) {
         if (request.data != null) {
-            if (request.callbackId != null) {
-                runJavaScript(String.format("%s.onReceive('%s', %s, '%s')",
-                    jsObj, request.name, request.data.toString(), request.callbackId), webView);
-            } else {
-                runJavaScript(String.format("%s.onReceive('%s', %s, null)",
-                    jsObj, request.name, request.data.toString()), webView);
-            }
+            runJavaScript(String.format("%s.onReceive('%s', %s, '%s')",
+                jsObj, request.name, request.data.toString(), request.callbackId), webView);
         } else {
-            if (request.callbackId != null) {
-                runJavaScript(String.format("%s.onReceive('%s', null, '%s')",
-                    jsObj, request.name, request.callbackId), webView);
-            } else {
-                runJavaScript(String.format("%s.onReceive('%s', null, null)",
-                    jsObj, request.name), webView);
-            }
+            runJavaScript(String.format("%s.onReceive('%s', null, '%s')",
+                jsObj, request.name, request.callbackId), webView);
         }
     }
 

@@ -3,6 +3,7 @@ package jp.hituzi.kamome;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
@@ -183,7 +184,7 @@ public final class Client {
      * @param callback    A callback.
      */
     public void send(@Nullable JSONObject data, String commandName, @Nullable SendMessageCallback callback) {
-        String callbackId = addSendMessageCallback(callback);
+        String callbackId = addSendMessageCallback(commandName, callback);
         requests.add(new Request(commandName, callbackId, data));
 
         waitForReadyAndSendRequests();
@@ -208,7 +209,7 @@ public final class Client {
      * @param callback    A callback.
      */
     public void send(@Nullable JSONArray data, String commandName, @Nullable SendMessageCallback callback) {
-        String callbackId = addSendMessageCallback(callback);
+        String callbackId = addSendMessageCallback(commandName, callback);
         requests.add(new Request(commandName, callbackId, data));
 
         waitForReadyAndSendRequests();
@@ -282,13 +283,10 @@ public final class Client {
         }
     }
 
-    @Nullable
-    private String addSendMessageCallback(@Nullable final SendMessageCallback callback) {
-        if (callback == null) {
-            return null;
-        }
-
-        final String callbackId = UUID.randomUUID().toString();
+    @NonNull
+    private String addSendMessageCallback(String commandName,
+        @Nullable final SendMessageCallback callback) {
+        final String callbackId = "_km_" + commandName + "_" + UUID.randomUUID().toString();
 
         // Add a temporary command receiving a result from the JavaScript handler.
         add(new Command(callbackId, new Command.Handler() {
@@ -299,11 +297,17 @@ public final class Client {
                 boolean success = data.optBoolean("success");
 
                 if (success) {
-                    callback.onReceiveResult(commandName, data.opt("result"), null);
+                    if (callback != null) {
+                        callback.onReceiveResult(commandName, data.opt("result"), null);
+                    }
                 } else {
                     String errorMessage = data.optString("error");
-                    Error error = new Error(errorMessage != null && !errorMessage.isEmpty() ? errorMessage : "UnknownError");
-                    callback.onReceiveResult(commandName, null, error);
+                    Error error = new Error(errorMessage != null && !errorMessage.isEmpty() ?
+                        errorMessage : "UnknownError");
+
+                    if (callback != null) {
+                        callback.onReceiveResult(commandName, null, error);
+                    }
                 }
 
                 completion.resolve();
