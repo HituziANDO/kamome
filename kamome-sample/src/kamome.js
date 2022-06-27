@@ -1,5 +1,5 @@
 /**
- * kamome.js v5.2.0
+ * kamome.js v5.2.1
  * https://github.com/HituziANDO/kamome
  *
  * MIT License
@@ -28,7 +28,7 @@ window.KM = (function () {
     /**
      * The version code of the Kamome JavaScript library.
      */
-    const VERSION_CODE = 50200
+    const VERSION_CODE = 50201
 
     const Error = {
         requestTimeout: 'RequestTimeout',
@@ -420,7 +420,7 @@ window.KM = (function () {
      *
      * @param {string} name
      * @param {any|null} json
-     * @param {string|null} callbackId
+     * @param {string} callbackId
      * @return {null}
      */
     const onReceive = (name, json, callbackId) => {

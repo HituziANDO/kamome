@@ -25,7 +25,7 @@ import Foundation
 import WebKit
 
 /// The version code of the Kamome framework.
-public let kamomeVersionCode = 50200
+public let kamomeVersionCode = 50201
 
 /// The data type transferred from the JavaScript to the native.
 public typealias TransferData = [String: Any?]
