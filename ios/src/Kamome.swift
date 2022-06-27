@@ -368,7 +368,7 @@ open class Client: NSObject {
     ///   - commandName A command name.
     ///   - callback: A callback.
     public func send(_ commandName: String, callback: SendMessageCallback? = nil) {
-        let callbackID = addSendMessageCallback(callback)
+        let callbackID = addSendMessageCallback(callback, commandName: commandName)
         requests.append(Request(name: commandName, callbackID: callbackID, data: nil))
 
         waitForReadyAndSendRequests()
@@ -381,7 +381,7 @@ open class Client: NSObject {
     ///   - commandName: A command name.
     ///   - callback: A callback.
     public func send(_ data: [String: Any?], commandName: String, callback: SendMessageCallback? = nil) {
-        let callbackID = addSendMessageCallback(callback)
+        let callbackID = addSendMessageCallback(callback, commandName: commandName)
         requests.append(Request(name: commandName, callbackID: callbackID, data: data))
 
         waitForReadyAndSendRequests()
@@ -394,7 +394,7 @@ open class Client: NSObject {
     ///   - commandName: A command name.
     ///   - callback: A callback.
     public func send(_ data: [Any?], commandName: String, callback: SendMessageCallback? = nil) {
-        let callbackID = addSendMessageCallback(callback)
+        let callbackID = addSendMessageCallback(callback, commandName: commandName)
         requests.append(Request(name: commandName, callbackID: callbackID, data: data))
 
         waitForReadyAndSendRequests()
@@ -455,8 +455,8 @@ private extension Client {
         }
     }
 
-    func addSendMessageCallback(_ callback: SendMessageCallback?) -> String {
-        let callbackID = UUID().uuidString
+    func addSendMessageCallback(_ callback: SendMessageCallback?, commandName: String) -> String {
+        let callbackID = "_km_\(commandName)_\(UUID().uuidString)"
 
         // Add a temporary command receiving a result from the JavaScript handler.
         add(Command(callbackID) { name, data, completion in
