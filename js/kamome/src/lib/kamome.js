@@ -420,7 +420,7 @@ window.KM = (function () {
      *
      * @param {string} name
      * @param {any|null} json
-     * @param {string|null} callbackId
+     * @param {string} callbackId
      * @return {null}
      */
     const onReceive = (name, json, callbackId) => {
