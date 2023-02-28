@@ -1,5 +1,11 @@
 # Kamome
 
+![release](https://img.shields.io/github/v/release/HituziANDO/kamome?display_name=tag)
+[![npm](https://img.shields.io/npm/v/kamome)](https://www.npmjs.com/package/kamome)
+[![Pod Version](https://img.shields.io/cocoapods/v/kamome.svg?style=flat)](http://cocoapods.org/pods/kamome)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
+
 Kamome is a library for iOS and Android apps using the WebView. This library bridges a gap between JavaScript in the WebView and the native code written in Swift, Java or Kotlin.
 
 <img src="./README/images/illustration.png" width="410">
