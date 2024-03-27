@@ -2,12 +2,13 @@ import { KM } from './KM.ts';
 import { KamomeEventData } from './KamomeEventData.ts';
 import { KamomeEventResult } from './KamomeEventResult.ts';
 import { KamomeRequest } from './KamomeRequest.ts';
+import { undefinedToNull } from './util/undefinedToNull.ts';
 import { uuid } from './util/uuid.ts';
 
 export type CommandHandlerResolve = (data?: KamomeEventResult | null) => void;
 export type CommandHandlerReject = (reason: string | null) => void;
 export type CommandHandler = (
-  data: KamomeEventData,
+  data: KamomeEventData | null,
   resolve: CommandHandlerResolve,
   reject: CommandHandlerReject,
 ) => void;
@@ -68,12 +69,13 @@ export class WebBrowser {
    * @param data A JSON data.
    * @returns A promise object.
    */
-  send(name: string, data: KamomeEventData | null): Promise<KamomeEventResult> {
+  send(name: string, data?: KamomeEventData | null): Promise<KamomeEventResult> {
     return new Promise<KamomeEventResult>((resolve, reject) => {
       const callbackId = `_km_${name}_${uuid()}`;
 
       // Add a temporary command.
-      this.addCommand(callbackId, (result, cmdResolve, _) => {
+      this.addCommand(callbackId, (aResult, cmdResolve, _) => {
+        const result: { success: boolean; result?: any; error?: string } = aResult;
         if (result) {
           if (result['success']) {
             resolve(result['result']);
@@ -104,18 +106,13 @@ export class WebBrowser {
   execCommand(req: KamomeRequest) {
     setTimeout(() => {
       const resolve: CommandHandlerResolve = data => {
-        let result: KamomeEventResult;
-        if (data === undefined) {
-          result = null;
-        } else {
-          result = data;
-        }
+        const result = undefinedToNull<KamomeEventResult>(data);
         KM.onComplete(result, req.id);
       };
       const reject: CommandHandlerReject = reason => {
         KM.onError(reason ? encodeURIComponent(reason) : null, req.id);
       };
-      this.handlerDict[req.name](req.data, resolve, reject);
+      this.handlerDict[req.name](undefinedToNull<KamomeEventData>(req.data), resolve, reject);
     }, 0);
   }
 }

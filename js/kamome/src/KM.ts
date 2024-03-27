@@ -5,6 +5,7 @@ import { KamomeRequest } from './KamomeRequest.ts';
 import { VERSION_CODE } from './VERSION_CODE.ts';
 import { WebBrowser } from './WebBrowser.ts';
 import { AndroidPlatform, FlutterPlatform, IosPlatform } from './platform';
+import { undefinedToNull } from './util/undefinedToNull.ts';
 import { uuid } from './util/uuid.ts';
 
 /**
@@ -163,7 +164,7 @@ export class KM {
    */
   static send(
     name: string,
-    data: KamomeEventData | null,
+    data?: KamomeEventData | null,
     timeoutMillis?: number | null,
   ): Promise<KamomeEventResult | null> {
     const timeout = timeoutMillis || this.instance.requestTimeout;
@@ -190,7 +191,8 @@ export class KM {
   }
 
   private static sendRequest(req: KamomeRequest) {
-    const json = JSON.stringify({ name: req.name, data: req.data, id: req.id });
+    const data = undefinedToNull<KamomeEventData>(req.data);
+    const json = JSON.stringify({ name: req.name, data, id: req.id });
 
     if (iOS.hasClient()) {
       iOS.send(json);
