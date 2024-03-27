@@ -69,6 +69,10 @@ export class KM {
     return flutter;
   }
 
+  static get browser() {
+    return browser;
+  }
+
   /**
    * Tells whether the native client is ready.
    *
