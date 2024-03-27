@@ -13,5 +13,8 @@ export default defineConfig({
         globals: {}
       }
     }
+  },
+  test: {
+    environment: 'jsdom',
   }
 });
