@@ -4,7 +4,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: 'src/index.ts',
-      name: 'KM',
+      name: 'Kamome',
       fileName: (format) => `index.${format}.js`
     },
     rollupOptions: {
