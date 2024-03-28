@@ -1,5 +1,5 @@
-import { KamomeEventData } from './KamomeEventData.ts';
-import { KamomeEventResult } from './KamomeEventResult.ts';
+import { KamomeEventData } from './KamomeEventData';
+import { KamomeEventResult } from './KamomeEventResult';
 
 export type KamomeRequest = {
   id: string;

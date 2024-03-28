@@ -1,9 +1,9 @@
-import { KM } from './KM.ts';
-import { KamomeEventData } from './KamomeEventData.ts';
-import { KamomeEventResult } from './KamomeEventResult.ts';
-import { KamomeRequest } from './KamomeRequest.ts';
-import { undefinedToNull } from './util/undefinedToNull.ts';
-import { uuid } from './util/uuid.ts';
+import { KM } from './KM';
+import { KamomeEventData } from './KamomeEventData';
+import { KamomeEventResult } from './KamomeEventResult';
+import { KamomeRequest } from './KamomeRequest';
+import { undefinedToNull } from './util/undefinedToNull';
+import { uuid } from './util/uuid';
 
 export type CommandHandlerResolve = (data?: KamomeEventResult | null) => void;
 export type CommandHandlerReject = (reason: string | null) => void;

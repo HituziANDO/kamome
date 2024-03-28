@@ -1,12 +1,12 @@
-import { KamomeError } from './KamomeError.ts';
-import { KamomeEventData } from './KamomeEventData.ts';
-import { KamomeEventResult } from './KamomeEventResult.ts';
-import { KamomeRequest } from './KamomeRequest.ts';
-import { VERSION_CODE } from './VERSION_CODE.ts';
-import { WebBrowser } from './WebBrowser.ts';
+import { KamomeError } from './KamomeError';
+import { KamomeEventData } from './KamomeEventData';
+import { KamomeEventResult } from './KamomeEventResult';
+import { KamomeRequest } from './KamomeRequest';
+import { VERSION_CODE } from './VERSION_CODE';
+import { WebBrowser } from './WebBrowser';
 import { AndroidPlatform, FlutterPlatform, IosPlatform } from './platform';
-import { undefinedToNull } from './util/undefinedToNull.ts';
-import { uuid } from './util/uuid.ts';
+import { undefinedToNull } from './util/undefinedToNull';
+import { uuid } from './util/uuid';
 
 /**
  * The ready event listener.
