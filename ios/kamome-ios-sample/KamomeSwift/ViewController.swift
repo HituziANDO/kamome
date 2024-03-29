@@ -39,6 +39,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        print("kamome version: \(kamomeVersionCode)")
+
         // Creates the Client object with the webView.
         client = Client(webView)
                 .add(Command("echo") { commandName, data, completion in

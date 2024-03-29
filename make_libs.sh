@@ -34,7 +34,7 @@ cd ../
 
 # Make iOS
 
-cd ./ios
+cd ./ios/kamome-framework
 ./make_framework.sh
-cp -rf ./Output/Release-xcframework/*.xcframework ../$LIBS_DIR/ios
-cd ../
+cp -rf ./Output/Release-xcframework/*.xcframework ../../$LIBS_DIR/ios
+cd ../../

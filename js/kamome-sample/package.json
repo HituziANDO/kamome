@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint ./**/*.{ts,vue} && prettier --check ./**/*.{ts,vue}",
     "lint:fix": "eslint --fix ./**/*.{ts,vue} && prettier --write ./**/*.{ts,vue}",
-    "ios": "rm -rf ../../ios/Sample/KamomeSwift/www/* && cp -r ./dist/* ../../ios/Sample/KamomeSwift/www/",
+    "ios": "rm -rf ../../ios/kamome-ios-sample/KamomeSwift/www/* && cp -r ./dist/* ../../ios/kamome-ios-sample/KamomeSwift/www/",
     "android": "rm -rf ../../android/app/src/main/assets/www/* && cp -r ./dist/* ../../android/app/src/main/assets/www/",
     "copy": "npm run build && npm run ios && npm run android"
   },

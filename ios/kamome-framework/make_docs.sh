@@ -7,6 +7,6 @@ fi
 jazzy \
 --clean \
 --author "Hituzi Ando" \
---author_url https://hituzi-ando.com/ \
---build-tool-arguments -scheme,kamome \
+--author_url https://hituzi-ando.app/ \
+--build-tool-arguments -scheme,"kamome iOS" \
 --output docs/

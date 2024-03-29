@@ -70,5 +70,4 @@ iOSInjectionProject/
 Framework
 Sample/Framework/*.framework
 .build
-docs/*
-!docs/badge.svg
+docs
