@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		V/YTupq57evQ3zTXdK/B52BNAIk=
+		T1oI5ju1sOsByfa0tPWl2Uv21Mc=
 		</data>
 		<key>Resources/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -40,28 +40,28 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			eoXYfuoj7AoKHrwuXr5UZX1k+OBpuBNkgUYz7+fapjY=
+			yeUIvgT26OerC0+FILwe4xv6YM6tUcrz4mMqysWqKyY=
 			</data>
 		</dict>
 		<key>Modules/kamome.swiftmodule/arm64-apple-macos.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			hghHLrdC0jIXrmSfECl5nNjF1IYRjIhzco/XQWjI3I4=
+			Co+eYyvQm8oQSa7BjbSu58SdACzHErGU7fcivu+6Qg0=
 			</data>
 		</dict>
 		<key>Modules/kamome.swiftmodule/arm64-apple-macos.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			eoXYfuoj7AoKHrwuXr5UZX1k+OBpuBNkgUYz7+fapjY=
+			yeUIvgT26OerC0+FILwe4xv6YM6tUcrz4mMqysWqKyY=
 			</data>
 		</dict>
 		<key>Modules/kamome.swiftmodule/arm64-apple-macos.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			LnMD81DKvamrTEui+cC2Ule0rTgi+1SyQlPVcftLxuI=
+			37P3+KLDiG/AtNVf4b34E0j6ucYUcuruzYmnDfyyntE=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
@@ -75,7 +75,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			EAXFuE7eZ6TGP+JJRG2HlCctlzth/2iwo/suaOWtSnY=
+			YaSXykP9N4Z3lZxOn8lsyKW45FQEufzy83i8I4aOTDA=
 			</data>
 		</dict>
 		<key>Resources/PrivacyInfo.xcprivacy</key>

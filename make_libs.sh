@@ -3,6 +3,8 @@
 OUTPUT_DIR=output
 LIBS_DIR=$OUTPUT_DIR/kamome
 
+CREDENTIALS=$1
+
 if [ -e $OUTPUT_DIR ]; then
     rm -rf $OUTPUT_DIR
 fi
@@ -38,6 +40,11 @@ XCFRAMEWORK=kamome.xcframework
 
 cd ./ios/kamome-framework
 ./make_framework.sh
+
+if [ -n "$CREDENTIALS" ]; then
+    codesign --timestamp -v --sign "$CREDENTIALS" ./Output/Release-xcframework/$XCFRAMEWORK
+fi
+
 cp -rf ./Output/Release-xcframework/$XCFRAMEWORK ../../$LIBS_DIR/ios
 if [ -e ../$XCFRAMEWORK ]; then
     rm -rf ../$XCFRAMEWORK
