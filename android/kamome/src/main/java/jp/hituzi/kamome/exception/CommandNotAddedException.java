@@ -1,8 +1,9 @@
 package jp.hituzi.kamome.exception;
 
-public final class CommandNotAddedException extends RuntimeException {
+import androidx.annotation.NonNull;
 
-    public CommandNotAddedException(String commandName) {
+public final class CommandNotAddedException extends RuntimeException {
+    public CommandNotAddedException(@NonNull final String commandName) {
         super(commandName + " command not added.");
     }
 }

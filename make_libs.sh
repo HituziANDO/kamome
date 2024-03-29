@@ -24,12 +24,12 @@ cd ../../
 
 cd ./android
 
-if [ -e ./kamome/release ]; then
-    rm -rf ./kamome/release
+if [ -e ./kamome/build ]; then
+    rm -rf ./kamome/build
 fi
 
-./gradlew makeJar
-cp ./kamome/release/*.jar ../$LIBS_DIR/android
+./gradlew --info publish
+cp ./kamome/build/outputs/aar/kamome-release.aar ../$LIBS_DIR/android/kamome.aar
 cd ../
 
 # Make iOS

@@ -1,7 +1,9 @@
 package jp.hituzi.kamome;
 
-import android.support.annotation.Nullable;
 import android.webkit.WebView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -10,12 +12,13 @@ import java.util.Collection;
 import java.util.Map;
 
 public final class Completion implements Completable {
-
+    @NonNull
     private final WebView webView;
+    @NonNull
     private final String requestId;
     private boolean completed;
 
-    Completion(WebView webView, String requestId) {
+    Completion(@NonNull final WebView webView, @NonNull final String requestId) {
         this.webView = webView;
         this.requestId = requestId;
     }
@@ -31,16 +34,20 @@ public final class Completion implements Completable {
     }
 
     @Override
-    public void resolve(@Nullable Map data) {
-        try {
-            resolve(new JSONObject(data));
-        } catch (Exception e) {
-            reject("Failed to create JSONObject.");
+    public void resolve(@Nullable final Map data) {
+        if (data == null) {
+            resolve((JSONObject) null);
+        } else {
+            try {
+                resolve(new JSONObject(data));
+            } catch (Exception e) {
+                reject("Failed to create JSONObject.");
+            }
         }
     }
 
     @Override
-    public void resolve(@Nullable JSONObject data) {
+    public void resolve(@Nullable final JSONObject data) {
         if (completed) {
             return;
         }
@@ -51,12 +58,12 @@ public final class Completion implements Completable {
     }
 
     @Override
-    public void resolve(@Nullable Collection data) {
+    public void resolve(@Nullable final Collection data) {
         resolve(new JSONArray(data));
     }
 
     @Override
-    public void resolve(@Nullable JSONArray data) {
+    public void resolve(@Nullable final JSONArray data) {
         if (completed) {
             return;
         }
@@ -72,7 +79,7 @@ public final class Completion implements Completable {
     }
 
     @Override
-    public void reject(@Nullable String errorMessage) {
+    public void reject(@Nullable final String errorMessage) {
         if (completed) {
             return;
         }
