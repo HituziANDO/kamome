@@ -44,6 +44,8 @@
 		5E0D509A2BB6A1BE00C8CC3A /* TransferData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50982BB6A1BE00C8CC3A /* TransferData.swift */; };
 		5E0D509C2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D509B2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift */; };
 		5E0D509D2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D509B2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift */; };
+		5E0D509F2BB6A8BC00C8CC3A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5E0D509E2BB6A8BC00C8CC3A /* PrivacyInfo.xcprivacy */; };
+		5E0D50A02BB6A8BC00C8CC3A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5E0D509E2BB6A8BC00C8CC3A /* PrivacyInfo.xcprivacy */; };
 		5E8D4A2A2613254A00BC8771 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED97FF724B8BC6600B84867 /* Client.swift */; };
 		5ED97FF124B8BB1900B84867 /* kamome.h in Headers */ = {isa = PBXBuildFile; fileRef = 5ED97FEF24B8BB1900B84867 /* kamome.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5ED97FF824B8BC6600B84867 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED97FF724B8BC6600B84867 /* Client.swift */; };
@@ -61,6 +63,7 @@
 		5E0D50952BB6A13F00C8CC3A /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
 		5E0D50982BB6A1BE00C8CC3A /* TransferData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferData.swift; sourceTree = "<group>"; };
 		5E0D509B2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToHandleNonExistentCommand.swift; sourceTree = "<group>"; };
+		5E0D509E2BB6A8BC00C8CC3A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5E8D4A1F261324C800BC8771 /* kamome.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = kamome.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ED97FEC24B8BB1900B84867 /* kamome.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = kamome.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ED97FEF24B8BB1900B84867 /* kamome.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kamome.h; sourceTree = "<group>"; };
@@ -89,8 +92,9 @@
 		5ED97FE224B8BB1900B84867 = {
 			isa = PBXGroup;
 			children = (
-				5ED97FEE24B8BB1900B84867 /* src */,
+				5E0D509E2BB6A8BC00C8CC3A /* PrivacyInfo.xcprivacy */,
 				5ED97FED24B8BB1900B84867 /* Products */,
+				5ED97FEE24B8BB1900B84867 /* src */,
 			);
 			sourceTree = "<group>";
 		};
@@ -229,6 +233,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E0D50A02BB6A8BC00C8CC3A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +241,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E0D509F2BB6A8BC00C8CC3A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
