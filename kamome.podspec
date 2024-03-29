@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.license               = { :type => 'MIT', :file => 'LICENSE' }
   s.author                = "Hituzi Ando"
   s.ios.deployment_target = '10.0'
-  s.osx.deployment_target = '10.13'
+  s.osx.deployment_target = '10.15'
   s.source                = { :git => "https://github.com/HituziANDO/kamome.git", :tag => "#{s.version}" }
   #s.source_files         = "ios/kamome-framework/src/*.{swift,h}"
   s.vendored_frameworks   = "ios/kamome.xcframework"
