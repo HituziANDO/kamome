@@ -3,11 +3,12 @@ package jp.hituzi.kamome;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +24,6 @@ import java.util.UUID;
 import jp.hituzi.kamome.exception.CommandNotAddedException;
 
 public final class Client {
-
     public enum HowToHandleNonExistentCommand {
         /**
          * Anyway resolved passing null.
@@ -40,12 +40,10 @@ public final class Client {
     }
 
     public interface ReadyEventListener {
-
         void onReady();
     }
 
     public interface SendMessageCallback {
-
         /**
          * Receives a result from the JavaScript receiver when it processed a task of a command.
          *
@@ -53,16 +51,20 @@ public final class Client {
          * @param result      A result when the native client receives it successfully from the JavaScript receiver.
          * @param error       An error when the native client receives it from the JavaScript receiver. If a task in JavaScript results in successful, the error will be null.
          */
-        void onReceiveResult(String commandName, @Nullable Object result, @Nullable Error error);
+        void onReceiveResult(@NonNull final String commandName, @Nullable final Object result, @Nullable final Error error);
     }
 
+    @NonNull
     private static final String TAG = "Kamome";
+    @NonNull
     private static final String COMMAND_SYN = "_kamomeSYN";
+    @NonNull
     private static final String COMMAND_ACK = "_kamomeACK";
 
     /**
      * How to handle non-existent command.
      */
+    @NonNull
     public HowToHandleNonExistentCommand howToHandleNonExistentCommand = HowToHandleNonExistentCommand.RESOLVED;
     /**
      * A ready event listener.
@@ -71,48 +73,39 @@ public final class Client {
     @Nullable
     public ReadyEventListener readyEventListener;
 
+    @NonNull
     private final WebView webView;
+    @NonNull
     private final Map<String, Command> commands = new HashMap<>();
+    @NonNull
     private final List<Request> requests = new ArrayList<>();
+    @NonNull
     private final WaitForReady waitForReady = new WaitForReady();
     private boolean ready = false;
 
     @SuppressLint("SetJavaScriptEnabled")
-    public Client(WebView webView) {
+    public Client(@NonNull final WebView webView) {
         this.webView = webView;
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(this, "kamomeAndroid");
 
         // Add preset commands.
-        add(new Command(COMMAND_SYN, new Command.Handler() {
+        add(new Command(COMMAND_SYN, (commandName, data, completion) -> {
+            ready = true;
 
-            @Override
-            public void execute(String commandName, @Nullable JSONObject data, Completable completion) {
-                ready = true;
-
-                try {
-                    completion.resolve(new JSONObject()
-                        .put("versionCode", BuildConfig.VERSION_CODE));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            try {
+                completion.resolve(new JSONObject().put("versionCode", BuildConfig.VERSION_CODE));
+            } catch (JSONException e) {
+                Log.e(TAG, "Failed to resolve with versionCode json.", e);
+            }
+        })).add(new Command(COMMAND_ACK, (commandName, data, completion) -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (readyEventListener != null) {
+                    readyEventListener.onReady();
                 }
-            }
-        })).add(new Command(COMMAND_ACK, new Command.Handler() {
+            });
 
-            @Override
-            public void execute(String commandName, @Nullable JSONObject data, Completable completion) {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (readyEventListener != null) {
-                            readyEventListener.onReady();
-                        }
-                    }
-                });
-
-                completion.resolve();
-            }
+            completion.resolve();
         }));
     }
 
@@ -129,7 +122,8 @@ public final class Client {
      * @param command A command.
      * @return Self.
      */
-    public Client add(Command command) {
+    @NonNull
+    public Client add(@NonNull final Command command) {
         commands.put(command.getName(), command);
         return this;
     }
@@ -139,7 +133,7 @@ public final class Client {
      *
      * @param commandName A command name that you will remove.
      */
-    public void remove(String commandName) {
+    public void remove(@NonNull final String commandName) {
         if (hasCommand(commandName)) {
             commands.remove(commandName);
         }
@@ -151,7 +145,7 @@ public final class Client {
      * @param name A command name.
      * @return true if the command of specified name is added, otherwise false.
      */
-    public boolean hasCommand(String name) {
+    public boolean hasCommand(@NonNull final String name) {
         return commands.containsKey(name);
     }
 
@@ -161,7 +155,7 @@ public final class Client {
      * @param commandName A command name.
      * @param callback    A callback.
      */
-    public void send(String commandName, @Nullable SendMessageCallback callback) {
+    public void send(@NonNull final String commandName, @Nullable final SendMessageCallback callback) {
         send((JSONObject) null, commandName, callback);
     }
 
@@ -172,7 +166,7 @@ public final class Client {
      * @param commandName A command name.
      * @param callback    A callback.
      */
-    public void send(@Nullable Map data, String commandName, @Nullable SendMessageCallback callback) {
+    public void send(@Nullable final Map data, @NonNull final String commandName, @Nullable final SendMessageCallback callback) {
         send(data != null ? new JSONObject(data) : null, commandName, callback);
     }
 
@@ -183,7 +177,7 @@ public final class Client {
      * @param commandName A command name.
      * @param callback    A callback.
      */
-    public void send(@Nullable JSONObject data, String commandName, @Nullable SendMessageCallback callback) {
+    public void send(@Nullable final JSONObject data, @NonNull final String commandName, @Nullable final SendMessageCallback callback) {
         String callbackId = addSendMessageCallback(commandName, callback);
         requests.add(new Request(commandName, callbackId, data));
 
@@ -197,7 +191,7 @@ public final class Client {
      * @param commandName A command name.
      * @param callback    A callback.
      */
-    public void send(@Nullable Collection data, String commandName, @Nullable SendMessageCallback callback) {
+    public void send(@Nullable final Collection data, @NonNull final String commandName, @Nullable final SendMessageCallback callback) {
         send(data != null ? new JSONArray(data) : null, commandName, callback);
     }
 
@@ -208,7 +202,7 @@ public final class Client {
      * @param commandName A command name.
      * @param callback    A callback.
      */
-    public void send(@Nullable JSONArray data, String commandName, @Nullable SendMessageCallback callback) {
+    public void send(@Nullable final JSONArray data, @NonNull final String commandName, @Nullable final SendMessageCallback callback) {
         String callbackId = addSendMessageCallback(commandName, callback);
         requests.add(new Request(commandName, callbackId, data));
 
@@ -221,7 +215,7 @@ public final class Client {
      * @param commandName A command name.
      * @param callback    A callback.
      */
-    public void execute(String commandName, @Nullable LocalCompletion.Callback callback) {
+    public void execute(@NonNull final String commandName, @Nullable final LocalCompletion.Callback callback) {
         execute(commandName, (JSONObject) null, callback);
     }
 
@@ -232,7 +226,7 @@ public final class Client {
      * @param data        A data as Map.
      * @param callback    A callback.
      */
-    public void execute(String commandName, @Nullable Map data, @Nullable LocalCompletion.Callback callback) {
+    public void execute(@NonNull final String commandName, @Nullable final Map data, @Nullable final LocalCompletion.Callback callback) {
         handle(commandName, data != null ? new JSONObject(data) : null, new LocalCompletion(callback));
     }
 
@@ -243,7 +237,7 @@ public final class Client {
      * @param data        A data as JSONObject.
      * @param callback    A callback.
      */
-    public void execute(String commandName, @Nullable JSONObject data, @Nullable LocalCompletion.Callback callback) {
+    public void execute(@NonNull final String commandName, @Nullable final JSONObject data, @Nullable final LocalCompletion.Callback callback) {
         handle(commandName, data, new LocalCompletion(callback));
     }
 
@@ -253,7 +247,7 @@ public final class Client {
      * @param message A JSON passed from the JavaScript object.
      */
     @JavascriptInterface
-    public void kamomeSend(String message) {
+    public void kamomeSend(@NonNull final String message) {
         try {
             JSONObject object = new JSONObject(message);
             String requestId = object.getString("id");
@@ -261,11 +255,11 @@ public final class Client {
             JSONObject data = object.isNull("data") ? null : object.getJSONObject("data");
             handle(name, data, new Completion(webView, requestId));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Failed to parse JSON.", e);
         }
     }
 
-    private void handle(String commandName, @Nullable JSONObject data, Completable completion) {
+    private void handle(@NonNull final String commandName, @Nullable final JSONObject data, @NonNull final Completable completion) {
         Command command = commands.get(commandName);
 
         if (command != null) {
@@ -284,37 +278,31 @@ public final class Client {
     }
 
     @NonNull
-    private String addSendMessageCallback(String commandName,
-        @Nullable final SendMessageCallback callback) {
+    private String addSendMessageCallback(@NonNull final String commandName, @Nullable final SendMessageCallback callback) {
         final String callbackId = "_km_" + commandName + "_" + UUID.randomUUID().toString();
 
         // Add a temporary command receiving a result from the JavaScript handler.
-        add(new Command(callbackId, new Command.Handler() {
+        add(new Command(callbackId, (commandName1, data, completion) -> {
+            assert data != null;
+            boolean success = data.optBoolean("success");
 
-            @Override
-            public void execute(String commandName, @Nullable JSONObject data, Completable completion) {
-                assert data != null;
-                boolean success = data.optBoolean("success");
-
-                if (success) {
-                    if (callback != null) {
-                        callback.onReceiveResult(commandName, data.opt("result"), null);
-                    }
-                } else {
-                    String errorMessage = data.optString("error");
-                    Error error = new Error(errorMessage != null && !errorMessage.isEmpty() ?
-                        errorMessage : "UnknownError");
-
-                    if (callback != null) {
-                        callback.onReceiveResult(commandName, null, error);
-                    }
+            if (success) {
+                if (callback != null) {
+                    callback.onReceiveResult(commandName1, data.opt("result"), null);
                 }
+            } else {
+                String errorMessage = data.optString("error");
+                Error error = new Error(!errorMessage.isEmpty() ? errorMessage : "UnknownError");
 
-                completion.resolve();
-
-                // Remove the temporary command.
-                remove(callbackId);
+                if (callback != null) {
+                    callback.onReceiveResult(commandName1, null, error);
+                }
             }
+
+            completion.resolve();
+
+            // Remove the temporary command.
+            remove(callbackId);
         }));
 
         return callbackId;
@@ -325,13 +313,7 @@ public final class Client {
      */
     private void waitForReadyAndSendRequests() {
         if (!ready) {
-            boolean isWaiting = waitForReady.wait(new WaitForReady.Executable() {
-
-                @Override
-                public void onExecute() {
-                    waitForReadyAndSendRequests();
-                }
-            });
+            boolean isWaiting = waitForReady.wait(this::waitForReadyAndSendRequests);
 
             if (!isWaiting) {
                 Log.d(TAG, "Waiting for ready has timed out.");

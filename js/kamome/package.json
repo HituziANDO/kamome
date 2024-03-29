@@ -1,12 +1,51 @@
 {
   "name": "kamome",
-  "license": "MIT",
-  "scripts": {
-    "dev": "NODE_ENV=development webpack --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch": "NODE_ENV=production webpack --config=node_modules/laravel-mix/setup/webpack.config.js --watch",
-    "prod": "NODE_ENV=production  webpack --config=node_modules/laravel-mix/setup/webpack.config.js"
+  "private": false,
+  "version": "5.3.0",
+  "description": "Kamome is a library for iOS, Android, and Flutter apps using the WebView. This library bridges a gap between JavaScript in the WebView and the native code written in Swift, Java, Kotlin, or Dart.",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "types": "dist/types/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
   },
+  "sideEffects": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "preview": "vite preview",
+    "test": "vitest",
+    "lint": "eslint ./**/*.ts && prettier --check ./**/*.ts",
+    "lint:fix": "eslint --fix ./**/*.ts && prettier --write ./**/*.ts",
+    "prepublishOnly": "npm test && npm run build"
+  },
+  "author": "Hituzi Ando",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:HituziANDO/kamome.git"
+  },
+  "homepage": "https://github.com/HituziANDO/kamome",
+  "license": "MIT",
   "devDependencies": {
-    "laravel-mix": "^6.0.34"
+    "@types/jsdom": "^21.1.6",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
+    "jsdom": "^24.0.0",
+    "prettier": "3.2.5",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vitest": "^1.4.0"
   }
 }

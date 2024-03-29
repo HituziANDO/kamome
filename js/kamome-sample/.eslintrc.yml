@@ -1,0 +1,60 @@
+root: true
+env:
+  browser: true
+  es2020: true
+extends:
+  - eslint:recommended
+  - plugin:@typescript-eslint/recommended
+  - plugin:vue/vue3-recommended
+  - prettier
+plugins:
+  - '@typescript-eslint'
+  - import
+parser: 'vue-eslint-parser'
+parserOptions:
+  parser: '@typescript-eslint/parser'
+  ecmaVersion: latest
+  ecmaFeatures:
+    jsx: true
+  sourceType: module
+  project:
+    - './tsconfig.json'
+  extraFileExtensions:
+    - .vue
+rules:
+  # turn on errors for missing imports
+  import/no-unresolved: error
+  '@typescript-eslint/no-var-requires': off
+  '@typescript-eslint/no-unused-vars': off
+  '@typescript-eslint/no-explicit-any': off
+  '@typescript-eslint/explicit-module-boundary-types': off
+  '@typescript-eslint/no-empty-function': off
+  '@typescript-eslint/ban-ts-comment': off
+  '@typescript-eslint/no-this-alias': warn
+  '@typescript-eslint/ban-types': warn
+  no-empty: off
+  no-control-regex: warn
+  import/order:
+    - warn
+    - groups:
+        - builtin
+        - external
+        - parent
+        - sibling
+        - index
+        - object
+        - type
+      pathGroups:
+        - pattern: '@alias/**'
+          group: parent
+          position: before
+      alphabetize:
+        order: asc
+      newlines-between: always
+settings:
+  import/parsers:
+    '@typescript-eslint/parser':
+      - .ts
+      - .tsx
+  import/resolver:
+    typescript: { }

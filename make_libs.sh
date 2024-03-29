@@ -16,26 +16,31 @@ mkdir $LIBS_DIR/ios
 
 cd ./js/kamome
 
-npm run prod
-cp ./src/lib/kamome.js ../../$LIBS_DIR/js
-cp ./public/kamome.js ../../$LIBS_DIR/js/kamome.min.js
+npm run build
+cp -r ./dist/* ../../$LIBS_DIR/js/
 cd ../../
 
 # Make Android
 
 cd ./android
 
-if [ -e ./kamome/release ]; then
-    rm -rf ./kamome/release
+if [ -e ./kamome/build ]; then
+    rm -rf ./kamome/build
 fi
 
-./gradlew makeJar
-cp ./kamome/release/*.jar ../$LIBS_DIR/android
+./gradlew --info publish
+cp ./kamome/build/outputs/aar/kamome-release.aar ../$LIBS_DIR/android/kamome.aar
 cd ../
 
 # Make iOS
 
-cd ./ios
+XCFRAMEWORK=kamome.xcframework
+
+cd ./ios/kamome-framework
 ./make_framework.sh
-cp -rf ./Output/Release-xcframework/*.xcframework ../$LIBS_DIR/ios
-cd ../
+cp -rf ./Output/Release-xcframework/$XCFRAMEWORK ../../$LIBS_DIR/ios
+if [ -e ../$XCFRAMEWORK ]; then
+    rm -rf ../$XCFRAMEWORK
+fi
+cp -rf ./Output/Release-xcframework/$XCFRAMEWORK ..    # to publish
+cd ../../
