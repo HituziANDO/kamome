@@ -24,6 +24,8 @@ class MainActivity : Activity() {
 
         actionBar?.hide()
 
+        Log.d(TAG, "kamome version: ${jp.hituzi.kamome.BuildConfig.VERSION_CODE}")
+
         val webView = findViewById<WebView>(R.id.webView)
 
         // Creates the Client object with the webView.

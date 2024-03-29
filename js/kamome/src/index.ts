@@ -1,5 +1,4 @@
 export * from './platform';
-export * from './KamomeBrowser';
 export * from './KamomeError';
 export * from './KamomeEventData';
 export * from './KamomeEventResult';

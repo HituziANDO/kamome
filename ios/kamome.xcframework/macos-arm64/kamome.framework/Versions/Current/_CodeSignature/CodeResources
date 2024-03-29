@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		gnKQbx38tlw8rgmuC86X/u+WxBA=
+		V/YTupq57evQ3zTXdK/B52BNAIk=
 		</data>
 		<key>Resources/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -33,7 +33,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			R1udYUaxB8KHgR5yu+ROg85TwINfRK3OpcHx/knguHI=
+			w0IccEblp5SUMpUEjeDT0I0JS18k54bzP9lpdQaZjs0=
 			</data>
 		</dict>
 		<key>Modules/kamome.swiftmodule/arm64-apple-macos.private.swiftinterface</key>
@@ -61,7 +61,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			s4O89o7NrFyOqVyzpAjXDeKa7EFnCt5df89byyiySPE=
+			LnMD81DKvamrTEui+cC2Ule0rTgi+1SyQlPVcftLxuI=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
@@ -75,7 +75,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			HW8cnb9ul/4bmEPh9iAOK6AYLDBakRhLdGxXfab87sE=
+			EAXFuE7eZ6TGP+JJRG2HlCctlzth/2iwo/suaOWtSnY=
 			</data>
 		</dict>
 		<key>Resources/PrivacyInfo.xcprivacy</key>
