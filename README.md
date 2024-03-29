@@ -178,6 +178,9 @@ If you build Flutter apps with the WebView, see [kamome_flutter](https://github.
 	
 	```html
 	<script src="/path/to/kamome.umd.js"></script>
+	<script>
+	  const KM = window.Kamome.KM;
+	</script>
 	```
 
 ### 2. iOS App
