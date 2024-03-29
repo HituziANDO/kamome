@@ -16,9 +16,8 @@ mkdir $LIBS_DIR/ios
 
 cd ./js/kamome
 
-npm run prod
-cp ./src/lib/kamome.js ../../$LIBS_DIR/js
-cp ./public/kamome.js ../../$LIBS_DIR/js/kamome.min.js
+npm run build
+cp -r ./dist/* ../../$LIBS_DIR/js/
 cd ../../
 
 # Make Android
