@@ -1,13 +1,14 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+android.buildFeatures.buildConfig true
 
 android {
-    compileSdkVersion 27
+    compileSdk 34
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 27
-        versionCode 1
-        versionName "${LIB_VERSION}"
+        targetSdkVersion 34
 
         buildConfigField "int", "VERSION_CODE", "${LIB_VERSION_CODE}"
 
@@ -21,45 +22,38 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'jp.hituzi.kamome'
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
-task copyAar(type: Copy) {
-    from('build/outputs/aar/')
-    into('release/')
-    include(LIB_NAME + '-release.aar')
-}
-task unzipAar(type: Copy) {
-    from zipTree('release/' + LIB_NAME + '-release.aar')
-    into('release')
-    rename('classes.jar', LIB_NAME + '-' + LIB_VERSION + '.jar')
-}
-task makeJar(type: Delete) {
-    delete 'release/AndroidManifest.xml', 'release/R.txt', 'release/res', 'release/values', 'release/' + LIB_NAME + '-release.aar'
-}
-makeJar.dependsOn(build, copyAar, unzipAar)
-
 // Creates Maven repository
-def repo = new File(rootDir, "repo")
+def repo = file("$rootDir/repo")
 
-apply plugin: 'maven'
-
-uploadArchives {
+// use maven-publish plugin
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'jp.hituzi'
+            artifactId 'kamome'
+            version "${LIB_VERSION}"
+            afterEvaluate {
+                artifact(tasks.getByName("bundleReleaseAar"))
+            }
+        }
+    }
     repositories {
-        mavenDeployer {
-            repository url: "file://${repo.absolutePath}"
-            pom.version = "${LIB_VERSION}"
-            pom.groupId = 'jp.hituzi'
-            pom.artifactId = 'kamome'
+        maven {
+            url = uri("${repo.absolutePath}")
         }
     }
 }
