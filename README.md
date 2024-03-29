@@ -174,20 +174,22 @@ If you build Flutter apps with the WebView, see [kamome_flutter](https://github.
 #### Manual Installation
 
 1. Download latest [Kamome SDK](https://github.com/HituziANDO/kamome/releases)
-
-1. Import kamome.js or kamome.min.js
+1. Import kamome.umd.js
 	
 	```html
-	<script src="/path/to/kamome[.min].js"></script>
+	<script src="/path/to/kamome.umd.js"></script>
 	```
-	
-	Or, you copy all code in [kamome.js](https://github.com/HituziANDO/kamome/blob/master/js/kamome/src/lib/kamome.js) file to your JavaScript.
-	
-1. (Optional) TypeScript
-	
-	If you install kamome.js manually and use TypeScript, you download [kamome.d.ts](https://github.com/HituziANDO/kamome/tree/master/js/kamome/src/kamome.d.ts) file and import it in your project's directory such as `@types`.
 
 ### 2. iOS App
+
+#### Swift Package Manager
+
+Kamome is available through Swift Package Manager. To install it using Xcode, specify the git URL for Kamome.
+	
+	
+```
+https://github.com/HituziANDO/kamome.git
+```
 
 #### CocoaPods
 	
@@ -211,17 +213,9 @@ You run the following command in the Terminal.
 carthage update --use-xcframeworks
 ```
 
-#### Swift Package Manager
-
-Kamome is available through Swift Package Manager. To install it using Xcode, specify the git URL for Kamome.
-	
-	
-```
-https://github.com/HituziANDO/kamome.git
-```
-
 #### Manual Installation
 
+1. Download latest [Kamome SDK](https://github.com/HituziANDO/kamome/releases)
 1. Drag & drop kamome.xcframework into your Xcode project
 1. Click General tab in your target
 1. In Frameworks, Libraries, and Embedded Content, Select "Embed & Sign" for kamome.xcframework
@@ -254,13 +248,14 @@ Add the following code in build.gradle(app level).
 
 ```groovy
 dependencies {		
-    implementation 'jp.hituzi:kamome:5.2.1'
+    implementation 'jp.hituzi:kamome:5.3.0'
 }
 ```
 
 #### Manual Installation
-	
-1. Copy kamome-x.x.x.jar to YOUR_ANDROID_STUDIO_PROJECT/app/libs directory
+
+1. Download latest [Kamome SDK](https://github.com/HituziANDO/kamome/releases)
+1. Copy kamome.aar to YOUR\_ANDROID\_STUDIO\_PROJECT/app/libs directory
 1. Sync Project in AndroidStudio
 
 ## Configuration
@@ -341,6 +336,6 @@ KM.browser
     });
 ```
 
----
+## Sample App
 
-More info, see my [iOS sample project](https://github.com/HituziANDO/kamome/tree/master/ios) and [Android sample project](https://github.com/HituziANDO/kamome/tree/master/android).
+More info, see my [iOS sample project](https://github.com/HituziANDO/kamome/tree/main/ios) and [Android sample project](https://github.com/HituziANDO/kamome/tree/main/android).
