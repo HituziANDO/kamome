@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5ED97FEB24B8BB1900B84867"
-               BuildableName = "kamome_iOS.framework"
+               BuildableName = "kamome.framework"
                BlueprintName = "kamome iOS"
                ReferencedContainer = "container:kamome.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5ED97FEB24B8BB1900B84867"
-            BuildableName = "kamome_iOS.framework"
+            BuildableName = "kamome.framework"
             BlueprintName = "kamome iOS"
             ReferencedContainer = "container:kamome.xcodeproj">
          </BuildableReference>
