@@ -9,11 +9,12 @@
     "preview": "vite preview",
     "lint": "eslint ./**/*.{ts,vue} && prettier --check ./**/*.{ts,vue}",
     "lint:fix": "eslint --fix ./**/*.{ts,vue} && prettier --write ./**/*.{ts,vue}",
-    "ios": "rm -r ../ios/Sample/KamomeSwift/www/* && cp -r ./dist/* ../ios/Sample/KamomeSwift/www/",
-    "android": "rm -r ../android/app/src/main/assets/www/* && cp -r ./dist/* ../android/app/src/main/assets/www/",
+    "ios": "rm -rf ../../ios/Sample/KamomeSwift/www/* && cp -r ./dist/* ../../ios/Sample/KamomeSwift/www/",
+    "android": "rm -rf ../../android/app/src/main/assets/www/* && cp -r ./dist/* ../../android/app/src/main/assets/www/",
     "copy": "npm run build && npm run ios && npm run android"
   },
   "dependencies": {
+    "kamome": "file:../kamome",
     "vue": "^3.4.21",
     "vuetify": "^3.5.12"
   },

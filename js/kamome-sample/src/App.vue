@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import {
+  CommandHandlerReject,
+  CommandHandlerResolve,
+  KamomeEventData,
+  KamomeEventResult,
+  KM,
+} from 'kamome';
 import { onMounted, ref } from 'vue';
-
-type ResolveFunc = (data?: any | null) => void;
-type RejectFunc = (reason?: string) => void;
-
-// @ts-ignore
-const KM = window.Kamome.KM;
 
 const APP_BAR_HEIGHT = 90;
 
@@ -52,36 +53,64 @@ onMounted(() => {
   KM.setDefaultRequestTimeout(3000);
 
   // Add a receiver that receives a message sent by the native client.
-  KM.addReceiver('greeting', (data: any, resolve: ResolveFunc, reject: RejectFunc) => {
-    // The data is the object sent by the native client.
-    messages.value.push(data.greeting);
+  KM.addReceiver(
+    'greeting',
+    (
+      data: KamomeEventData | null,
+      resolve: (data?: KamomeEventResult | null) => void,
+      reject: (reason?: string) => void,
+    ) => {
+      // The data is the object sent by the native client.
+      messages.value.push(data.greeting);
 
-    // Run asynchronous something to do...
-    setTimeout(() => {
-      // Return a result as any object or null to the native client.
-      resolve('OK!');
-      // If the task is failed, call `reject()` function.
-      //reject('Error message')
-    }, 1000);
-  });
+      // Run asynchronous something to do...
+      setTimeout(() => {
+        // Return a result as any object or null to the native client.
+        resolve('OK!');
+        // If the task is failed, call `reject()` function.
+        //reject('Error message')
+      }, 1000);
+    },
+  );
 
   // When there is no Kamome iOS, Android, or Flutter client, that is, when you run with a browser alone,
   // you can register the processing of each command.
   KM.browser
-    .addCommand('echo', (data: any, resolve: ResolveFunc, reject: RejectFunc) => {
-      // Success
-      resolve({ message: data['message'] });
-    })
-    .addCommand('echoError', (data: any, resolve: ResolveFunc, reject: RejectFunc) => {
-      // Failure
-      reject('Echo Error! [\'"+-._~\\@#$%^&*=,/?;:|{}]');
-    })
-    .addCommand('tooLong', (data: any, resolve: ResolveFunc, reject: RejectFunc) => {
-      // Too long process...
-      setTimeout(() => {
-        resolve();
-      }, 30000);
-    })
+    .addCommand(
+      'echo',
+      (
+        data: KamomeEventData | null,
+        resolve: CommandHandlerResolve,
+        reject: CommandHandlerReject,
+      ) => {
+        // Success
+        resolve({ message: data['message'] });
+      },
+    )
+    .addCommand(
+      'echoError',
+      (
+        data: KamomeEventData | null,
+        resolve: CommandHandlerResolve,
+        reject: CommandHandlerReject,
+      ) => {
+        // Failure
+        reject('Echo Error! [\'"+-._~\\@#$%^&*=,/?;:|{}]');
+      },
+    )
+    .addCommand(
+      'tooLong',
+      (
+        data: KamomeEventData | null,
+        resolve: CommandHandlerResolve,
+        reject: CommandHandlerReject,
+      ) => {
+        // Too long process...
+        setTimeout(() => {
+          resolve();
+        }, 30000);
+      },
+    )
     .addCommand('testCommand', () => {})
     .removeCommand('testCommand');
 
