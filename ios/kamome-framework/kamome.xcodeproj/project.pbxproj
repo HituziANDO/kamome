@@ -22,17 +22,50 @@
 
 /* Begin PBXBuildFile section */
 		5E0D507C2BB6866E00C8CC3A /* kamome.h in Headers */ = {isa = PBXBuildFile; fileRef = 5ED97FEF24B8BB1900B84867 /* kamome.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5E8D4A2A2613254A00BC8771 /* Kamome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED97FF724B8BC6600B84867 /* Kamome.swift */; };
+		5E0D507E2BB69D1300C8CC3A /* ConsoleLogAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D507D2BB69D1300C8CC3A /* ConsoleLogAdapter.swift */; };
+		5E0D507F2BB69D1300C8CC3A /* ConsoleLogAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D507D2BB69D1300C8CC3A /* ConsoleLogAdapter.swift */; };
+		5E0D50812BB69E9900C8CC3A /* KamomeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50802BB69E9900C8CC3A /* KamomeError.swift */; };
+		5E0D50822BB69E9900C8CC3A /* KamomeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50802BB69E9900C8CC3A /* KamomeError.swift */; };
+		5E0D50842BB69F2C00C8CC3A /* Messenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50832BB69F2C00C8CC3A /* Messenger.swift */; };
+		5E0D50852BB69F2C00C8CC3A /* Messenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50832BB69F2C00C8CC3A /* Messenger.swift */; };
+		5E0D50872BB69FC500C8CC3A /* WaitForReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */; };
+		5E0D50882BB69FC500C8CC3A /* WaitForReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */; };
+		5E0D508A2BB69FF600C8CC3A /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50892BB69FF600C8CC3A /* Request.swift */; };
+		5E0D508B2BB69FF600C8CC3A /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50892BB69FF600C8CC3A /* Request.swift */; };
+		5E0D508D2BB6A01D00C8CC3A /* Completable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D508C2BB6A01D00C8CC3A /* Completable.swift */; };
+		5E0D508E2BB6A01D00C8CC3A /* Completable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D508C2BB6A01D00C8CC3A /* Completable.swift */; };
+		5E0D50902BB6A03C00C8CC3A /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D508F2BB6A03C00C8CC3A /* Completion.swift */; };
+		5E0D50912BB6A03C00C8CC3A /* Completion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D508F2BB6A03C00C8CC3A /* Completion.swift */; };
+		5E0D50932BB6A09200C8CC3A /* LocalCompletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50922BB6A09200C8CC3A /* LocalCompletion.swift */; };
+		5E0D50942BB6A09200C8CC3A /* LocalCompletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50922BB6A09200C8CC3A /* LocalCompletion.swift */; };
+		5E0D50962BB6A13F00C8CC3A /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50952BB6A13F00C8CC3A /* Command.swift */; };
+		5E0D50972BB6A13F00C8CC3A /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50952BB6A13F00C8CC3A /* Command.swift */; };
+		5E0D50992BB6A1BE00C8CC3A /* TransferData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50982BB6A1BE00C8CC3A /* TransferData.swift */; };
+		5E0D509A2BB6A1BE00C8CC3A /* TransferData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50982BB6A1BE00C8CC3A /* TransferData.swift */; };
+		5E0D509C2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D509B2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift */; };
+		5E0D509D2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D509B2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift */; };
+		5E8D4A2A2613254A00BC8771 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED97FF724B8BC6600B84867 /* Client.swift */; };
 		5ED97FF124B8BB1900B84867 /* kamome.h in Headers */ = {isa = PBXBuildFile; fileRef = 5ED97FEF24B8BB1900B84867 /* kamome.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5ED97FF824B8BC6600B84867 /* Kamome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED97FF724B8BC6600B84867 /* Kamome.swift */; };
+		5ED97FF824B8BC6600B84867 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED97FF724B8BC6600B84867 /* Client.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5E0D507D2BB69D1300C8CC3A /* ConsoleLogAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogAdapter.swift; sourceTree = "<group>"; };
+		5E0D50802BB69E9900C8CC3A /* KamomeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KamomeError.swift; sourceTree = "<group>"; };
+		5E0D50832BB69F2C00C8CC3A /* Messenger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messenger.swift; sourceTree = "<group>"; };
+		5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitForReady.swift; sourceTree = "<group>"; };
+		5E0D50892BB69FF600C8CC3A /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		5E0D508C2BB6A01D00C8CC3A /* Completable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Completable.swift; sourceTree = "<group>"; };
+		5E0D508F2BB6A03C00C8CC3A /* Completion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Completion.swift; sourceTree = "<group>"; };
+		5E0D50922BB6A09200C8CC3A /* LocalCompletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalCompletion.swift; sourceTree = "<group>"; };
+		5E0D50952BB6A13F00C8CC3A /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
+		5E0D50982BB6A1BE00C8CC3A /* TransferData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferData.swift; sourceTree = "<group>"; };
+		5E0D509B2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToHandleNonExistentCommand.swift; sourceTree = "<group>"; };
 		5E8D4A1F261324C800BC8771 /* kamome.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = kamome.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ED97FEC24B8BB1900B84867 /* kamome.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = kamome.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ED97FEF24B8BB1900B84867 /* kamome.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kamome.h; sourceTree = "<group>"; };
 		5ED97FF024B8BB1900B84867 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5ED97FF724B8BC6600B84867 /* Kamome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kamome.swift; sourceTree = "<group>"; };
+		5ED97FF724B8BC6600B84867 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,9 +106,20 @@
 		5ED97FEE24B8BB1900B84867 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				5ED97FF724B8BC6600B84867 /* Client.swift */,
+				5E0D50952BB6A13F00C8CC3A /* Command.swift */,
+				5E0D508C2BB6A01D00C8CC3A /* Completable.swift */,
+				5E0D508F2BB6A03C00C8CC3A /* Completion.swift */,
+				5E0D507D2BB69D1300C8CC3A /* ConsoleLogAdapter.swift */,
+				5E0D509B2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift */,
 				5ED97FF024B8BB1900B84867 /* Info.plist */,
 				5ED97FEF24B8BB1900B84867 /* kamome.h */,
-				5ED97FF724B8BC6600B84867 /* Kamome.swift */,
+				5E0D50802BB69E9900C8CC3A /* KamomeError.swift */,
+				5E0D50922BB6A09200C8CC3A /* LocalCompletion.swift */,
+				5E0D50832BB69F2C00C8CC3A /* Messenger.swift */,
+				5E0D50892BB69FF600C8CC3A /* Request.swift */,
+				5E0D50982BB6A1BE00C8CC3A /* TransferData.swift */,
+				5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -222,7 +266,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E8D4A2A2613254A00BC8771 /* Kamome.swift in Sources */,
+				5E0D50942BB6A09200C8CC3A /* LocalCompletion.swift in Sources */,
+				5E0D50822BB69E9900C8CC3A /* KamomeError.swift in Sources */,
+				5E0D509A2BB6A1BE00C8CC3A /* TransferData.swift in Sources */,
+				5E0D508B2BB69FF600C8CC3A /* Request.swift in Sources */,
+				5E0D50972BB6A13F00C8CC3A /* Command.swift in Sources */,
+				5E0D509D2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift in Sources */,
+				5E0D507F2BB69D1300C8CC3A /* ConsoleLogAdapter.swift in Sources */,
+				5E0D50882BB69FC500C8CC3A /* WaitForReady.swift in Sources */,
+				5E0D508E2BB6A01D00C8CC3A /* Completable.swift in Sources */,
+				5E0D50912BB6A03C00C8CC3A /* Completion.swift in Sources */,
+				5E8D4A2A2613254A00BC8771 /* Client.swift in Sources */,
+				5E0D50852BB69F2C00C8CC3A /* Messenger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,7 +285,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5ED97FF824B8BC6600B84867 /* Kamome.swift in Sources */,
+				5E0D50932BB6A09200C8CC3A /* LocalCompletion.swift in Sources */,
+				5E0D50812BB69E9900C8CC3A /* KamomeError.swift in Sources */,
+				5E0D50992BB6A1BE00C8CC3A /* TransferData.swift in Sources */,
+				5E0D508A2BB69FF600C8CC3A /* Request.swift in Sources */,
+				5E0D50962BB6A13F00C8CC3A /* Command.swift in Sources */,
+				5E0D509C2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift in Sources */,
+				5E0D507E2BB69D1300C8CC3A /* ConsoleLogAdapter.swift in Sources */,
+				5E0D50872BB69FC500C8CC3A /* WaitForReady.swift in Sources */,
+				5E0D508D2BB6A01D00C8CC3A /* Completable.swift in Sources */,
+				5E0D50902BB6A03C00C8CC3A /* Completion.swift in Sources */,
+				5ED97FF824B8BC6600B84867 /* Client.swift in Sources */,
+				5E0D50842BB69F2C00C8CC3A /* Messenger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
