@@ -1,9 +1,9 @@
+import { KamomeBrowser } from './KamomeBrowser.ts';
 import { KamomeError } from './KamomeError';
 import { KamomeEventData } from './KamomeEventData';
 import { KamomeEventResult } from './KamomeEventResult';
 import { KamomeRequest } from './KamomeRequest';
 import { VERSION_CODE } from './VERSION_CODE';
-import { WebBrowser } from './WebBrowser';
 import { AndroidPlatform, FlutterPlatform, IosPlatform } from './platform';
 import { undefinedToNull } from './util/undefinedToNull';
 import { uuid } from './util/uuid';
@@ -27,7 +27,7 @@ const COMMAND_ACK: string = '_kamomeACK';
 const android = new AndroidPlatform();
 const iOS = new IosPlatform();
 const flutter = new FlutterPlatform();
-const browser = new WebBrowser();
+const browser = new KamomeBrowser();
 
 let isReady = false;
 let retryCountForReady = 0;

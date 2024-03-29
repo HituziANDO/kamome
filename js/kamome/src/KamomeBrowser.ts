@@ -13,7 +13,7 @@ export type CommandHandler = (
   reject: CommandHandlerReject,
 ) => void;
 
-export class WebBrowser {
+export class KamomeBrowser {
   constructor(private handlerDict: { [name: string]: CommandHandler } = {}) {}
 
   /**
@@ -34,7 +34,7 @@ export class WebBrowser {
    * @param handler A handler.
    * @returns This instance.
    */
-  addCommand(name: string, handler: CommandHandler): WebBrowser {
+  addCommand(name: string, handler: CommandHandler): KamomeBrowser {
     this.handlerDict[name] = handler;
     return this;
   }
@@ -45,7 +45,7 @@ export class WebBrowser {
    * @param name A command name that you will remove.
    * @returns This instance.
    */
-  removeCommand(name: string): WebBrowser {
+  removeCommand(name: string): KamomeBrowser {
     if (this.hasCommand(name)) {
       delete this.handlerDict[name];
     }
