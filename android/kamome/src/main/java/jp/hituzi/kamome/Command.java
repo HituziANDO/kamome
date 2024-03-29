@@ -1,30 +1,31 @@
 package jp.hituzi.kamome;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.json.JSONObject;
 
 public final class Command {
-
     public interface Handler {
-
-        void execute(String commandName, @Nullable JSONObject data, Completable completion);
+        void execute(@NonNull String commandName, @Nullable JSONObject data, @NonNull Completable completion);
     }
 
-    private String name;
+    @NonNull
+    private final String name;
     @Nullable
-    private Handler handler;
+    private final Handler handler;
 
-    public Command(String name, @Nullable Handler handler) {
+    public Command(@NonNull final String name, @Nullable final Handler handler) {
         this.name = name;
         this.handler = handler;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    void execute(@Nullable JSONObject data, Completable completion) {
+    void execute(@Nullable final JSONObject data, @NonNull final Completable completion) {
         if (handler != null) {
             handler.execute(name, data, completion);
         }
