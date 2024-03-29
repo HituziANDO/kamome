@@ -34,7 +34,13 @@ cd ../
 
 # Make iOS
 
+XCFRAMEWORK=kamome.xcframework
+
 cd ./ios/kamome-framework
 ./make_framework.sh
-cp -rf ./Output/Release-xcframework/*.xcframework ../../$LIBS_DIR/ios
+cp -rf ./Output/Release-xcframework/$XCFRAMEWORK ../../$LIBS_DIR/ios
+if [ -e ../$XCFRAMEWORK ]; then
+    rm -rf ../$XCFRAMEWORK
+fi
+cp -rf ./Output/Release-xcframework/$XCFRAMEWORK ..    # to publish
 cd ../../
