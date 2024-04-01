@@ -21,8 +21,8 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "kamome",
-            path: "ios/kamome-framework",
-            exclude: ["make_docs.sh"],
+            path: "ios/kamome-framework/src",
+            exclude: ["Info.plist", "kamome.h"],
             resources: [.copy("PrivacyInfo.xcprivacy")]),
 //        .binaryTarget(name: "kamome", path: "ios/kamome.xcframework"),
     ]

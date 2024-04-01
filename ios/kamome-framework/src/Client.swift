@@ -25,7 +25,7 @@ import Foundation
 import WebKit
 
 /// The version code of the Kamome framework.
-public let kamomeVersionCode = 50301
+public let kamomeVersionCode = 50302
 
 /// Receives a result from the JavaScript receiver when it processed a task of a command.
 /// An error occurs when the native client receives it from the JavaScript receiver, otherwise it will be null.
