@@ -9,7 +9,7 @@ const processEnv = process.env;
 // https://vitejs.dev/config/
 export default defineConfig({
   define: {
-    'process.env': processEnv,
+    'process.env.NODE_ENV': `"${processEnv.NODE_ENV}"`,
   },
   plugins: [vue()],
   build: {
