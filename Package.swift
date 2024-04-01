@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "kamome",
-    platforms: [.iOS(.v12), .macOS(.v10_13)],
+    platforms: [.iOS(.v12), .macOS(.v10_15)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -19,16 +19,11 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
-//        .target(
-//            name: "kamome",
-//            dependencies: [],
-//            path: "ios/src",
-//            exclude:["Info.plist", "kamome.h"]),
-//        .testTarget(
-//            name: "kamomeTests",
-//            dependencies: ["kamome"],
-//            path: "ios/Tests",
-//            sources: ["kamomeTests"]),
-        .binaryTarget(name: "kamome", path: "ios/kamome.xcframework"),
+        .target(
+            name: "kamome",
+            path: "ios/kamome-framework",
+            exclude: ["make_docs.sh"],
+            resources: [.copy("PrivacyInfo.xcprivacy")]),
+//        .binaryTarget(name: "kamome", path: "ios/kamome.xcframework"),
     ]
 )
