@@ -27,7 +27,7 @@ import WebKit
 open class Completion: Completable {
     private let requestID: String
 
-    private weak var webView: WKWebView!
+    private weak var webView: WKWebView?
     private var completed = false
 
     public init(webView: WKWebView, requestID: String) {
@@ -40,9 +40,7 @@ open class Completion: Completable {
     }
 
     public func resolve() {
-        if completed {
-            return
-        }
+        guard !completed, let webView else { return }
 
         completed = true
 
@@ -50,9 +48,7 @@ open class Completion: Completable {
     }
 
     public func resolve(_ data: [String: Any?]) {
-        if completed {
-            return
-        }
+        guard !completed, let webView else { return }
 
         completed = true
 
@@ -60,9 +56,7 @@ open class Completion: Completable {
     }
 
     public func resolve(_ data: [Any?]) {
-        if completed {
-            return
-        }
+        guard !completed, let webView else { return }
 
         completed = true
 
@@ -74,9 +68,7 @@ open class Completion: Completable {
     }
 
     public func reject(_ errorMessage: String?) {
-        if completed {
-            return
-        }
+        guard !completed, let webView else { return }
 
         completed = true
 
