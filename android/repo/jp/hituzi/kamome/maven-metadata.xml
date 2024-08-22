@@ -3,8 +3,8 @@
   <groupId>jp.hituzi</groupId>
   <artifactId>kamome</artifactId>
   <versioning>
-    <latest>5.3.3</latest>
-    <release>5.3.3</release>
+    <latest>5.3.4</latest>
+    <release>5.3.4</release>
     <versions>
       <version>1.3.0</version>
       <version>1.4.0</version>
@@ -22,7 +22,8 @@
       <version>5.2.1</version>
       <version>5.3.0</version>
       <version>5.3.3</version>
+      <version>5.3.4</version>
     </versions>
-    <lastUpdated>20240401064915</lastUpdated>
+    <lastUpdated>20240822021757</lastUpdated>
   </versioning>
 </metadata>
