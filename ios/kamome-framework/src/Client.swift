@@ -50,6 +50,8 @@ open class Client: NSObject {
     private var requests = [Request]()
     private let waitForReady = WaitForReady()
 
+    private let locker = NSLock()
+
     /// - Parameters:
     ///   - webView: A webView for this framework.
     public init(_ webView: WKWebView) {
@@ -76,7 +78,9 @@ open class Client: NSObject {
     ///   - command: A command object.
     @discardableResult
     public func add(_ command: Command) -> Client {
-        commands[command.name] = command
+        locker.withLock {
+            commands[command.name] = command
+        }
         return self
     }
 
@@ -86,13 +90,17 @@ open class Client: NSObject {
     ///   - commandName: A command name that you will remove.
     public func remove(_ commandName: String) {
         if hasCommand(commandName) {
-            commands.removeValue(forKey: commandName)
+            _ = locker.withLock {
+                commands.removeValue(forKey: commandName)
+            }
         }
     }
 
     /// Tells whether specified command is added.
     public func hasCommand(_ name: String) -> Bool {
-        commands.contains { $0.key == name }
+        locker.withLock {
+            commands.contains { $0.key == name }
+        }
     }
 
     /// Sends a message to the JavaScript receiver.
@@ -102,7 +110,9 @@ open class Client: NSObject {
     ///   - callback: A callback.
     public func send(_ commandName: String, callback: SendMessageCallback? = nil) {
         let callbackID = addSendMessageCallback(callback, commandName: commandName)
-        requests.append(Request(name: commandName, callbackID: callbackID, data: nil))
+        locker.withLock {
+            requests.append(Request(name: commandName, callbackID: callbackID, data: nil))
+        }
 
         waitForReadyAndSendRequests()
     }
@@ -115,7 +125,9 @@ open class Client: NSObject {
     ///   - callback: A callback.
     public func send(_ data: [String: Any?], commandName: String, callback: SendMessageCallback? = nil) {
         let callbackID = addSendMessageCallback(callback, commandName: commandName)
-        requests.append(Request(name: commandName, callbackID: callbackID, data: data))
+        locker.withLock {
+            requests.append(Request(name: commandName, callbackID: callbackID, data: data))
+        }
 
         waitForReadyAndSendRequests()
     }
@@ -128,7 +140,9 @@ open class Client: NSObject {
     ///   - callback: A callback.
     public func send(_ data: [Any?], commandName: String, callback: SendMessageCallback? = nil) {
         let callbackID = addSendMessageCallback(callback, commandName: commandName)
-        requests.append(Request(name: commandName, callbackID: callbackID, data: data))
+        locker.withLock {
+            requests.append(Request(name: commandName, callbackID: callbackID, data: data))
+        }
 
         waitForReadyAndSendRequests()
     }
@@ -171,8 +185,10 @@ extension Client: WKScriptMessageHandler {
 private extension Client {
     func handle(_ commandName: String, data: TransferData?, completion: Completable) throws {
         if hasCommand(commandName) {
-            let command = commands[commandName]
-            command?.execute(data: data, completion: completion)
+            locker.withLock {
+                let command = commands[commandName]
+                command?.execute(data: data, completion: completion)
+            }
         }
         else {
             switch howToHandleNonExistentCommand {
@@ -232,9 +248,11 @@ private extension Client {
             return
         }
 
-        requests.forEach { try? Messenger.sendRequest($0, with: webView) }
+        locker.withLock {
+            requests.forEach { try? Messenger.sendRequest($0, with: webView) }
 
-        // Reset
-        requests.removeAll()
+            // Reset
+            requests.removeAll()
+        }
     }
 }
