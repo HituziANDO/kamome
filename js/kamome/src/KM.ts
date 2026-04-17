@@ -332,7 +332,7 @@ export class KM {
     if (!isReady) {
       if (retryCountForReady < 50) {
         retryCountForReady++;
-        setTimeout(() => KM.waitForReadyAndSendRequests(), 200);
+        setTimeout(() => this.waitForReadyAndSendRequests(), 200);
       } else {
         console.error('[kamome.js] Waiting for ready has timed out.');
       }
