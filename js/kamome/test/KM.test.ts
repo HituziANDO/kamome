@@ -14,13 +14,37 @@ window.dispatchEvent(new Event('DOMContentLoaded'));
 
 function waitForReady(timeout = 5000): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('KM did not become ready')), timeout);
+    let done = false;
+    let pollTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const cleanup = () => {
+      clearTimeout(timer);
+      if (pollTimer !== null) {
+        clearTimeout(pollTimer);
+        pollTimer = null;
+      }
+    };
+
+    const timer = setTimeout(() => {
+      if (done) {
+        return;
+      }
+      done = true;
+      cleanup();
+      reject(new Error('KM did not become ready'));
+    }, timeout);
+
     const check = () => {
+      if (done) {
+        return;
+      }
+
       if (KM.isReady()) {
-        clearTimeout(timer);
+        done = true;
+        cleanup();
         resolve();
       } else {
-        setTimeout(check, 10);
+        pollTimer = setTimeout(check, 10);
       }
     };
     check();
