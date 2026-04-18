@@ -149,12 +149,13 @@ open class Client: NSObject {
     ///   - data: A data as Dictionary.
     ///   - callback: A callback.
     public func execute(_ commandName: String, data: TransferData?, callback: LocalCompletion.Callback?) {
+        let completion = LocalCompletion(callback: callback)
         do {
-            try handle(commandName, data: data, completion: LocalCompletion(callback: callback))
+            try handle(commandName, data: data, completion: completion)
         }
         catch {
             print("[Kamome] execute failed: \(error)")
-            callback?(nil, "\(error)")
+            completion.reject("\(error)")
         }
     }
 }
