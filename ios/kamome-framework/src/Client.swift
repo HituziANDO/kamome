@@ -149,7 +149,14 @@ open class Client: NSObject {
     ///   - data: A data as Dictionary.
     ///   - callback: A callback.
     public func execute(_ commandName: String, data: TransferData?, callback: LocalCompletion.Callback?) {
-        try! handle(commandName, data: data, completion: LocalCompletion(callback: callback))
+        let completion = LocalCompletion(callback: callback)
+        do {
+            try handle(commandName, data: data, completion: completion)
+        }
+        catch {
+            print("[Kamome] execute failed: \(error)")
+            completion.reject("\(error)")
+        }
     }
 }
 
@@ -162,9 +169,24 @@ extension Client: WKScriptMessageHandler {
               let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         else { return }
 
+        guard let requestID = obj["id"] as? String else { return }
+
+        let completion = Completion(webView: webView, requestID: requestID)
+
+        guard let name = obj["name"] as? String else {
+            print("[Kamome] invalid message: missing 'name'")
+            completion.reject("InvalidMessage")
+            return
+        }
+
         let params = obj["data"] as? TransferData
-        let completion = Completion(webView: webView, requestID: obj["id"] as! String)
-        try! handle(obj["name"] as! String, data: params, completion: completion)
+        do {
+            try handle(name, data: params, completion: completion)
+        }
+        catch {
+            print("[Kamome] handle failed: \(error)")
+            completion.reject("\(error)")
+        }
     }
 }
 
