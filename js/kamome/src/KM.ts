@@ -16,7 +16,7 @@ export type CommandHandler = (
 ) => void;
 
 export class WebPlatform {
-  constructor(private handlerDict: { [name: string]: CommandHandler } = {}) {}
+  constructor(private handlerDict: { [name: string]: CommandHandler } = {}) { }
 
   /**
    * Adds a command when it will be processed in the browser not the WebView.
@@ -157,7 +157,7 @@ export class KM {
     private receivers: { [commandName: string]: OnReceiver } = {},
     private requests: { [id: string]: KamomeRequest } = {},
     private requestTimeout = 10000,
-  ) {}
+  ) { }
 
   private static instance = new KM();
 
@@ -278,7 +278,7 @@ export class KM {
     data?: KamomeEventData | null,
     timeoutMillis?: number | null,
   ): Promise<KamomeEventResult | null> {
-    const timeout = timeoutMillis || this.instance.requestTimeout;
+    const timeout = timeoutMillis ?? this.instance.requestTimeout;
 
     return new Promise<KamomeEventResult | null>((resolve, reject) => {
       const id = uuid();

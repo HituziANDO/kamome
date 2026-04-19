@@ -236,6 +236,73 @@ describe('KM.send timeout', () => {
     expect(error).toContain('RequestTimeout');
     expect(error).toContain('slowCmd');
   });
+
+  it('should disable timeout when timeoutMillis is 0', async () => {
+    // Reduce the default so the old buggy `||` fallback (treating 0 as falsy)
+    // would fire a short timeout. Under the fix, 0 must disable the timer.
+    KM.setDefaultRequestTimeout(100);
+    try {
+      let resolveHandler: (() => void) | null = null;
+      KM.browser.addCommand('slowCmd', (_data, resolve) => {
+        resolveHandler = () => resolve({ done: true });
+      });
+
+      const sendPromise = KM.send('slowCmd', null, 0);
+
+      // Fire execCommand's setTimeout(0) so the handler captures resolveHandler
+      await vi.advanceTimersByTimeAsync(1);
+      // Well past the (reduced) default timeout — no RequestTimeout must fire
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(resolveHandler).not.toBeNull();
+      resolveHandler!();
+
+      await expect(sendPromise).resolves.toEqual({ done: true });
+    } finally {
+      KM.setDefaultRequestTimeout(10000);
+    }
+  });
+
+  it('should disable timeout when timeoutMillis is negative', async () => {
+    KM.setDefaultRequestTimeout(100);
+    try {
+      let resolveHandler: (() => void) | null = null;
+      KM.browser.addCommand('slowCmd', (_data, resolve) => {
+        resolveHandler = () => resolve({ done: true });
+      });
+
+      const sendPromise = KM.send('slowCmd', null, -1);
+
+      await vi.advanceTimersByTimeAsync(1);
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(resolveHandler).not.toBeNull();
+      resolveHandler!();
+
+      await expect(sendPromise).resolves.toEqual({ done: true });
+    } finally {
+      KM.setDefaultRequestTimeout(10000);
+    }
+  });
+
+  it('should fall back to default timeout when timeoutMillis is null', async () => {
+    KM.setDefaultRequestTimeout(100);
+    try {
+      KM.browser.addCommand('slowCmd', () => {
+        // Intentionally never resolves
+      });
+
+      const promise = KM.send('slowCmd', null, null).catch((e: string) => e);
+
+      await vi.advanceTimersByTimeAsync(1);
+      await vi.advanceTimersByTimeAsync(200);
+
+      const error = await promise;
+      expect(error).toContain('RequestTimeout');
+    } finally {
+      KM.setDefaultRequestTimeout(10000);
+    }
+  });
 });
 
 describe('WebPlatform', () => {
