@@ -16,7 +16,7 @@ export type CommandHandler = (
 ) => void;
 
 export class WebPlatform {
-  constructor(private handlerDict: { [name: string]: CommandHandler } = {}) { }
+  constructor(private handlerDict: { [name: string]: CommandHandler } = {}) {}
 
   /**
    * Adds a command when it will be processed in the browser not the WebView.
