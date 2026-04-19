@@ -59,7 +59,11 @@ public final class Completion implements Completable {
 
     @Override
     public void resolve(@Nullable final Collection data) {
-        resolve(new JSONArray(data));
+        if (data == null) {
+            resolve((JSONArray) null);
+        } else {
+            resolve(new JSONArray(data));
+        }
     }
 
     @Override

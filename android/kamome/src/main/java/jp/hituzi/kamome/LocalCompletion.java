@@ -26,11 +26,11 @@ public final class LocalCompletion implements Completable {
         void onRejected(@NonNull String errorMessage);
     }
 
-    @NonNull
+    @Nullable
     private final Callback callback;
     private boolean completed;
 
-    LocalCompletion(@NonNull final Callback callback) {
+    LocalCompletion(@Nullable final Callback callback) {
         this.callback = callback;
     }
 
@@ -65,12 +65,18 @@ public final class LocalCompletion implements Completable {
 
         completed = true;
 
-        callback.onResolved(data);
+        if (callback != null) {
+            callback.onResolved(data);
+        }
     }
 
     @Override
     public void resolve(@Nullable final Collection data) {
-        resolve(new JSONArray(data));
+        if (data == null) {
+            resolve((JSONArray) null);
+        } else {
+            resolve(new JSONArray(data));
+        }
     }
 
     @Override
@@ -81,7 +87,9 @@ public final class LocalCompletion implements Completable {
 
         completed = true;
 
-        callback.onResolved(data);
+        if (callback != null) {
+            callback.onResolved(data);
+        }
     }
 
     @Override
@@ -96,6 +104,10 @@ public final class LocalCompletion implements Completable {
         }
 
         completed = true;
+
+        if (callback == null) {
+            return;
+        }
 
         if (errorMessage != null && !errorMessage.isEmpty()) {
             callback.onRejected(errorMessage);
