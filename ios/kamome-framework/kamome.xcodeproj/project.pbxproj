@@ -30,6 +30,8 @@
 		5E0D50852BB69F2C00C8CC3A /* Messenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50832BB69F2C00C8CC3A /* Messenger.swift */; };
 		5E0D50872BB69FC500C8CC3A /* WaitForReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */; };
 		5E0D50882BB69FC500C8CC3A /* WaitForReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */; };
+		5E0D60012BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D60002BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift */; };
+		5E0D60022BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D60002BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift */; };
 		5E0D508A2BB69FF600C8CC3A /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50892BB69FF600C8CC3A /* Request.swift */; };
 		5E0D508B2BB69FF600C8CC3A /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50892BB69FF600C8CC3A /* Request.swift */; };
 		5E0D508D2BB6A01D00C8CC3A /* Completable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D508C2BB6A01D00C8CC3A /* Completable.swift */; };
@@ -56,6 +58,7 @@
 		5E0D50802BB69E9900C8CC3A /* KamomeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KamomeError.swift; sourceTree = "<group>"; };
 		5E0D50832BB69F2C00C8CC3A /* Messenger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messenger.swift; sourceTree = "<group>"; };
 		5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitForReady.swift; sourceTree = "<group>"; };
+		5E0D60002BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakScriptMessageHandler.swift; sourceTree = "<group>"; };
 		5E0D50892BB69FF600C8CC3A /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		5E0D508C2BB6A01D00C8CC3A /* Completable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Completable.swift; sourceTree = "<group>"; };
 		5E0D508F2BB6A03C00C8CC3A /* Completion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Completion.swift; sourceTree = "<group>"; };
@@ -124,6 +127,7 @@
 				5E0D50892BB69FF600C8CC3A /* Request.swift */,
 				5E0D50982BB6A1BE00C8CC3A /* TransferData.swift */,
 				5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */,
+				5E0D60002BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -280,6 +284,7 @@
 				5E0D509D2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift in Sources */,
 				5E0D507F2BB69D1300C8CC3A /* ConsoleLogAdapter.swift in Sources */,
 				5E0D50882BB69FC500C8CC3A /* WaitForReady.swift in Sources */,
+				5E0D60022BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift in Sources */,
 				5E0D508E2BB6A01D00C8CC3A /* Completable.swift in Sources */,
 				5E0D50912BB6A03C00C8CC3A /* Completion.swift in Sources */,
 				5E8D4A2A2613254A00BC8771 /* Client.swift in Sources */,
@@ -299,6 +304,7 @@
 				5E0D509C2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift in Sources */,
 				5E0D507E2BB69D1300C8CC3A /* ConsoleLogAdapter.swift in Sources */,
 				5E0D50872BB69FC500C8CC3A /* WaitForReady.swift in Sources */,
+				5E0D60012BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift in Sources */,
 				5E0D508D2BB6A01D00C8CC3A /* Completable.swift in Sources */,
 				5E0D50902BB6A03C00C8CC3A /* Completion.swift in Sources */,
 				5ED97FF824B8BC6600B84867 /* Client.swift in Sources */,
