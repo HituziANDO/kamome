@@ -55,7 +55,13 @@ open class Client: NSObject {
     public init(_ webView: WKWebView) {
         super.init()
         self.webView = webView
-        self.webView!.configuration.userContentController.add(self, name: Self.scriptMessageHandlerName)
+        // Use a weak proxy so WKUserContentController does not retain `self`.
+        // This lets the owner release the Client without having to detach the
+        // script message handler manually.
+        webView.configuration.userContentController.add(
+            WeakScriptMessageHandler(delegate: self),
+            name: Self.scriptMessageHandlerName
+        )
 
         // Add preset commands.
         self.add(Command(Self.commandSYN) { [weak self] _, _, completion in
@@ -68,6 +74,12 @@ open class Client: NSObject {
                 }
                 completion.resolve()
             })
+    }
+
+    deinit {
+        webView?.configuration.userContentController.removeScriptMessageHandler(
+            forName: Self.scriptMessageHandlerName
+        )
     }
 
     /// Adds a command called by the JavaScript code.
@@ -212,7 +224,9 @@ private extension Client {
         let callbackID = "_km_\(commandName)_\(UUID().uuidString)"
 
         // Add a temporary command receiving a result from the JavaScript handler.
-        add(Command(callbackID) { name, data, completion in
+        // Capture `self` weakly to avoid a retain cycle
+        // (commands -> Command -> closure -> Client).
+        add(Command(callbackID) { [weak self] name, data, completion in
             if let data {
                 if let success = data["success"] as? Bool, success {
                     callback?(name, data["result"]!, nil)
@@ -235,7 +249,7 @@ private extension Client {
             completion.resolve()
 
             // Remove the temporary command.
-            self.remove(callbackID)
+            self?.remove(callbackID)
         })
 
         return callbackID
