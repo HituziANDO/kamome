@@ -104,7 +104,7 @@ open class Client: NSObject {
 
     /// Tells whether specified command is added.
     public func hasCommand(_ name: String) -> Bool {
-        commands.contains { $0.key == name }
+        commands[name] != nil
     }
 
     /// Sends a message to the JavaScript receiver.
