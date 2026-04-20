@@ -229,7 +229,12 @@ private extension Client {
         add(Command(callbackID) { [weak self] name, data, completion in
             if let data {
                 if let success = data["success"] as? Bool, success {
-                    callback?(name, data["result"]!, nil)
+                    // `data["result"]` is `Any??` (Dictionary subscript wraps the
+                    // stored Any? in another Optional). `?? nil` flattens a missing
+                    // key to a single-level nil so callers aren't surprised by a
+                    // force-unwrap crash when JS sends `{ success: true }` with no
+                    // `result` key.
+                    callback?(name, data["result"] ?? nil, nil)
                 }
                 else {
                     let reason: String
