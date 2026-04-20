@@ -3,8 +3,8 @@ import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vite
 import { KM, WebPlatform } from '../src';
 import { KamomeError } from '../src/KamomeError';
 import { VERSION_CODE } from '../src/VERSION_CODE';
-import { uuid } from '../src/util/uuid';
 import { undefinedToNull } from '../src/util/undefinedToNull';
+import { uuid } from '../src/util/uuid';
 
 // Trigger KM initialization.
 // The KM module registers a DOMContentLoaded listener at import time,
@@ -207,6 +207,28 @@ describe('KM.send (browser mode)', () => {
     const result = await KM.send('testCmd');
     expect(result).toEqual({ received: null });
   });
+
+  it('should invoke each handler exactly once when multiple sends are queued synchronously', async () => {
+    const handler1 = vi.fn((_data, resolve) => resolve({ id: 1 }));
+    const handler2 = vi.fn((_data, resolve) => resolve({ id: 2 }));
+    const handler3 = vi.fn((_data, resolve) => resolve({ id: 3 }));
+    KM.browser.addCommand('cmdA', handler1);
+    KM.browser.addCommand('cmdB', handler2);
+    KM.browser.addCommand('cmdC', handler3);
+
+    try {
+      const results = await Promise.all([KM.send('cmdA'), KM.send('cmdB'), KM.send('cmdC')]);
+
+      expect(results).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }]);
+      expect(handler1).toHaveBeenCalledTimes(1);
+      expect(handler2).toHaveBeenCalledTimes(1);
+      expect(handler3).toHaveBeenCalledTimes(1);
+    } finally {
+      KM.browser.removeCommand('cmdA');
+      KM.browser.removeCommand('cmdB');
+      KM.browser.removeCommand('cmdC');
+    }
+  });
 });
 
 describe('KM.send timeout', () => {
@@ -354,9 +376,7 @@ describe('WebPlatform', () => {
 describe('uuid', () => {
   it('should generate a valid UUID v4 format', () => {
     const id = uuid();
-    expect(id).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
-    );
+    expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
   });
 
   it('should generate unique values', () => {

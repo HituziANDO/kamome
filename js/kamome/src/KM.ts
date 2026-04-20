@@ -142,6 +142,7 @@ const browser = new WebPlatform();
 
 let isReady = false;
 let retryCountForReady = 0;
+let isWaitingForReady = false;
 let onReady: OnReadyListener | null = null;
 
 export class KM {
@@ -157,7 +158,7 @@ export class KM {
     private receivers: { [commandName: string]: OnReceiver } = {},
     private requests: { [id: string]: KamomeRequest } = {},
     private requestTimeout = 10000,
-  ) { }
+  ) {}
 
   private static instance = new KM();
 
@@ -302,6 +303,7 @@ export class KM {
   }
 
   private static sendRequest(req: KamomeRequest) {
+    req.sent = true;
     const data = undefinedToNull<KamomeEventData>(req.data);
     const json = JSON.stringify({ name: req.name, data, id: req.id });
 
@@ -330,9 +332,16 @@ export class KM {
   private static waitForReadyAndSendRequests() {
     // Waiting for ready.
     if (!isReady) {
+      if (isWaitingForReady) {
+        return;
+      }
       if (retryCountForReady < 50) {
         retryCountForReady++;
-        setTimeout(() => this.waitForReadyAndSendRequests(), 200);
+        isWaitingForReady = true;
+        setTimeout(() => {
+          isWaitingForReady = false;
+          this.waitForReadyAndSendRequests();
+        }, 200);
       } else {
         console.error('[kamome.js] Waiting for ready has timed out.');
       }
@@ -341,6 +350,9 @@ export class KM {
 
     for (const id in this.instance.requests) {
       const req = this.instance.requests[id];
+      if (req.sent) {
+        continue;
+      }
       this.sendRequest(req);
     }
   }
