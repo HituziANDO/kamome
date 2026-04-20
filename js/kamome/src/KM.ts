@@ -329,7 +329,7 @@ export class KM {
     }
   }
 
-  private static waitForReadyAndSendRequests() {
+  static waitForReadyAndSendRequests() {
     // Waiting for ready.
     if (!isReady) {
       if (isWaitingForReady) {
@@ -428,6 +428,7 @@ function ready() {
       }
 
       isReady = true;
+      KM.waitForReadyAndSendRequests();
 
       setTimeout(() => onReady?.(), 0);
 
@@ -439,6 +440,7 @@ function ready() {
       );
       // Set true for backward compatibility. (< 5.1.0)
       isReady = true;
+      KM.waitForReadyAndSendRequests();
     });
 }
 

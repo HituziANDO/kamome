@@ -327,6 +327,56 @@ describe('KM.send timeout', () => {
   });
 });
 
+describe('KM pre-ready queue drain (BUG-H01 regression)', () => {
+  it('drains queued requests immediately on ready transition', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.resetModules();
+      const mod = await import('../src');
+      const FreshKM = mod.KM;
+
+      let synResolve: (() => void) | null = null;
+      FreshKM.browser.addCommand('_kamomeSYN', (_data, resolve) => {
+        synResolve = () => resolve({ versionCode: FreshKM.VERSION_CODE });
+      });
+
+      // Triggers ready() for the fresh module: SYN is sent, our handler captures resolve.
+      window.dispatchEvent(new Event('DOMContentLoaded'));
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(FreshKM.isReady()).toBe(false);
+      expect(synResolve).not.toBeNull();
+
+      const handlerA = vi.fn((_data, resolve) => resolve({ id: 'A' }));
+      const handlerB = vi.fn((_data, resolve) => resolve({ id: 'B' }));
+      FreshKM.browser.addCommand('preReadyA', handlerA);
+      FreshKM.browser.addCommand('preReadyB', handlerB);
+
+      const pA = FreshKM.send('preReadyA');
+      const pB = FreshKM.send('preReadyB');
+      await vi.advanceTimersByTimeAsync(1);
+
+      // Not ready yet — queued, not dispatched.
+      expect(handlerA).not.toHaveBeenCalled();
+      expect(handlerB).not.toHaveBeenCalled();
+
+      // Release SYN: ready transitions. The fix must drain immediately,
+      // not wait for the next 200ms retry tick.
+      synResolve!();
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(FreshKM.isReady()).toBe(true);
+      expect(handlerA).toHaveBeenCalledTimes(1);
+      expect(handlerB).toHaveBeenCalledTimes(1);
+
+      const results = await Promise.all([pA, pB]);
+      expect(results).toEqual([{ id: 'A' }, { id: 'B' }]);
+    } finally {
+      vi.useRealTimers();
+    }
+  }, 15000);
+});
+
 describe('WebPlatform', () => {
   let platform: WebPlatform;
 
