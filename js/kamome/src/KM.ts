@@ -145,6 +145,10 @@ let retryCountForReady = 0;
 let isWaitingForReady = false;
 let onReady: OnReadyListener | null = null;
 
+// Internal request shape — carries a dispatch flag that must not leak
+// into the public KamomeRequest type consumers can see.
+type InternalRequest = KamomeRequest & { sent?: boolean };
+
 export class KM {
   /**
    * The constructor.
@@ -156,7 +160,7 @@ export class KM {
    */
   private constructor(
     private receivers: { [commandName: string]: OnReceiver } = {},
-    private requests: { [id: string]: KamomeRequest } = {},
+    private requests: { [id: string]: InternalRequest } = {},
     private requestTimeout = 10000,
   ) {}
 
@@ -302,7 +306,7 @@ export class KM {
     });
   }
 
-  private static sendRequest(req: KamomeRequest) {
+  private static sendRequest(req: InternalRequest) {
     try {
       const data = undefinedToNull<KamomeEventData>(req.data);
       const json = JSON.stringify({ name: req.name, data, id: req.id });

@@ -8,5 +8,4 @@ export type KamomeRequest = {
   timeout: number;
   resolve: (data: KamomeEventResult | null) => void;
   reject: (reason: string) => void;
-  sent?: boolean;
 };
