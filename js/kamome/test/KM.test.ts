@@ -208,6 +208,24 @@ describe('KM.send (browser mode)', () => {
     expect(result).toEqual({ received: null });
   });
 
+  it('should reject and clean up when request data fails to serialize', async () => {
+    const circular: any = { name: 'loop' };
+    circular.self = circular;
+
+    await expect(KM.send('anyCmd', circular)).rejects.toContain('Rejected');
+
+    // Subsequent sends must work — the failed request must not block
+    // the pipeline nor linger as a ghost entry (would leak memory and
+    // could cause duplicate dispatch on later drains).
+    KM.browser.addCommand('testCmd', (_data, resolve) => resolve({ ok: true }));
+    try {
+      const result = await KM.send('testCmd');
+      expect(result).toEqual({ ok: true });
+    } finally {
+      KM.browser.removeCommand('testCmd');
+    }
+  });
+
   it('should invoke each handler exactly once when multiple sends are queued synchronously', async () => {
     const handler1 = vi.fn((_data, resolve) => resolve({ id: 1 }));
     const handler2 = vi.fn((_data, resolve) => resolve({ id: 2 }));

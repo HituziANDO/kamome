@@ -303,18 +303,27 @@ export class KM {
   }
 
   private static sendRequest(req: KamomeRequest) {
-    req.sent = true;
-    const data = undefinedToNull<KamomeEventData>(req.data);
-    const json = JSON.stringify({ name: req.name, data, id: req.id });
+    try {
+      const data = undefinedToNull<KamomeEventData>(req.data);
+      const json = JSON.stringify({ name: req.name, data, id: req.id });
 
-    if (iOS.hasClient()) {
-      iOS.send(json);
-    } else if (android.hasClient()) {
-      android.send(json);
-    } else if (flutter.hasClient()) {
-      flutter.send(json);
-    } else if (browser.hasCommand(req.name)) {
-      browser.execCommand(req);
+      if (iOS.hasClient()) {
+        iOS.send(json);
+      } else if (android.hasClient()) {
+        android.send(json);
+      } else if (flutter.hasClient()) {
+        flutter.send(json);
+      } else if (browser.hasCommand(req.name)) {
+        browser.execCommand(req);
+      }
+
+      req.sent = true;
+    } catch (e) {
+      const reason = e instanceof Error ? e.message : String(e);
+      const msg = reason ? ':' + reason : '';
+      req.reject(KamomeError.rejected + ':' + req.name + msg);
+      delete this.instance.requests[req.id];
+      return;
     }
 
     if (req.timeout > 0) {
