@@ -142,7 +142,12 @@ const browser = new WebPlatform();
 
 let isReady = false;
 let retryCountForReady = 0;
+let isWaitingForReady = false;
 let onReady: OnReadyListener | null = null;
+
+// Internal request shape — carries a dispatch flag that must not leak
+// into the public KamomeRequest type consumers can see.
+type InternalRequest = KamomeRequest & { sent?: boolean };
 
 export class KM {
   /**
@@ -155,9 +160,9 @@ export class KM {
    */
   private constructor(
     private receivers: { [commandName: string]: OnReceiver } = {},
-    private requests: { [id: string]: KamomeRequest } = {},
+    private requests: { [id: string]: InternalRequest } = {},
     private requestTimeout = 10000,
-  ) { }
+  ) {}
 
   private static instance = new KM();
 
@@ -301,18 +306,28 @@ export class KM {
     });
   }
 
-  private static sendRequest(req: KamomeRequest) {
-    const data = undefinedToNull<KamomeEventData>(req.data);
-    const json = JSON.stringify({ name: req.name, data, id: req.id });
+  private static sendRequest(req: InternalRequest) {
+    try {
+      const data = undefinedToNull<KamomeEventData>(req.data);
+      const json = JSON.stringify({ name: req.name, data, id: req.id });
 
-    if (iOS.hasClient()) {
-      iOS.send(json);
-    } else if (android.hasClient()) {
-      android.send(json);
-    } else if (flutter.hasClient()) {
-      flutter.send(json);
-    } else if (browser.hasCommand(req.name)) {
-      browser.execCommand(req);
+      if (iOS.hasClient()) {
+        iOS.send(json);
+      } else if (android.hasClient()) {
+        android.send(json);
+      } else if (flutter.hasClient()) {
+        flutter.send(json);
+      } else if (browser.hasCommand(req.name)) {
+        browser.execCommand(req);
+      }
+
+      req.sent = true;
+    } catch (e) {
+      const reason = e instanceof Error ? e.message : String(e);
+      const msg = reason ? ':' + reason : '';
+      req.reject(KamomeError.rejected + ':' + req.name + msg);
+      delete this.instance.requests[req.id];
+      return;
     }
 
     if (req.timeout > 0) {
@@ -330,9 +345,16 @@ export class KM {
   private static waitForReadyAndSendRequests() {
     // Waiting for ready.
     if (!isReady) {
+      if (isWaitingForReady) {
+        return;
+      }
       if (retryCountForReady < 50) {
         retryCountForReady++;
-        setTimeout(() => this.waitForReadyAndSendRequests(), 200);
+        isWaitingForReady = true;
+        setTimeout(() => {
+          isWaitingForReady = false;
+          this.waitForReadyAndSendRequests();
+        }, 200);
       } else {
         console.error('[kamome.js] Waiting for ready has timed out.');
       }
@@ -341,6 +363,9 @@ export class KM {
 
     for (const id in this.instance.requests) {
       const req = this.instance.requests[id];
+      if (req.sent) {
+        continue;
+      }
       this.sendRequest(req);
     }
   }
@@ -400,41 +425,48 @@ export class KM {
     }
     return null;
   }
-}
 
-// Add preset commands.
-browser.addCommand(COMMAND_SYN, (_, resolve) => resolve({ versionCode: VERSION_CODE }));
-browser.addCommand(COMMAND_ACK, (_, resolve) => resolve());
+  private static handshake() {
+    this.send(COMMAND_SYN, null, 5000)
+      .then(data => {
+        if (VERSION_CODE !== data.versionCode) {
+          console.warn(
+            '[kamome.js] The Kamome native library version does not match. Please update it to latest version.',
+          );
+        }
 
-function ready() {
-  KM.send(COMMAND_SYN, null, 5000)
-    .then(data => {
-      if (VERSION_CODE !== data.versionCode) {
-        console.warn(
-          '[kamome.js] The Kamome native library version does not match. Please update it to latest version.',
+        isReady = true;
+        this.waitForReadyAndSendRequests();
+
+        setTimeout(() => onReady?.(), 0);
+
+        this.send(COMMAND_ACK, null, 5000).catch(() =>
+          console.warn('[kamome.js] Failed to send ACK.'),
         );
-      }
+      })
+      .catch(() => {
+        console.warn(
+          '[kamome.js] Failed to send SYN. Please update the Kamome native library to latest version.',
+        );
+        // Set true for backward compatibility. (< 5.1.0)
+        isReady = true;
+        this.waitForReadyAndSendRequests();
+      });
+  }
 
-      isReady = true;
+  static {
+    // Add preset commands.
+    browser.addCommand(COMMAND_SYN, (_, resolve) => resolve({ versionCode: VERSION_CODE }));
+    browser.addCommand(COMMAND_ACK, (_, resolve) => resolve());
 
-      setTimeout(() => onReady?.(), 0);
-
-      KM.send(COMMAND_ACK, null, 5000).catch(() => console.warn('[kamome.js] Failed to send ACK.'));
-    })
-    .catch(() => {
-      console.warn(
-        '[kamome.js] Failed to send SYN. Please update the Kamome native library to latest version.',
-      );
-      // Set true for backward compatibility. (< 5.1.0)
-      isReady = true;
-    });
-}
-
-// Side effect: Add the ready event listener.
-if ('flutter_inappwebview' in window) {
-  window.addEventListener('flutterInAppWebViewPlatformReady', ready);
-} else {
-  window.addEventListener('DOMContentLoaded', ready);
+    // Register the ready event listener.
+    const trigger = () => this.handshake();
+    if ('flutter_inappwebview' in window) {
+      window.addEventListener('flutterInAppWebViewPlatformReady', trigger);
+    } else {
+      window.addEventListener('DOMContentLoaded', trigger);
+    }
+  }
 }
 
 // Side effect: For backward compatibility. (< 5.3.0)

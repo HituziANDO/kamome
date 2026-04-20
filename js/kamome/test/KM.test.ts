@@ -3,8 +3,8 @@ import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vite
 import { KM, WebPlatform } from '../src';
 import { KamomeError } from '../src/KamomeError';
 import { VERSION_CODE } from '../src/VERSION_CODE';
-import { uuid } from '../src/util/uuid';
 import { undefinedToNull } from '../src/util/undefinedToNull';
+import { uuid } from '../src/util/uuid';
 
 // Trigger KM initialization.
 // The KM module registers a DOMContentLoaded listener at import time,
@@ -207,6 +207,46 @@ describe('KM.send (browser mode)', () => {
     const result = await KM.send('testCmd');
     expect(result).toEqual({ received: null });
   });
+
+  it('should reject and clean up when request data fails to serialize', async () => {
+    const circular: any = { name: 'loop' };
+    circular.self = circular;
+
+    await expect(KM.send('anyCmd', circular)).rejects.toContain('Rejected');
+
+    // Subsequent sends must work — the failed request must not block
+    // the pipeline nor linger as a ghost entry (would leak memory and
+    // could cause duplicate dispatch on later drains).
+    KM.browser.addCommand('testCmd', (_data, resolve) => resolve({ ok: true }));
+    try {
+      const result = await KM.send('testCmd');
+      expect(result).toEqual({ ok: true });
+    } finally {
+      KM.browser.removeCommand('testCmd');
+    }
+  });
+
+  it('should invoke each handler exactly once when multiple sends are queued synchronously', async () => {
+    const handler1 = vi.fn((_data, resolve) => resolve({ id: 1 }));
+    const handler2 = vi.fn((_data, resolve) => resolve({ id: 2 }));
+    const handler3 = vi.fn((_data, resolve) => resolve({ id: 3 }));
+    KM.browser.addCommand('cmdA', handler1);
+    KM.browser.addCommand('cmdB', handler2);
+    KM.browser.addCommand('cmdC', handler3);
+
+    try {
+      const results = await Promise.all([KM.send('cmdA'), KM.send('cmdB'), KM.send('cmdC')]);
+
+      expect(results).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }]);
+      expect(handler1).toHaveBeenCalledTimes(1);
+      expect(handler2).toHaveBeenCalledTimes(1);
+      expect(handler3).toHaveBeenCalledTimes(1);
+    } finally {
+      KM.browser.removeCommand('cmdA');
+      KM.browser.removeCommand('cmdB');
+      KM.browser.removeCommand('cmdC');
+    }
+  });
 });
 
 describe('KM.send timeout', () => {
@@ -305,6 +345,56 @@ describe('KM.send timeout', () => {
   });
 });
 
+describe('KM pre-ready queue drain (BUG-H01 regression)', () => {
+  it('drains queued requests immediately on ready transition', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.resetModules();
+      const mod = await import('../src');
+      const FreshKM = mod.KM;
+
+      let synResolve: (() => void) | null = null;
+      FreshKM.browser.addCommand('_kamomeSYN', (_data, resolve) => {
+        synResolve = () => resolve({ versionCode: FreshKM.VERSION_CODE });
+      });
+
+      // Triggers ready() for the fresh module: SYN is sent, our handler captures resolve.
+      window.dispatchEvent(new Event('DOMContentLoaded'));
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(FreshKM.isReady()).toBe(false);
+      expect(synResolve).not.toBeNull();
+
+      const handlerA = vi.fn((_data, resolve) => resolve({ id: 'A' }));
+      const handlerB = vi.fn((_data, resolve) => resolve({ id: 'B' }));
+      FreshKM.browser.addCommand('preReadyA', handlerA);
+      FreshKM.browser.addCommand('preReadyB', handlerB);
+
+      const pA = FreshKM.send('preReadyA');
+      const pB = FreshKM.send('preReadyB');
+      await vi.advanceTimersByTimeAsync(1);
+
+      // Not ready yet — queued, not dispatched.
+      expect(handlerA).not.toHaveBeenCalled();
+      expect(handlerB).not.toHaveBeenCalled();
+
+      // Release SYN: ready transitions. The fix must drain immediately,
+      // not wait for the next 200ms retry tick.
+      synResolve!();
+      await vi.advanceTimersByTimeAsync(1);
+
+      expect(FreshKM.isReady()).toBe(true);
+      expect(handlerA).toHaveBeenCalledTimes(1);
+      expect(handlerB).toHaveBeenCalledTimes(1);
+
+      const results = await Promise.all([pA, pB]);
+      expect(results).toEqual([{ id: 'A' }, { id: 'B' }]);
+    } finally {
+      vi.useRealTimers();
+    }
+  }, 15000);
+});
+
 describe('WebPlatform', () => {
   let platform: WebPlatform;
 
@@ -354,9 +444,7 @@ describe('WebPlatform', () => {
 describe('uuid', () => {
   it('should generate a valid UUID v4 format', () => {
     const id = uuid();
-    expect(id).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
-    );
+    expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
   });
 
   it('should generate unique values', () => {
