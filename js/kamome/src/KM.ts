@@ -338,7 +338,7 @@ export class KM {
     }
   }
 
-  static waitForReadyAndSendRequests() {
+  private static waitForReadyAndSendRequests() {
     // Waiting for ready.
     if (!isReady) {
       if (isWaitingForReady) {
@@ -421,43 +421,48 @@ export class KM {
     }
     return null;
   }
-}
 
-// Add preset commands.
-browser.addCommand(COMMAND_SYN, (_, resolve) => resolve({ versionCode: VERSION_CODE }));
-browser.addCommand(COMMAND_ACK, (_, resolve) => resolve());
+  private static handshake() {
+    this.send(COMMAND_SYN, null, 5000)
+      .then(data => {
+        if (VERSION_CODE !== data.versionCode) {
+          console.warn(
+            '[kamome.js] The Kamome native library version does not match. Please update it to latest version.',
+          );
+        }
 
-function ready() {
-  KM.send(COMMAND_SYN, null, 5000)
-    .then(data => {
-      if (VERSION_CODE !== data.versionCode) {
-        console.warn(
-          '[kamome.js] The Kamome native library version does not match. Please update it to latest version.',
+        isReady = true;
+        this.waitForReadyAndSendRequests();
+
+        setTimeout(() => onReady?.(), 0);
+
+        this.send(COMMAND_ACK, null, 5000).catch(() =>
+          console.warn('[kamome.js] Failed to send ACK.'),
         );
-      }
+      })
+      .catch(() => {
+        console.warn(
+          '[kamome.js] Failed to send SYN. Please update the Kamome native library to latest version.',
+        );
+        // Set true for backward compatibility. (< 5.1.0)
+        isReady = true;
+        this.waitForReadyAndSendRequests();
+      });
+  }
 
-      isReady = true;
-      KM.waitForReadyAndSendRequests();
+  static {
+    // Add preset commands.
+    browser.addCommand(COMMAND_SYN, (_, resolve) => resolve({ versionCode: VERSION_CODE }));
+    browser.addCommand(COMMAND_ACK, (_, resolve) => resolve());
 
-      setTimeout(() => onReady?.(), 0);
-
-      KM.send(COMMAND_ACK, null, 5000).catch(() => console.warn('[kamome.js] Failed to send ACK.'));
-    })
-    .catch(() => {
-      console.warn(
-        '[kamome.js] Failed to send SYN. Please update the Kamome native library to latest version.',
-      );
-      // Set true for backward compatibility. (< 5.1.0)
-      isReady = true;
-      KM.waitForReadyAndSendRequests();
-    });
-}
-
-// Side effect: Add the ready event listener.
-if ('flutter_inappwebview' in window) {
-  window.addEventListener('flutterInAppWebViewPlatformReady', ready);
-} else {
-  window.addEventListener('DOMContentLoaded', ready);
+    // Register the ready event listener.
+    const trigger = () => this.handshake();
+    if ('flutter_inappwebview' in window) {
+      window.addEventListener('flutterInAppWebViewPlatformReady', trigger);
+    } else {
+      window.addEventListener('DOMContentLoaded', trigger);
+    }
+  }
 }
 
 // Side effect: For backward compatibility. (< 5.3.0)
