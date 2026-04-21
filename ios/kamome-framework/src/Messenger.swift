@@ -30,11 +30,7 @@ class Messenger {
     static func completeMessage(with webView: WKWebView, data: Any?, for requestID: String) throws {
         let id = escapeForJSStringLiteral(requestID)
         if let data {
-            if !JSONSerialization.isValidJSONObject(data) {
-                throw KamomeError.invalidJSONObject
-            }
-
-            let params = String(data: try JSONSerialization.data(withJSONObject: data), encoding: .utf8)!
+            let params = try jsPayload(from: data)
             run(javaScript: "\(jsObj).onComplete(\(params), '\(id)')", with: webView)
         }
         else {
@@ -58,11 +54,7 @@ class Messenger {
         let name = escapeForJSStringLiteral(request.name)
         let callbackID = escapeForJSStringLiteral(request.callbackID)
         if let data = request.data {
-            if !JSONSerialization.isValidJSONObject(data) {
-                throw KamomeError.invalidJSONObject
-            }
-
-            let params = String(data: try JSONSerialization.data(withJSONObject: data), encoding: .utf8)!
+            let params = try jsPayload(from: data)
             run(javaScript: "\(jsObj).onReceive('\(name)', \(params), '\(callbackID)')",
                     with: webView)
         }
@@ -70,6 +62,21 @@ class Messenger {
             run(javaScript: "\(jsObj).onReceive('\(name)', null, '\(callbackID)')",
                     with: webView)
         }
+    }
+
+    /// Serializes a JSON-compatible value to a UTF-8 string suitable for
+    /// interpolation into generated JavaScript. Throws `KamomeError.invalidJSONObject`
+    /// when the value is not a valid top-level JSON object or when the resulting
+    /// bytes cannot be decoded as UTF-8.
+    private static func jsPayload(from data: Any) throws -> String {
+        guard JSONSerialization.isValidJSONObject(data) else {
+            throw KamomeError.invalidJSONObject
+        }
+        let bytes = try JSONSerialization.data(withJSONObject: data)
+        guard let params = String(data: bytes, encoding: .utf8) else {
+            throw KamomeError.invalidJSONObject
+        }
+        return params
     }
 
     /// Escapes a string for safe interpolation inside a single-quoted JavaScript string literal.
