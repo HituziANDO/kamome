@@ -397,8 +397,8 @@ describe('KM pre-ready queue drain (BUG-H01 regression)', () => {
 
 describe('WebPlatform.execCommand missing-command guard (BUG-M01 regression)', () => {
   it('rejects with Rejected:<name>:CommandNotAdded instead of throwing when the command is unregistered', async () => {
-    // Route KM's onError through a capturing receiver so we can observe the
-    // rejection without depending on the global requests map.
+    // Use a direct execCommand request id and observe the propagated rejection
+    // by spying on KM.onError.
     const id = 'direct-exec-' + Date.now();
 
     // Spy on KM.onError to verify the reject reason propagates.
