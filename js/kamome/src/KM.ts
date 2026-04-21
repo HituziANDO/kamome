@@ -114,6 +114,10 @@ export class WebPlatform {
       const reject: CommandHandlerReject = reason => {
         KM.onError(reason ? encodeURIComponent(reason) : null, req.id);
       };
+      if (!this.hasCommand(req.name)) {
+        reject('CommandNotAdded');
+        return;
+      }
       this.handlerDict[req.name](undefinedToNull<KamomeEventData>(req.data), resolve, reject);
     }, 0);
   }
