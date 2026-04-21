@@ -395,6 +395,39 @@ describe('KM pre-ready queue drain (BUG-H01 regression)', () => {
   }, 15000);
 });
 
+describe('WebPlatform.execCommand missing-command guard (BUG-M01 regression)', () => {
+  it('rejects with Rejected:<name>:CommandNotAdded instead of throwing when the command is unregistered', async () => {
+    // Route KM's onError through a capturing receiver so we can observe the
+    // rejection without depending on the global requests map.
+    const id = 'direct-exec-' + Date.now();
+
+    // Spy on KM.onError to verify the reject reason propagates.
+    const spy = vi.spyOn(KM, 'onError');
+
+    try {
+      KM.browser.execCommand({
+        id,
+        name: 'noSuchCommand',
+        data: null,
+        timeout: 0,
+        resolve: () => {},
+        reject: () => {},
+      });
+
+      // execCommand defers the work with setTimeout(0).
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      const [encodedReason, reqId] = spy.mock.calls[0];
+      expect(reqId).toBe(id);
+      expect(encodedReason).not.toBeNull();
+      expect(decodeURIComponent(encodedReason as string)).toBe('CommandNotAdded');
+    } finally {
+      spy.mockRestore();
+    }
+  });
+});
+
 describe('WebPlatform', () => {
   let platform: WebPlatform;
 
