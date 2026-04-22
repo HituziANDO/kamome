@@ -46,7 +46,18 @@ class ViewController: UIViewController {
                 .add(Command("echo") { commandName, data, completion in
                     // Received `echo` command.
                     // Then sends resolved result to the JavaScript callback function.
-                    completion.resolve(["message": data!["message"]!])
+                    guard let rawMessage = data?["message"] as? String else {
+                        completion.reject("'message' is required")
+                        return
+                    }
+
+                    let message = rawMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !message.isEmpty else {
+                        completion.reject("'message' is required")
+                        return
+                    }
+
+                    completion.resolve(["message": message])
                 })
                 .add(Command("echoError") { commandName, data, completion in
                     // Sends rejected result if failed.

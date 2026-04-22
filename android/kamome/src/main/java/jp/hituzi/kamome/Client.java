@@ -283,7 +283,15 @@ public final class Client {
 
         // Add a temporary command receiving a result from the JavaScript handler.
         add(new Command(callbackId, (commandName1, data, completion) -> {
-            assert data != null;
+            if (data == null) {
+                if (callback != null) {
+                    callback.onReceiveResult(commandName1, null, new Error("UnknownError"));
+                }
+                completion.resolve();
+                remove(callbackId);
+                return;
+            }
+
             boolean success = data.optBoolean("success");
 
             if (success) {

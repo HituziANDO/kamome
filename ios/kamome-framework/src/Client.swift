@@ -25,7 +25,7 @@ import Foundation
 import WebKit
 
 /// The version code of the Kamome framework.
-public let kamomeVersionCode = 50304
+public let kamomeVersionCode = 50400
 
 /// Receives a result from the JavaScript receiver when it processed a task of a command.
 /// An error occurs when the native client receives it from the JavaScript receiver, otherwise it will be null.
@@ -55,7 +55,13 @@ open class Client: NSObject {
     public init(_ webView: WKWebView) {
         super.init()
         self.webView = webView
-        self.webView!.configuration.userContentController.add(self, name: Self.scriptMessageHandlerName)
+        // Use a weak proxy so WKUserContentController does not retain `self`.
+        // This lets the owner release the Client without having to detach the
+        // script message handler manually.
+        webView.configuration.userContentController.add(
+            WeakScriptMessageHandler(delegate: self),
+            name: Self.scriptMessageHandlerName
+        )
 
         // Add preset commands.
         self.add(Command(Self.commandSYN) { [weak self] _, _, completion in
@@ -68,6 +74,12 @@ open class Client: NSObject {
                 }
                 completion.resolve()
             })
+    }
+
+    deinit {
+        webView?.configuration.userContentController.removeScriptMessageHandler(
+            forName: Self.scriptMessageHandlerName
+        )
     }
 
     /// Adds a command called by the JavaScript code.
@@ -92,7 +104,7 @@ open class Client: NSObject {
 
     /// Tells whether specified command is added.
     public func hasCommand(_ name: String) -> Bool {
-        commands.contains { $0.key == name }
+        commands[name] != nil
     }
 
     /// Sends a message to the JavaScript receiver.
@@ -149,7 +161,14 @@ open class Client: NSObject {
     ///   - data: A data as Dictionary.
     ///   - callback: A callback.
     public func execute(_ commandName: String, data: TransferData?, callback: LocalCompletion.Callback?) {
-        try! handle(commandName, data: data, completion: LocalCompletion(callback: callback))
+        let completion = LocalCompletion(callback: callback)
+        do {
+            try handle(commandName, data: data, completion: completion)
+        }
+        catch {
+            print("[Kamome] execute failed: \(error)")
+            completion.reject("\(error)")
+        }
     }
 }
 
@@ -162,9 +181,24 @@ extension Client: WKScriptMessageHandler {
               let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         else { return }
 
+        guard let requestID = obj["id"] as? String else { return }
+
+        let completion = Completion(webView: webView, requestID: requestID)
+
+        guard let name = obj["name"] as? String else {
+            print("[Kamome] invalid message: missing 'name'")
+            completion.reject("InvalidMessage")
+            return
+        }
+
         let params = obj["data"] as? TransferData
-        let completion = Completion(webView: webView, requestID: obj["id"] as! String)
-        try! handle(obj["name"] as! String, data: params, completion: completion)
+        do {
+            try handle(name, data: params, completion: completion)
+        }
+        catch {
+            print("[Kamome] handle failed: \(error)")
+            completion.reject("\(error)")
+        }
     }
 }
 
@@ -190,10 +224,17 @@ private extension Client {
         let callbackID = "_km_\(commandName)_\(UUID().uuidString)"
 
         // Add a temporary command receiving a result from the JavaScript handler.
-        add(Command(callbackID) { name, data, completion in
+        // Capture `self` weakly to avoid a retain cycle
+        // (commands -> Command -> closure -> Client).
+        add(Command(callbackID) { [weak self] name, data, completion in
             if let data {
                 if let success = data["success"] as? Bool, success {
-                    callback?(name, data["result"]!, nil)
+                    // `data["result"]` is `Any??` (Dictionary subscript wraps the
+                    // stored Any? in another Optional). `?? nil` flattens a missing
+                    // key to a single-level nil so callers aren't surprised by a
+                    // force-unwrap crash when JS sends `{ success: true }` with no
+                    // `result` key.
+                    callback?(name, data["result"] ?? nil, nil)
                 }
                 else {
                     let reason: String
@@ -213,7 +254,7 @@ private extension Client {
             completion.resolve()
 
             // Remove the temporary command.
-            self.remove(callbackID)
+            self?.remove(callbackID)
         })
 
         return callbackID

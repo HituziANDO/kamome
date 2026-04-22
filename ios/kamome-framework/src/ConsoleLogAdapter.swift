@@ -45,6 +45,13 @@ open class ConsoleLogAdapter: NSObject {
     /// - Parameters:
     ///   - webView: A webView.
     public func setTo(_ webView: WKWebView) {
+        // NOTE: `add(self, name:)` intentionally retains this adapter via the
+        // user content controller so the documented one-liner
+        // `ConsoleLogAdapter().setTo(webView)` keeps the adapter alive for the
+        // lifetime of the WKWebView without the caller having to hold a
+        // reference. Switching to a weak proxy here would deallocate the
+        // adapter immediately after this call returns and stop forwarding
+        // console messages.
         webView.configuration.userContentController.add(self, name: Self.scriptMessageHandlerName)
 
         let jsLog = "window.console.log = function(msg) { window.webkit.messageHandlers.\(Self.scriptMessageHandlerName).postMessage(msg); };"

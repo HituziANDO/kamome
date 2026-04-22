@@ -33,9 +33,14 @@ class MainActivity : Activity() {
             .add(Command("echo") { commandName, data, completion ->
                 // Received `echo` command.
                 // Then sends resolved result to the JavaScript callback function.
-                val map = HashMap<String?, Any?>()
-                map["message"] = data!!.optString("message")
-                completion.resolve(map)
+                val message = data?.optString("message")
+                if (message.isNullOrEmpty()) {
+                    completion.reject("'message' is required")
+                } else {
+                    val map = HashMap<String?, Any?>()
+                    map["message"] = message
+                    completion.resolve(map)
+                }
             })
             .add(Command("echoError") { commandName, data, completion ->
                 // Sends rejected result if failed.

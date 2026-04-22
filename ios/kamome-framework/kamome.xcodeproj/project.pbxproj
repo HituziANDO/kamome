@@ -30,6 +30,8 @@
 		5E0D50852BB69F2C00C8CC3A /* Messenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50832BB69F2C00C8CC3A /* Messenger.swift */; };
 		5E0D50872BB69FC500C8CC3A /* WaitForReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */; };
 		5E0D50882BB69FC500C8CC3A /* WaitForReady.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */; };
+		5E0D60012BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D60002BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift */; };
+		5E0D60022BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D60002BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift */; };
 		5E0D508A2BB69FF600C8CC3A /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50892BB69FF600C8CC3A /* Request.swift */; };
 		5E0D508B2BB69FF600C8CC3A /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D50892BB69FF600C8CC3A /* Request.swift */; };
 		5E0D508D2BB6A01D00C8CC3A /* Completable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0D508C2BB6A01D00C8CC3A /* Completable.swift */; };
@@ -56,6 +58,7 @@
 		5E0D50802BB69E9900C8CC3A /* KamomeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KamomeError.swift; sourceTree = "<group>"; };
 		5E0D50832BB69F2C00C8CC3A /* Messenger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messenger.swift; sourceTree = "<group>"; };
 		5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitForReady.swift; sourceTree = "<group>"; };
+		5E0D60002BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakScriptMessageHandler.swift; sourceTree = "<group>"; };
 		5E0D50892BB69FF600C8CC3A /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		5E0D508C2BB6A01D00C8CC3A /* Completable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Completable.swift; sourceTree = "<group>"; };
 		5E0D508F2BB6A03C00C8CC3A /* Completion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Completion.swift; sourceTree = "<group>"; };
@@ -124,6 +127,7 @@
 				5E0D50892BB69FF600C8CC3A /* Request.swift */,
 				5E0D50982BB6A1BE00C8CC3A /* TransferData.swift */,
 				5E0D50862BB69FC500C8CC3A /* WaitForReady.swift */,
+				5E0D60002BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -263,7 +267,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# 出力先ディレクトリ（プロジェクトの直下）\nOUTPUT_DIR=${PROJECT_DIR}/Output\n\n# 中間ファイルの出力先ディレクトリ\nDERIVED_DIR=${OUTPUT_DIR}/${CONFIGURATION}-derived\n\n# archiveの出力先ディレクトリ\nARCHIVE_DIR=${OUTPUT_DIR}/${CONFIGURATION}-archive\n\n# xcframeworkの出力先ディレクトリ\nXCFRAMEWORK_DIR=${OUTPUT_DIR}/${CONFIGURATION}-xcframework\n\n# 出力先ディレクトリ削除\nrm -rf ${OUTPUT_DIR}\n\n# 中間ファイルの出力先ディレクトリ作成\nmkdir -p ${DERIVED_DIR}\n\n# アーカイブファイルの出力先ディレクトリ作成\nmkdir -p ${ARCHIVE_DIR}\n\n# xcframeworkの出力先ディレクトリ作成\nmkdir -p ${XCFRAMEWORK_DIR}\n\n# iOS実機用のarchiveファイル\nARCHIVE_FILE_IOS=${ARCHIVE_DIR}/ios.xcarchive\necho \"ARCHIVE_FILE_IOS:${ARCHIVE_FILE_IOS}\"\n\n# iOSシミュレータ用のarchiveファイル\nARCHIVE_FILE_IOS_SIMULATOR=${ARCHIVE_DIR}/iossimulator.xcarchive\necho \"ARCHIVE_FILE_IOS_SIMULATOR:${ARCHIVE_FILE_IOS_SIMULATOR}\"\n\n# macCatalyst用のarchiveファイル\nARCHIVE_FILE_IOS_MACCATALYST=${ARCHIVE_DIR}/maccatalyst.xcarchive\necho \"ARCHIVE_FILE_IOS_MACCATALYST:${ARCHIVE_FILE_IOS_MACCATALYST}\"\n\n# macOS用のarchiveファイル\nARCHIVE_FILE_MACOS=${ARCHIVE_DIR}/macos.xcarchive\necho \"ARCHIVE_FILE_MACOS:${ARCHIVE_FILE_MACOS}\"\n\n# iOS実機用のarchiveファイル作成\nxcodebuild archive \\\n-scheme \"kamome iOS\" \\\n-destination=\"iOS\" \\\n-archivePath $ARCHIVE_FILE_IOS \\\n-derivedDataPath $DERIVED_DIR \\\n-sdk iphoneos SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n\n# iOSシミュレータ用のarchiveファイル作成\nxcodebuild archive \\\n-scheme \"kamome iOS\" \\\n-destination=\"iOS Simulator\" \\\n-archivePath $ARCHIVE_FILE_IOS_SIMULATOR \\\n-derivedDataPath $DERIVED_DIR \\\n-sdk iphonesimulator SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n\n# macCatalyst用のarchiveファイル作成\nxcodebuild archive \\\n-scheme \"kamome iOS\" \\\n-destination='platform=macOS,arch=x86_64,variant=Mac Catalyst' \\\n-archivePath $ARCHIVE_FILE_IOS_MACCATALYST SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n\n# macOS用のarchiveファイル作成\nxcodebuild archive \\\n-scheme \"kamome macOS\" \\\n-sdk macosx \\\n-archivePath $ARCHIVE_FILE_MACOS \\\nSKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n\n# xcframework作成\nxcodebuild -create-xcframework \\\n-framework $ARCHIVE_FILE_IOS/Products/Library/Frameworks/${PROJECT_NAME}.framework \\\n-framework $ARCHIVE_FILE_IOS_SIMULATOR/Products/Library/Frameworks/${PROJECT_NAME}.framework \\\n-framework $ARCHIVE_FILE_IOS_MACCATALYST/Products/Library/Frameworks/${PROJECT_NAME}.framework \\\n-framework $ARCHIVE_FILE_MACOS/Products/Library/Frameworks/${PROJECT_NAME}.framework \\\n-output $XCFRAMEWORK_DIR/${PROJECT_NAME}.xcframework\n";
+			shellScript = "# 出力先ディレクトリ（プロジェクトの直下）\nOUTPUT_DIR=${PROJECT_DIR}/Output\n\n# 中間ファイルの出力先ディレクトリ\nDERIVED_DIR=${OUTPUT_DIR}/${CONFIGURATION}-derived\n\n# archiveの出力先ディレクトリ\nARCHIVE_DIR=${OUTPUT_DIR}/${CONFIGURATION}-archive\n\n# xcframeworkの出力先ディレクトリ\nXCFRAMEWORK_DIR=${OUTPUT_DIR}/${CONFIGURATION}-xcframework\n\n# 出力先ディレクトリ削除\nrm -rf ${OUTPUT_DIR}\n\n# 中間ファイルの出力先ディレクトリ作成\nmkdir -p ${DERIVED_DIR}\n\n# アーカイブファイルの出力先ディレクトリ作成\nmkdir -p ${ARCHIVE_DIR}\n\n# xcframeworkの出力先ディレクトリ作成\nmkdir -p ${XCFRAMEWORK_DIR}\n\n# iOS実機用のarchiveファイル\nARCHIVE_FILE_IOS=${ARCHIVE_DIR}/ios.xcarchive\necho \"ARCHIVE_FILE_IOS:${ARCHIVE_FILE_IOS}\"\n\n# iOSシミュレータ用のarchiveファイル\nARCHIVE_FILE_IOS_SIMULATOR=${ARCHIVE_DIR}/iossimulator.xcarchive\necho \"ARCHIVE_FILE_IOS_SIMULATOR:${ARCHIVE_FILE_IOS_SIMULATOR}\"\n\n# macCatalyst用のarchiveファイル\nARCHIVE_FILE_IOS_MACCATALYST=${ARCHIVE_DIR}/maccatalyst.xcarchive\necho \"ARCHIVE_FILE_IOS_MACCATALYST:${ARCHIVE_FILE_IOS_MACCATALYST}\"\n\n# macOS用のarchiveファイル\nARCHIVE_FILE_MACOS=${ARCHIVE_DIR}/macos.xcarchive\necho \"ARCHIVE_FILE_MACOS:${ARCHIVE_FILE_MACOS}\"\n\n# iOS実機用のarchiveファイル作成\nxcodebuild archive \\\n-scheme \"kamome iOS\" \\\n-destination=\"iOS\" \\\n-archivePath $ARCHIVE_FILE_IOS \\\n-derivedDataPath $DERIVED_DIR \\\n-sdk iphoneos SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n\n# iOSシミュレータ用のarchiveファイル作成\nxcodebuild archive \\\n-scheme \"kamome iOS\" \\\n-destination=\"iOS Simulator\" \\\n-archivePath $ARCHIVE_FILE_IOS_SIMULATOR \\\n-derivedDataPath $DERIVED_DIR \\\n-sdk iphonesimulator SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n\n# macCatalyst用のarchiveファイル作成\nxcodebuild archive \\\n-scheme \"kamome iOS\" \\\n-destination 'platform=macOS,variant=Mac Catalyst' \\\n-archivePath $ARCHIVE_FILE_IOS_MACCATALYST SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n\n# macOS用のarchiveファイル作成\nxcodebuild archive \\\n-scheme \"kamome macOS\" \\\n-sdk macosx \\\n-archivePath $ARCHIVE_FILE_MACOS \\\nSKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n\n# xcframework作成\nxcodebuild -create-xcframework \\\n-framework $ARCHIVE_FILE_IOS/Products/Library/Frameworks/${PROJECT_NAME}.framework \\\n-framework $ARCHIVE_FILE_IOS_SIMULATOR/Products/Library/Frameworks/${PROJECT_NAME}.framework \\\n-framework $ARCHIVE_FILE_IOS_MACCATALYST/Products/Library/Frameworks/${PROJECT_NAME}.framework \\\n-framework $ARCHIVE_FILE_MACOS/Products/Library/Frameworks/${PROJECT_NAME}.framework \\\n-output $XCFRAMEWORK_DIR/${PROJECT_NAME}.xcframework\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -280,6 +284,7 @@
 				5E0D509D2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift in Sources */,
 				5E0D507F2BB69D1300C8CC3A /* ConsoleLogAdapter.swift in Sources */,
 				5E0D50882BB69FC500C8CC3A /* WaitForReady.swift in Sources */,
+				5E0D60022BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift in Sources */,
 				5E0D508E2BB6A01D00C8CC3A /* Completable.swift in Sources */,
 				5E0D50912BB6A03C00C8CC3A /* Completion.swift in Sources */,
 				5E8D4A2A2613254A00BC8771 /* Client.swift in Sources */,
@@ -299,6 +304,7 @@
 				5E0D509C2BB6A20E00C8CC3A /* HowToHandleNonExistentCommand.swift in Sources */,
 				5E0D507E2BB69D1300C8CC3A /* ConsoleLogAdapter.swift in Sources */,
 				5E0D50872BB69FC500C8CC3A /* WaitForReady.swift in Sources */,
+				5E0D60012BB6AA0000C8CC3A /* WeakScriptMessageHandler.swift in Sources */,
 				5E0D508D2BB6A01D00C8CC3A /* Completable.swift in Sources */,
 				5E0D50902BB6A03C00C8CC3A /* Completion.swift in Sources */,
 				5ED97FF824B8BC6600B84867 /* Client.swift in Sources */,
@@ -317,7 +323,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 50304;
+				CURRENT_PROJECT_VERSION = 50400;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -330,7 +336,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 5.3.4;
+				MARKETING_VERSION = 5.4.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_MODULE_NAME = kamome;
@@ -350,7 +356,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 50304;
+				CURRENT_PROJECT_VERSION = 50400;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -363,7 +369,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				MARKETING_VERSION = 5.3.4;
+				MARKETING_VERSION = 5.4.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_MODULE_NAME = kamome;
@@ -506,7 +512,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50304;
+				CURRENT_PROJECT_VERSION = 50400;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -519,7 +525,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.3.4;
+				MARKETING_VERSION = 5.4.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_MODULE_NAME = kamome;
@@ -537,7 +543,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50304;
+				CURRENT_PROJECT_VERSION = 50400;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -550,7 +556,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.3.4;
+				MARKETING_VERSION = 5.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.hituzi.SwiftyKamome;
 				PRODUCT_MODULE_NAME = kamome;
 				PRODUCT_NAME = kamome;

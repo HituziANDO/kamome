@@ -170,7 +170,7 @@ If you build Flutter apps with the WebView, see [kamome_flutter](https://github.
 	```javascript
 	import { KM } from "kamome"
 	```
-	
+
 #### Manual Installation
 
 1. Download latest [Kamome SDK](https://github.com/HituziANDO/kamome/releases)
@@ -251,7 +251,7 @@ Add the following code in build.gradle(app level).
 
 ```groovy
 dependencies {		
-    implementation 'jp.hituzi:kamome:5.3.0'
+    implementation 'jp.hituzi:kamome:5.4.0'
 }
 ```
 
@@ -342,3 +342,11 @@ KM.browser
 ## Sample App
 
 More info, see my [iOS sample project](https://github.com/HituziANDO/kamome/tree/main/ios) and [Android sample project](https://github.com/HituziANDO/kamome/tree/main/android).
+
+## Run Tests
+
+```
+cd js/kamome
+npm install
+npm test
+```
