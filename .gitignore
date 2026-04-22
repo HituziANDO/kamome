@@ -7,3 +7,4 @@ MEMO.md
 .build
 .swiftpm
 *.sketch
+.claude/settings.local.json
