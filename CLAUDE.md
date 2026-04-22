@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Kamome is a cross-platform WebView bridge library that enables bidirectional communication between JavaScript running in a WebView and native code on iOS (Swift) and Android (Java/Kotlin). Version 5.3.4. A separate Flutter plugin exists at [kamome_flutter](https://github.com/HituziANDO/kamome_flutter).
+Kamome is a cross-platform WebView bridge library that enables bidirectional communication between JavaScript running in a WebView and native code on iOS (Swift) and Android (Java/Kotlin). Version 5.4.0. A separate Flutter plugin exists at [kamome_flutter](https://github.com/HituziANDO/kamome_flutter).
 
 ## Build & Development Commands
 
