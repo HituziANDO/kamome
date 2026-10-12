@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "kamome": "file:../kamome",
-    "vue": "^3.4.21",
+    "vue": "^3.5.43",
     "vuetify": "^3.5.12"
   },
   "devDependencies": {
